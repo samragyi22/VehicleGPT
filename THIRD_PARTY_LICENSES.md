@@ -17,5 +17,5 @@ This document tracks all external open-source models, libraries, and datasets us
 
 | Model | License | Notes |
 |---|---|---|
-| Qwen2.5-1.5B-Instruct / Qwen2.5-0.5B-Instruct | Apache 2.0 | To be evaluated for tool selection under 2 GB RAM |
-| SmolLM2-1.7B-Instruct / SmolLM2-360M-Instruct | Apache 2.0 | Compact candidate for constrained edge inference |
+| Qwen2.5-0.5B-Instruct (`qwen2.5-0.5b-instruct-q4_k_m.gguf`) | **Apache 2.0** (Verified via Hugging Face model card `Qwen/Qwen2.5-0.5B-Instruct`) | Working default edge SLM. Permissive open source. |
+| Qwen2.5-1.5B-Instruct (`qwen2.5-1.5b-instruct-q4_k_m.gguf`) | **Apache 2.0** (Verified via Hugging Face model card `Qwen/Qwen2.5-1.5B-Instruct`) | Candidate comparison SLM for Phase 4 benchmarking. |
