@@ -1,0 +1,342 @@
+{
+  "all_events": [
+    {
+      "details_json": "{\"pack_temp_c\": 45.65, \"ambient_temp_c\": 35.78, \"cause\": \"High sustained highway power during heatwave\"}",
+      "event_id": "EV-0001",
+      "severity": "WARNING",
+      "ts": "2026-10-04T16:22:10",
+      "type": "BATTERY_OVERHEAT_WARNING"
+    },
+    {
+      "details_json": "{\"pack_temp_c\": 45.62, \"ambient_temp_c\": 35.04, \"cause\": \"High sustained highway power during heatwave\"}",
+      "event_id": "EV-0002",
+      "severity": "WARNING",
+      "ts": "2026-10-05T17:54:34",
+      "type": "BATTERY_OVERHEAT_WARNING"
+    },
+    {
+      "details_json": "{\"speed_kmh\": 102.58242660795368, \"reason\": \"Construction zone lane split\", \"segment\": \"highway\"}",
+      "event_id": "EV-0003",
+      "severity": "WARNING",
+      "ts": "2026-10-10T10:46:20",
+      "type": "ADAS_DISENGAGEMENT"
+    },
+    {
+      "details_json": "{\"speed_kmh\": 98.32043690124883, \"reason\": \"Construction zone lane split\", \"segment\": \"highway\"}",
+      "event_id": "EV-0004",
+      "severity": "WARNING",
+      "ts": "2026-10-10T16:41:20",
+      "type": "ADAS_DISENGAGEMENT"
+    },
+    {
+      "details_json": "{\"soc_pct\": 11.999853448275854, \"estimated_range_km\": 46.5}",
+      "event_id": "EV-0005",
+      "severity": "WARNING",
+      "ts": "2026-10-11T16:50:36",
+      "type": "LOW_SOC_WARNING"
+    },
+    {
+      "details_json": "{\"soc_pct\": 11.993428639846547, \"estimated_range_km\": 35.4}",
+      "event_id": "EV-0006",
+      "severity": "WARNING",
+      "ts": "2026-10-25T16:50:25",
+      "type": "LOW_SOC_WARNING"
+    },
+    {
+      "details_json": "{\"speed_kmh\": 98.93463050722457, \"reason\": \"Lane line occlusion / sensor glare on highway\", \"segment\": \"highway\"}",
+      "event_id": "EV-0007",
+      "severity": "WARNING",
+      "ts": "2026-10-27T08:13:30",
+      "type": "ADAS_DISENGAGEMENT"
+    },
+    {
+      "details_json": "{\"speed_kmh\": 96.49656740833078, \"reason\": \"Lane line occlusion / sensor glare on highway\", \"segment\": \"highway\"}",
+      "event_id": "EV-0008",
+      "severity": "WARNING",
+      "ts": "2026-10-27T08:21:00",
+      "type": "ADAS_DISENGAGEMENT"
+    },
+    {
+      "details_json": "{\"speed_kmh\": 98.290075507631, \"reason\": \"Lane line occlusion / sensor glare on highway\", \"segment\": \"highway\"}",
+      "event_id": "EV-0009",
+      "severity": "WARNING",
+      "ts": "2026-10-27T17:45:30",
+      "type": "ADAS_DISENGAGEMENT"
+    }
+  ],
+  "data_integrity": {
+    "drop_type": "scattered_single_samples",
+    "dropped_sample_count": 684,
+    "injected_corruptions": [
+      {
+        "column": "speed_kmh",
+        "corrupted_value": null,
+        "original_value": 41.9,
+        "trip_id": "TRIP-0001",
+        "ts": "2026-09-30T08:03:00",
+        "type": "nan"
+      },
+      {
+        "column": "pack_voltage_v",
+        "corrupted_value": null,
+        "original_value": 409.0,
+        "trip_id": "TRIP-0001",
+        "ts": "2026-09-30T08:06:40",
+        "type": "nan"
+      },
+      {
+        "column": "ambient_temp_c",
+        "corrupted_value": null,
+        "original_value": 22.3,
+        "trip_id": "TRIP-0001",
+        "ts": "2026-09-30T08:14:01",
+        "type": "nan"
+      },
+      {
+        "column": "speed_kmh",
+        "corrupted_value": 999.0,
+        "original_value": 10.1,
+        "trip_id": "TRIP-0001",
+        "ts": "2026-09-30T08:26:05",
+        "type": "outlier_spike"
+      },
+      {
+        "column": "pack_temp_c",
+        "corrupted_value": -99.0,
+        "original_value": 27.5,
+        "trip_id": "TRIP-0002",
+        "ts": "2026-09-30T12:46:48",
+        "type": "sensor_glitch"
+      },
+      {
+        "column": "soc_pct",
+        "corrupted_value": 150.0,
+        "original_value": 79.73,
+        "trip_id": "TRIP-0003",
+        "ts": "2026-09-30T17:46:48",
+        "type": "overflow_glitch"
+      },
+      {
+        "column": "pack_voltage_v",
+        "corrupted_value": 0.0,
+        "original_value": 404.3,
+        "trip_id": "TRIP-0004",
+        "ts": "2026-10-01T08:32:26",
+        "type": "voltage_drop"
+      }
+    ],
+    "longest_consecutive_gap_seconds": 3,
+    "single_sample_drops": 677
+  },
+  "efficiency_metrics": {
+    "city_avg_wh_per_km": 144.5,
+    "highway_avg_wh_per_km": 188.6,
+    "overall_avg_wh_per_km": 176.8,
+    "weekly_summary": [
+      {
+        "avg_ambient_c": 27.5,
+        "avg_hvac_kw": 0.7,
+        "efficiency_wh_per_km": 160.8,
+        "end": "2026-10-07",
+        "highway_dist_share": 0.707,
+        "start": "2026-09-30",
+        "total_distance_km": 547.2,
+        "total_energy_kwh": 88.0,
+        "week": 1
+      },
+      {
+        "avg_ambient_c": 24.8,
+        "avg_hvac_kw": 0.4,
+        "efficiency_wh_per_km": 154.8,
+        "end": "2026-10-14",
+        "highway_dist_share": 0.716,
+        "start": "2026-10-07",
+        "total_distance_km": 570.1,
+        "total_energy_kwh": 88.24,
+        "week": 2
+      },
+      {
+        "avg_ambient_c": 8.1,
+        "avg_hvac_kw": 1.74,
+        "efficiency_wh_per_km": 192.8,
+        "end": "2026-10-21",
+        "highway_dist_share": 0.851,
+        "start": "2026-10-14",
+        "total_distance_km": 672.4,
+        "total_energy_kwh": 129.65,
+        "week": 3
+      },
+      {
+        "avg_ambient_c": 8.1,
+        "avg_hvac_kw": 1.75,
+        "efficiency_wh_per_km": 192.5,
+        "end": "2026-10-28",
+        "highway_dist_share": 0.846,
+        "start": "2026-10-21",
+        "total_distance_km": 676.1,
+        "total_energy_kwh": 130.16,
+        "week": 4
+      }
+    ]
+  },
+  "metadata": {
+    "battery_capacity_kwh": 60.0,
+    "efficiency_formula": "total_energy_wh / total_distance_km = (sum(energy_kwh) * 1000.0) / sum(distance_km)",
+    "generated_at": "2026-10-28T18:00:00",
+    "history_days": 28,
+    "random_seed": 42,
+    "simulated_now": "2026-10-28T18:00:00",
+    "usable_capacity_kwh": 58.0
+  },
+  "scenarios": {
+    "adas_disengagements": {
+      "earlier_cluster_count": 2,
+      "earlier_cluster_date": "2026-10-10",
+      "earlier_cluster_events": [
+        {
+          "details": {
+            "reason": "Construction zone lane split",
+            "segment": "highway",
+            "speed_kmh": 102.58242660795368
+          },
+          "event_id": "EV-0003",
+          "ts": "2026-10-10T10:46:20"
+        },
+        {
+          "details": {
+            "reason": "Construction zone lane split",
+            "segment": "highway",
+            "speed_kmh": 98.32043690124883
+          },
+          "event_id": "EV-0004",
+          "ts": "2026-10-10T16:41:20"
+        }
+      ],
+      "yesterday_count": 3,
+      "yesterday_date": "2026-10-27",
+      "yesterday_events": [
+        {
+          "details": {
+            "reason": "Lane line occlusion / sensor glare on highway",
+            "segment": "highway",
+            "speed_kmh": 98.93463050722457
+          },
+          "event_id": "EV-0007",
+          "ts": "2026-10-27T08:13:30"
+        },
+        {
+          "details": {
+            "reason": "Lane line occlusion / sensor glare on highway",
+            "segment": "highway",
+            "speed_kmh": 96.49656740833078
+          },
+          "event_id": "EV-0008",
+          "ts": "2026-10-27T08:21:00"
+        },
+        {
+          "details": {
+            "reason": "Lane line occlusion / sensor glare on highway",
+            "segment": "highway",
+            "speed_kmh": 98.290075507631
+          },
+          "event_id": "EV-0009",
+          "ts": "2026-10-27T17:45:30"
+        }
+      ]
+    },
+    "battery_overheating": {
+      "events": [
+        {
+          "details": {
+            "ambient_temp_c": 35.78,
+            "cause": "High sustained highway power during heatwave",
+            "pack_temp_c": 45.65
+          },
+          "event_id": "EV-0001",
+          "ts": "2026-10-04T16:22:10"
+        },
+        {
+          "details": {
+            "ambient_temp_c": 35.04,
+            "cause": "High sustained highway power during heatwave",
+            "pack_temp_c": 45.62
+          },
+          "event_id": "EV-0002",
+          "ts": "2026-10-05T17:54:34"
+        }
+      ],
+      "total_events": 2
+    },
+    "largest_efficiency_drop": {
+      "cause": "Onset of cold snap and cabin PTC heater activation",
+      "date": "2026-10-14",
+      "drop_pct": 32.3,
+      "efficiency_after_wh_per_km": 190.2,
+      "efficiency_before_wh_per_km": 143.7,
+      "metric": "energy_wh_per_km",
+      "previous_date": "2026-10-13"
+    },
+    "low_soc": {
+      "events": [
+        {
+          "details": {
+            "estimated_range_km": 46.5,
+            "soc_pct": 11.999853448275854
+          },
+          "event_id": "EV-0005",
+          "ts": "2026-10-11T16:50:36"
+        },
+        {
+          "details": {
+            "estimated_range_km": 35.4,
+            "soc_pct": 11.993428639846547
+          },
+          "event_id": "EV-0006",
+          "ts": "2026-10-25T16:50:25"
+        }
+      ],
+      "total_events": 2
+    },
+    "range_drop": {
+      "baseline_window": {
+        "avg_ambient_c": 26.1,
+        "avg_hvac_kw": 0.55,
+        "end_date": "2026-10-14",
+        "estimated_range_km": 367.8,
+        "highway_dist_share": 0.712,
+        "start_date": "2026-09-30",
+        "wh_per_km": 157.7
+      },
+      "coupling_note": "cold_weather is the primary factor combining ambient thermodynamic/aerodynamic losses and cabin PTC heating. Individual sub-factors are measured via independent counterfactual runs.",
+      "delta": {
+        "range_drop_km": 66.8,
+        "range_drop_pct": 18.2,
+        "wh_per_km_increase": 35.0,
+        "wh_per_km_pct": 22.2
+      },
+      "factor_ranking": [
+        "cold_weather",
+        "highway_share"
+      ],
+      "group_contributions_wh_km": {
+        "cold_weather": 29.0,
+        "highway_share": 6.4
+      },
+      "interaction_residual_wh_km": -0.4,
+      "metric": "estimated_range_km",
+      "sub_factors_counterfactual_wh_km": {
+        "cabin_heating_hvac": 17.3,
+        "pure_ambient_drag_and_battery": 10.9
+      },
+      "target_window": {
+        "avg_ambient_c": 8.1,
+        "avg_hvac_kw": 1.74,
+        "end_date": "2026-10-28",
+        "estimated_range_km": 301.0,
+        "highway_dist_share": 0.848,
+        "start_date": "2026-10-14",
+        "wh_per_km": 192.7
+      }
+    }
+  }
+}

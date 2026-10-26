@@ -198,10 +198,9 @@ TABLES_DDL: dict[str, str] = {
 # ---------------------------------------------------------------------------
 # 3. Symbolic Time Range Specifications (SLM Output Representation)
 # ---------------------------------------------------------------------------
-# today, last_28_days, last_n_hours, and all_history exist to support edge temporal queries, full-dataset aggregation, and sub-day trend resolution.
+# last_28_days, last_n_hours, and all_history exist to support edge temporal queries, full-dataset aggregation, and sub-day trend resolution.
 class TimeRangeKind(str, Enum):
     yesterday = "yesterday"
-    today = "today"
     last_7_days = "last_7_days"
     last_14_days = "last_14_days"
     last_28_days = "last_28_days"
