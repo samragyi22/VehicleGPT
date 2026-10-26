@@ -168,11 +168,22 @@ def render_answer(tool_name: ToolName | str, output: ToolOutput) -> str:
         hvac_inc = evidence_m.get("hvac_power_increase_kw", 0.0)
         hwy_inc = evidence_m.get("highway_share_increase_pct", 0.0)
 
+        durations = res.get("window_durations_days", {})
+        tgt_days = durations.get("target", 14.0)
+        base_actual_days = durations.get("baseline_actual", 14.0)
+        base_nom_days = durations.get("baseline_nominal", 14.0)
+        truncated = res.get("baseline_truncated", False)
+        baseline_note = res.get("baseline_note", "")
+
         lines = [
             (
-                f"Over the last two weeks, estimated driving range at full charge dropped by {delta_range:.1f} km "
+                f"Over the requested window ({tgt_days:.2f} days), estimated full-charge range dropped by {delta_range:.1f} km "
                 f"(from {base_range:.1f} km to {tgt_range:.1f} km) as energy consumption increased "
                 f"from {base_eff:.1f} Wh/km to {tgt_eff:.1f} Wh/km (+{delta_eff:.1f} Wh/km)."
+            ),
+            (
+                f"Window comparison: target duration {tgt_days:.2f} days vs baseline duration {base_actual_days:.2f} days"
+                + (f" (truncated from nominal {base_nom_days:.2f} days)." if truncated else ".")
             ),
             "",
             "Possible contributing factors ranked by impact:",
@@ -193,6 +204,8 @@ def render_answer(tool_name: ToolName | str, output: ToolOutput) -> str:
             rank_idx += 1
 
         lines.append("")
+        if truncated and baseline_note:
+            lines.append(f"Note on baseline: {baseline_note}")
         lines.append(
             "Note: Results represent possible contributing factors based on driving telemetry."
         )

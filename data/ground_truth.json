@@ -129,7 +129,7 @@
     "single_sample_drops": 677
   },
   "efficiency_metrics": {
-    "city_avg_wh_per_km": 144.5,
+    "city_avg_wh_per_km": 133.4,
     "highway_avg_wh_per_km": 188.6,
     "overall_avg_wh_per_km": 176.8,
     "weekly_summary": [

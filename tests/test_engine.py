@@ -132,6 +132,12 @@ def test_case_1_range_drop_and_factors(ground_truth):
         < 0.01
     )
 
+    # Verify baseline truncation flag and window duration in days
+    assert res["baseline_truncated"] is True
+    assert res["window_durations_days"]["target"] == 14.75
+    assert res["window_durations_days"]["baseline_nominal"] == 14.75
+    assert res["window_durations_days"]["baseline_actual"] == 13.67
+
     # Verify factor ranking
     assert res["factor_ranking"] == ["cold_weather", "highway_share"]
 
@@ -140,10 +146,12 @@ def test_case_1_range_drop_and_factors(ground_truth):
     assert abs(contribs["cold_weather"] - 29.0) <= 3.0
     assert abs(contribs["highway_share"] - 6.4) <= 3.0
 
-    # Verify rendering
+    # Verify rendering uses 'estimated full-charge range' and explains truncation
     rendered = render_answer(ToolName.explain_factors, out)
+    assert "estimated full-charge range" in rendered
     assert "Cold weather" in rendered
     assert "Highway driving share" in rendered
+    assert "truncated" in rendered
     assert len(render_evidence(out)) > 0
 
 
@@ -210,17 +218,19 @@ def test_case_3_adas_disengagements_yesterday(ground_truth):
 def test_case_4_context_before_overheating():
     """
     Q4: 'What happened before the battery overheating warning?'
-    - Pulls 60 s pre-event snapshot for latest battery overheating warning.
+    - Defaults to 300 s at 1 Hz from samples_1hz plus last 60 s snapshot at 10 Hz.
     - Pack temperature must show a 'rising' trend reaching >= 45.6°C.
     """
     out = context_before(
         event_id="latest_BATTERY_OVERHEAT_WARNING",
-        seconds=60,
         signals=["pack_temp_c", "power_kw", "speed_kmh", "ambient_temp_c"],
     )
     res = out.result
 
     assert res["event_id"] in ("EV-0001", "EV-0002")
+    assert res["seconds"] == 300
+    assert res["has_high_rate_snapshot_60s"] is True
+
     summary = res["signal_summary"]
     temp_stats = summary["pack_temp_c"]
 
@@ -239,8 +249,8 @@ def test_case_4_context_before_overheating():
 def test_case_5_city_vs_highway_comparison(ground_truth):
     """
     Q5: 'Compare energy consumption between city and highway driving.'
-    - City Wh/km within 1% of ground truth (144.5 Wh/km).
-    - Highway Wh/km within 1% of ground truth (188.6 Wh/km).
+    - City Wh/km within 1% of ground truth (133.4 Wh/km net power).
+    - Highway Wh/km within 1% of ground truth (188.6 Wh/km net power).
     """
     gt_eff = ground_truth["efficiency_metrics"]
     start, end = resolve_symbolic_range({"kind": "all_history"})
@@ -263,6 +273,48 @@ def test_case_5_city_vs_highway_comparison(ground_truth):
     rendered = render_answer(ToolName.compare, out)
     assert "City" in rendered
     assert "Highway" in rendered
+
+
+# ---------------------------------------------------------------------------
+# 7. Distance-Weighted Segments & Global ROW_LIMIT Tests
+# ---------------------------------------------------------------------------
+def test_distance_weighted_segments_reproduce_overall():
+    """
+    Validates that city and highway net efficiency, weighted by distance,
+    reproduces overall net efficiency within 0.5% (mathematically exact with net energy).
+    """
+    with get_db_connection() as con:
+        row_c = con.execute(
+            "SELECT SUM(power_kw), SUM(speed_kmh) FROM samples_1hz WHERE road_segment = 'city'"
+        ).fetchone()
+        row_h = con.execute(
+            "SELECT SUM(power_kw), SUM(speed_kmh) FROM samples_1hz WHERE road_segment = 'highway'"
+        ).fetchone()
+        row_all = con.execute("SELECT SUM(power_kw), SUM(speed_kmh) FROM samples_1hz").fetchone()
+
+    city_wh = 1000.0 * row_c[0] / row_c[1]
+    city_dist = row_c[1] / 3600.0
+
+    hwy_wh = 1000.0 * row_h[0] / row_h[1]
+    hwy_dist = row_h[1] / 3600.0
+
+    overall_wh = 1000.0 * row_all[0] / row_all[1]
+
+    weighted_wh = (city_dist * city_wh + hwy_dist * hwy_wh) / (city_dist + hwy_dist)
+    diff_pct = abs(weighted_wh - overall_wh) / overall_wh
+
+    assert diff_pct < 0.005, (
+        f"Distance-weighted mismatch: {weighted_wh:.4f} vs {overall_wh:.4f} ({diff_pct * 100:.4f}%)"
+    )
+
+
+def test_global_row_limit_cap():
+    """Verify that global ROW_LIMIT caps query results when results would exceed it."""
+    # When requesting all events with a small cap, ROW_LIMIT is enforced
+    start, end = resolve_symbolic_range({"kind": "all_history"})
+    out_capped = get_events(type=EventType.ADAS_DISENGAGEMENT, start=start, end=end, limit=2)
+    assert out_capped.meta.row_count <= config.ROW_LIMIT
+    assert len(out_capped.result["events"]) <= 2
 
 
 # ---------------------------------------------------------------------------

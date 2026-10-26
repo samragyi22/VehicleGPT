@@ -178,18 +178,18 @@ def test_ground_truth_recomputation_from_parquet(sim_artifacts):
     recomputed_overall = round_1(tot_energy * 1000.0 / tot_dist)
     assert recomputed_overall == gt["efficiency_metrics"]["overall_avg_wh_per_km"]
 
-    # 2. City and Highway efficiency from samples
+    # 2. City and Highway efficiency from samples (net power)
     # City:
     city_samples = df_samples[df_samples["road_segment"] == "city"]
     city_dist = (city_samples["speed_kmh"] / 3600.0).sum()
-    city_energy = (city_samples["power_kw"] * 1000.0 / 3600.0).clip(lower=0.0).sum()
+    city_energy = (city_samples["power_kw"] * 1000.0 / 3600.0).sum()
     recomputed_city = round_1(city_energy / city_dist)
     assert abs(recomputed_city - gt["efficiency_metrics"]["city_avg_wh_per_km"]) <= 0.05
 
     # Highway:
     hwy_samples = df_samples[df_samples["road_segment"] == "highway"]
     hwy_dist = (hwy_samples["speed_kmh"] / 3600.0).sum()
-    hwy_energy = (hwy_samples["power_kw"] * 1000.0 / 3600.0).clip(lower=0.0).sum()
+    hwy_energy = (hwy_samples["power_kw"] * 1000.0 / 3600.0).sum()
     recomputed_hwy = round_1(hwy_energy / hwy_dist)
     assert abs(recomputed_hwy - gt["efficiency_metrics"]["highway_avg_wh_per_km"]) <= 0.05
 

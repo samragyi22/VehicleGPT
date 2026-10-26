@@ -261,7 +261,7 @@ class ContextBeforeArgs(BaseModel):
         description="ID of the target event: 'EV-<digits>' (e.g. 'EV-0042') or 'latest_<EVENT_TYPE>'.",
     )
     seconds: int = Field(
-        default=60,
+        default=300,
         ge=1,
         le=300,
         description="Seconds of telemetry leading up to the event (<= 60 for 10Hz snapshot, <= 300 for 1Hz).",
@@ -361,7 +361,7 @@ class ContextBeforeExecArgs(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     event_id: str
-    seconds: int = Field(default=60, ge=1, le=300)
+    seconds: int = Field(default=300, ge=1, le=300)
     signals: list[str] = Field(default_factory=list)
 
     @field_validator("event_id")

@@ -133,13 +133,13 @@ def get_events(
 # ---------------------------------------------------------------------------
 def context_before(
     event_id: str,
-    seconds: int = 60,
+    seconds: int = 300,
     signals: list[str] | None = None,
 ) -> ToolOutput:
     """
     Retrieve telemetry leading up to an event:
-    - seconds <= 60: reads 10 Hz ring-buffer from event_snapshots.
-    - seconds > 60 (up to 300): reads 1 Hz driving samples from samples_1hz.
+    - Defaults to 300 s at 1 Hz from samples_1hz (broader trend context).
+    - PLUS the high-rate 10 Hz pre-event ring-buffer (last 60 s) from event_snapshots.
     Returns per-signal start, end, min, max, trend, and downsampled series.
     """
     t0 = time.perf_counter()
@@ -177,41 +177,35 @@ def context_before(
             else ["pack_temp_c", "power_kw", "speed_kmh", "ambient_temp_c", "soc_pct"]
         )
 
-        rows_data: list[dict[str, Any]] = []
+        # 1. 1 Hz telemetry up to `seconds` (default 300 s)
+        event_dt = datetime.fromisoformat(event_ts)
+        start_iso = (event_dt - timedelta(seconds=seconds)).isoformat()
+        hz_rows = con.execute(
+            """
+            SELECT ts, speed_kmh, power_kw, soc_pct, pack_voltage_v, pack_current_a,
+                   pack_temp_c, ambient_temp_c, hvac_power_kw, road_segment, adas_active
+            FROM samples_1hz
+            WHERE ts >= ? AND ts <= ?
+            ORDER BY ts ASC
+            LIMIT ?
+            """,
+            (start_iso, event_ts, config.ROW_LIMIT * 2),
+        ).fetchall()
 
-        if seconds <= 60:
-            # High-rate 10 Hz snapshot
-            min_offset = -seconds * 1000
-            snap_rows = con.execute(
-                """
-                SELECT offset_ms, speed_kmh, power_kw, soc_pct, pack_voltage_v, pack_current_a,
-                       pack_temp_c, ambient_temp_c, hvac_power_kw, road_segment, adas_active
-                FROM event_snapshots
-                WHERE event_id = ? AND offset_ms >= ? AND offset_ms <= 0
-                ORDER BY offset_ms ASC
-                """,
-                (actual_event_id, min_offset),
-            ).fetchall()
+        # 2. Plus high-rate 10 Hz snapshot for the last 60 s from event_snapshots
+        snap_rows = con.execute(
+            """
+            SELECT offset_ms, speed_kmh, power_kw, soc_pct, pack_voltage_v, pack_current_a,
+                   pack_temp_c, ambient_temp_c, hvac_power_kw, road_segment, adas_active
+            FROM event_snapshots
+            WHERE event_id = ? AND offset_ms >= -60000 AND offset_ms <= 0
+            ORDER BY offset_ms ASC
+            LIMIT ?
+            """,
+            (actual_event_id, config.ROW_LIMIT * 4),
+        ).fetchall()
 
-            for r in snap_rows:
-                rows_data.append(dict(r))
-        else:
-            # 1 Hz telemetry up to 300 s
-            event_dt = datetime.fromisoformat(event_ts)
-            start_iso = (event_dt - timedelta(seconds=seconds)).isoformat()
-            hz_rows = con.execute(
-                """
-                SELECT ts, speed_kmh, power_kw, soc_pct, pack_voltage_v, pack_current_a,
-                       pack_temp_c, ambient_temp_c, hvac_power_kw, road_segment, adas_active
-                FROM samples_1hz
-                WHERE ts >= ? AND ts <= ?
-                ORDER BY ts ASC
-                """,
-                (start_iso, event_ts),
-            ).fetchall()
-
-            for r in hz_rows:
-                rows_data.append(dict(r))
+    rows_data: list[dict[str, Any]] = [dict(r) for r in (hz_rows if hz_rows else snap_rows)]
 
     if not rows_data:
         elapsed_ms = (time.perf_counter() - t0) * 1000.0
@@ -228,33 +222,37 @@ def context_before(
         )
 
     # Calculate per-signal metrics and trend
-    signal_summary: dict[str, Any] = {}
-    for sig in target_signals:
-        vals = [r[sig] for r in rows_data if sig in r and r[sig] is not None]
-        if not vals:
-            continue
-        v_start = float(vals[0])
-        v_end = float(vals[-1])
-        v_min = float(min(vals))
-        v_max = float(max(vals))
-        diff = v_end - v_start
+    def _summarize_signals(rows: list[dict[str, Any]]) -> dict[str, Any]:
+        summary: dict[str, Any] = {}
+        for sig in target_signals:
+            vals = [r[sig] for r in rows if sig in r and r[sig] is not None]
+            if not vals:
+                continue
+            v_start = float(vals[0])
+            v_end = float(vals[-1])
+            v_min = float(min(vals))
+            v_max = float(max(vals))
+            diff = v_end - v_start
 
-        # Trend classification
-        if diff > 0.15:
-            trend = "rising"
-        elif diff < -0.15:
-            trend = "falling"
-        else:
-            trend = "stable"
+            if diff > 0.15:
+                trend = "rising"
+            elif diff < -0.15:
+                trend = "falling"
+            else:
+                trend = "stable"
 
-        signal_summary[sig] = {
-            "start": round(v_start, 2),
-            "end": round(v_end, 2),
-            "min": round(v_min, 2),
-            "max": round(v_max, 2),
-            "change": round(diff, 2),
-            "trend": trend,
-        }
+            summary[sig] = {
+                "start": round(v_start, 2),
+                "end": round(v_end, 2),
+                "min": round(v_min, 2),
+                "max": round(v_max, 2),
+                "change": round(diff, 2),
+                "trend": trend,
+            }
+        return summary
+
+    signal_summary = _summarize_signals(rows_data)
+    snap_summary = _summarize_signals([dict(r) for r in snap_rows]) if snap_rows else {}
 
     # Downsample points for evidence series (compact representation <= 30 points)
     step = max(1, len(rows_data) // 20)
@@ -263,6 +261,13 @@ def context_before(
         downsampled.append(rows_data[-1])
 
     elapsed_ms = (time.perf_counter() - t0) * 1000.0
+    evidence = [
+        actual_event_id,
+        f"1Hz window: {len(hz_rows)}s" if hz_rows else "1Hz telemetry unavailable",
+        f"10Hz snapshot: {len(snap_rows)} samples (last 60s)"
+        if snap_rows
+        else "10Hz snapshot unavailable",
+    ]
 
     return ToolOutput(
         result={
@@ -271,10 +276,14 @@ def context_before(
             "event_type": event_type,
             "seconds": seconds,
             "signal_summary": signal_summary,
-            "downsampled_series_count": len(downsampled),
+            "snapshot_60s_summary": snap_summary,
+            "has_high_rate_snapshot_60s": len(snap_rows) > 0,
+            "downsampled_series_count": min(len(downsampled), config.ROW_LIMIT),
         },
-        evidence=[actual_event_id, f"offsets: {rows_data[0].get('offset_ms', 0)} to 0 ms"],
-        meta=ToolOutputMeta(row_count=len(rows_data), query_time_ms=round(elapsed_ms, 3)),
+        evidence=evidence,
+        meta=ToolOutputMeta(
+            row_count=len(rows_data) + len(snap_rows), query_time_ms=round(elapsed_ms, 3)
+        ),
     )
 
 
@@ -290,7 +299,7 @@ def compare(
 ) -> ToolOutput:
     """
     Compare vehicle telemetry across road segments (city vs highway).
-    Efficiency uses non-negative power draw over speed: 1000 * sum(max(power, 0)) / sum(speed).
+    Efficiency uses distance-weighted net power: 1000 * sum(power_kw) / sum(speed_kmh).
     """
     t0 = time.perf_counter()
     metric_str = metric.value if isinstance(metric, Metric) else str(metric)
@@ -299,10 +308,11 @@ def compare(
 
     with get_db_connection() as con:
         if metric_str in ("energy_wh_per_km", "estimated_range_km"):
-            # Distance-weighted gross propulsion + aux consumption
+            # Efficiency definition: distance-weighted net power (energy_wh_per_km = 1000 * sum(power_kw) / sum(speed_kmh)).
+            # Net power includes regenerative braking everywhere. Defined per PROJECT_CONTEXT.md Section 10.
             row_a = con.execute(
                 """
-                SELECT SUM(CASE WHEN power_kw > 0 THEN power_kw ELSE 0 END),
+                SELECT SUM(power_kw),
                        SUM(speed_kmh), COUNT(*)
                 FROM samples_1hz
                 WHERE road_segment = ? AND ts >= ? AND ts < ?
@@ -312,7 +322,7 @@ def compare(
 
             row_b = con.execute(
                 """
-                SELECT SUM(CASE WHEN power_kw > 0 THEN power_kw ELSE 0 END),
+                SELECT SUM(power_kw),
                        SUM(speed_kmh), COUNT(*)
                 FROM samples_1hz
                 WHERE road_segment = ? AND ts >= ? AND ts < ?
@@ -560,6 +570,26 @@ def explain_factors(
     baseline_end_iso = start
 
     with get_db_connection() as con:
+        # Check if baseline window starts before earliest available sample in DB
+        min_ts_row = con.execute("SELECT MIN(ts) FROM samples_1hz").fetchone()
+        earliest_ts = min_ts_row[0] if min_ts_row and min_ts_row[0] else baseline_start_iso
+        baseline_truncated = baseline_start_iso < earliest_ts
+
+        target_duration_days = round((end_dt - start_dt).total_seconds() / 86400.0, 2)
+        baseline_nominal_days = target_duration_days
+        actual_start_dt = max(baseline_start_dt, datetime.fromisoformat(earliest_ts))
+        baseline_actual_days = round((start_dt - actual_start_dt).total_seconds() / 86400.0, 2)
+
+        if baseline_truncated:
+            baseline_note = (
+                f"Baseline window starts before earliest available telemetry ({earliest_ts}); "
+                f"nominal duration of {baseline_nominal_days:.2f} days truncated to {baseline_actual_days:.2f} days of actual telemetry."
+            )
+        else:
+            baseline_note = (
+                f"Full nominal baseline window of {baseline_nominal_days:.2f} days available."
+            )
+
         # Check that baseline has data
         base_count = con.execute(
             "SELECT COUNT(*) FROM samples_1hz WHERE ts >= ? AND ts < ?",
@@ -622,6 +652,8 @@ def explain_factors(
         )
 
         # Target window city vs highway efficiency gap
+        # Efficiency definition: distance-weighted net power (energy_wh_per_km = 1000 * sum(power_kw) / sum(speed_kmh)).
+        # Net power includes regenerative braking everywhere. Defined per PROJECT_CONTEXT.md Section 10.
         hwy_t = con.execute(
             """
             SELECT SUM(power_kw), SUM(speed_kmh) FROM samples_1hz
@@ -654,7 +686,7 @@ def explain_factors(
     share_t = hwy_spd_t / row_t[1]
     delta_share = share_t - share_b
 
-    # Target segment Wh/km gap
+    # Target segment Wh/km gap (net power)
     hwy_eff_t = 1000.0 * hwy_t[0] / hwy_t[1]
     city_eff_t = 1000.0 * city_t[0] / city_t[1]
     hwy_gap = hwy_eff_t - city_eff_t
@@ -682,13 +714,33 @@ def explain_factors(
     return ToolOutput(
         result={
             "metric": metric_str,
-            "target_window": {"start": start, "end": end},
-            "baseline_window": {"start": baseline_start_iso, "end": baseline_end_iso},
+            "target_window": {
+                "start": start,
+                "end": end,
+                "duration_days": target_duration_days,
+            },
+            "baseline_window": {
+                "start": baseline_start_iso,
+                "end": baseline_end_iso,
+                "nominal_duration_days": baseline_nominal_days,
+                "actual_duration_days": baseline_actual_days,
+                "actual_data_start": earliest_ts if baseline_truncated else baseline_start_iso,
+            },
+            "baseline_truncated": baseline_truncated,
+            "baseline_note": baseline_note,
+            "window_durations_days": {
+                "target": target_duration_days,
+                "baseline_nominal": baseline_nominal_days,
+                "baseline_actual": baseline_actual_days,
+            },
             "delta": {
                 "wh_per_km_increase": round(delta_eff, 1),
-                "range_drop_km": round(abs(delta_range), 1),
+                "estimated_full_charge_range_drop_km": round(abs(delta_range), 1),
                 "baseline_wh_per_km": round(eff_b, 1),
                 "target_wh_per_km": round(eff_t, 1),
+                "baseline_estimated_full_charge_range_km": round(range_b, 1),
+                "target_estimated_full_charge_range_km": round(range_t, 1),
+                "range_drop_km": round(abs(delta_range), 1),
                 "baseline_range_km": round(range_b, 1),
                 "target_range_km": round(range_t, 1),
             },
@@ -714,7 +766,8 @@ def explain_factors(
             f"cold_weather: {contrib_cold:.1f} Wh/km (ambient dropped by {amb_b - amb_t:.1f}°C, HVAC increased by {hvac_t - hvac_b:.2f} kW)",
             f"highway_share: {contrib_hwy:.1f} Wh/km (highway share increased by {delta_share * 100.0:.1f}%)",
             f"efficiency: {eff_b:.1f} -> {eff_t:.1f} Wh/km (+{delta_eff:.1f} Wh/km)",
-            f"range at full charge: {range_b:.1f} -> {range_t:.1f} km (-{abs(delta_range):.1f} km)",
+            f"estimated full-charge range: {range_b:.1f} -> {range_t:.1f} km (-{abs(delta_range):.1f} km)",
+            f"window duration: target {target_duration_days:.2f}d, baseline {baseline_actual_days:.2f}d{' (truncated from nominal ' + str(baseline_nominal_days) + 'd)' if baseline_truncated else ''}",
         ],
         meta=ToolOutputMeta(row_count=total_rows, query_time_ms=round(elapsed_ms, 3)),
     )

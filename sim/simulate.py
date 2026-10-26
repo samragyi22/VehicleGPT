@@ -556,15 +556,16 @@ def generate_simulation_data(
     total_energy_kwh = float(df_trips["energy_kwh"].sum())
     overall_avg_wh_km = round_1((total_energy_kwh * 1000.0) / total_dist_km)
 
-    # City & Highway segment efficiencies directly from clean sample telemetry
+    # Efficiency definition: distance-weighted net power (energy_wh_per_km = 1000 * sum(power_kw) / sum(speed_kmh)).
+    # Net power includes regenerative braking everywhere. Defined per PROJECT_CONTEXT.md Section 10.
     city_s = df_samples_cleaned[df_samples_cleaned["road_segment"] == "city"]
     city_dist = (city_s["speed_kmh"] / 3600.0).sum()
-    city_energy = (city_s["power_kw"] * 1000.0 / 3600.0).clip(lower=0.0).sum()
+    city_energy = (city_s["power_kw"] * 1000.0 / 3600.0).sum()
     city_wh_km = round_1(city_energy / max(city_dist, 1.0))
 
     hwy_s = df_samples_cleaned[df_samples_cleaned["road_segment"] == "highway"]
     hwy_dist = (hwy_s["speed_kmh"] / 3600.0).sum()
-    hwy_energy = (hwy_s["power_kw"] * 1000.0 / 3600.0).clip(lower=0.0).sum()
+    hwy_energy = (hwy_s["power_kw"] * 1000.0 / 3600.0).sum()
     highway_wh_km = round_1(hwy_energy / max(hwy_dist, 1.0))
 
     # Weekly table using single distance-weighted formula: (sum kWh * 1000) / (sum km)
