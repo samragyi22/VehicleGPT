@@ -60,3 +60,4 @@ models/*.gguf
 # IDE
 .vscode/
 .idea/
+HANDOFF_SUMMARY.md

@@ -24,11 +24,15 @@ Tests:
        trips-based window efficiency matches ground_truth.json within 1%.
   8. test_samples_1hz_window_efficiency
        samples_1hz-based window efficiency (1000*sum(power_kw)/sum(speed_kmh))
-       matches trips-based figure AND ground truth within 2%.
+       matches trips-based figure AND ground truth within 0.5%.
   9. test_missing_rows_total_is_684
        Sum of (expected - actual) across all trips = 684 (exact per-trip check).
  10. test_no_wal_files
        journal_mode=DELETE: no vehicle.db-wal or vehicle.db-shm files present.
+ 11. test_samples_1min_energy_weighted
+       samples_1min.energy_wh_per_km matches hand-computed 1000*sum(power_kw)/sum(speed_kmh).
+ 12. test_samples_1min_parked_null
+       samples_1min.energy_wh_per_km is NULL (NaN) when all speed_kmh=0 in a minute.
 """
 
 import json
@@ -39,7 +43,13 @@ import pandas as pd
 import pytest
 
 import config
-from ingest.normalize import MAX_INTERP_GAP, PLAUSIBLE_BOUNDS, _interpolate_short_gaps, normalise
+from ingest.normalize import (
+    MAX_INTERP_GAP,
+    PLAUSIBLE_BOUNDS,
+    _build_samples_1min,
+    _interpolate_short_gaps,
+    normalise,
+)
 
 # ---------------------------------------------------------------------------
 # Module-level fixture: run the normaliser once for the entire test session.
@@ -314,10 +324,10 @@ def test_samples_1hz_window_efficiency(db_rw, ground_truth):
     )
     gt_b = bw["wh_per_km"]
 
-    assert abs(hz_b_wh_km - tr_b_wh_km) / tr_b_wh_km < 0.02, (
-        f"Baseline 1Hz vs trips: {hz_b_wh_km:.2f} vs {tr_b_wh_km:.2f}"
+    assert abs(hz_b_wh_km - tr_b_wh_km) / tr_b_wh_km < 0.005, (
+        f"Baseline 1Hz vs trips: {hz_b_wh_km:.4f} vs {tr_b_wh_km:.4f}"
     )
-    assert abs(hz_b_wh_km - gt_b) / gt_b < 0.02, f"Baseline 1Hz vs GT: {hz_b_wh_km:.2f} vs {gt_b}"
+    assert abs(hz_b_wh_km - gt_b) / gt_b < 0.005, f"Baseline 1Hz vs GT: {hz_b_wh_km:.4f} vs {gt_b}"
 
     # Target
     hz_t_wh_km, _ = _hz_window_eff(
@@ -328,10 +338,10 @@ def test_samples_1hz_window_efficiency(db_rw, ground_truth):
     )
     gt_t = tw["wh_per_km"]
 
-    assert abs(hz_t_wh_km - tr_t_wh_km) / tr_t_wh_km < 0.02, (
-        f"Target 1Hz vs trips: {hz_t_wh_km:.2f} vs {tr_t_wh_km:.2f}"
+    assert abs(hz_t_wh_km - tr_t_wh_km) / tr_t_wh_km < 0.005, (
+        f"Target 1Hz vs trips: {hz_t_wh_km:.4f} vs {tr_t_wh_km:.4f}"
     )
-    assert abs(hz_t_wh_km - gt_t) / gt_t < 0.02, f"Target 1Hz vs GT: {hz_t_wh_km:.2f} vs {gt_t}"
+    assert abs(hz_t_wh_km - gt_t) / gt_t < 0.005, f"Target 1Hz vs GT: {hz_t_wh_km:.4f} vs {gt_t}"
 
 
 # ---------------------------------------------------------------------------
@@ -367,3 +377,80 @@ def test_no_wal_files(report):
     shm = Path(str(db) + "-shm")
     assert not wal.exists(), f"WAL file should not exist: {wal}"
     assert not shm.exists(), f"SHM file should not exist: {shm}"
+
+
+# ---------------------------------------------------------------------------
+# 11. Energy-weighted samples_1min efficiency vs hand-computed minute
+# ---------------------------------------------------------------------------
+
+
+def test_samples_1min_energy_weighted(db_rw):
+    """
+    samples_1min.energy_wh_per_km must be energy-weighted:
+      1000 * sum(power_kw) / sum(speed_kmh) over the 1Hz samples of that minute.
+    It must NOT be the arithmetic mean of 1Hz energy_wh_per_km ratios.
+    """
+    target_min = "2026-10-27T18:00:00"
+
+    # Query 1min aggregate from DB
+    row_1m = db_rw.execute(
+        "SELECT energy_wh_per_km FROM samples_1min WHERE ts = ?",
+        (target_min,),
+    ).fetchone()
+    assert row_1m is not None, f"Minute {target_min} not found in samples_1min"
+    db_eff = row_1m[0]
+
+    # Query underlying 1Hz samples for the same 60-second window
+    row_1hz = db_rw.execute(
+        "SELECT COUNT(*), SUM(power_kw), SUM(speed_kmh), AVG(energy_wh_per_km) "
+        "FROM samples_1hz WHERE ts >= ? AND ts < '2026-10-27T18:01:00'",
+        (target_min,),
+    ).fetchone()
+    count_1hz, sum_pwr, sum_spd, mean_of_ratios = row_1hz
+
+    assert count_1hz == 60, f"Expected 60 1Hz rows for minute {target_min}, got {count_1hz}"
+    assert sum_spd is not None and sum_spd > 0, "Speed sum must be positive"
+
+    # Hand-computed energy-weighted formula
+    expected_eff = 1000.0 * sum_pwr / sum_spd
+
+    # DB value matches hand computation to machine precision
+    assert abs(db_eff - expected_eff) < 1e-6, (
+        f"DB efficiency {db_eff} does not match hand-computed {expected_eff}"
+    )
+
+    # Confirm it distinctly differs from arithmetic mean of ratios
+    assert abs(db_eff - mean_of_ratios) > 0.05, (
+        f"DB efficiency {db_eff} unexpectedly matches mean-of-ratios {mean_of_ratios}"
+    )
+
+
+# ---------------------------------------------------------------------------
+# 12. Parked minute produces NULL energy_wh_per_km
+# ---------------------------------------------------------------------------
+
+
+def test_samples_1min_parked_null():
+    """
+    When all speed_kmh values in a minute are 0 (parked / idle vehicle),
+    energy_wh_per_km cannot be divided by zero and must be NULL (NaN in pandas).
+    """
+    df_parked = pd.DataFrame(
+        {
+            "ts": [f"2026-10-20T10:00:{s:02d}" for s in range(60)],
+            "speed_kmh": [0.0] * 60,
+            "power_kw": [1.5] * 60,
+            "soc_pct": [80.0] * 60,
+            "pack_temp_c": [25.0] * 60,
+            "ambient_temp_c": [20.0] * 60,
+            "hvac_power_kw": [1.5] * 60,
+            "estimated_range_km": [300.0] * 60,
+        }
+    )
+
+    result = _build_samples_1min(df_parked)
+    assert len(result) == 1
+    assert result.iloc[0]["ts"] == "2026-10-20T10:00:00"
+    assert pd.isna(result.iloc[0]["energy_wh_per_km"]), (
+        f"Expected NaN for parked minute, got {result.iloc[0]['energy_wh_per_km']}"
+    )

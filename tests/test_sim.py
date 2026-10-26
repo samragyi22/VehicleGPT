@@ -36,6 +36,7 @@ def sim_artifacts():
     return df_trips, df_samples, df_events, df_snapshots, gt
 
 
+@pytest.mark.slow
 def test_determinism_two_runs_identical():
     """Ensure two simulation runs produce byte-identical Parquet and JSON files."""
     df_trips1, df_samples1, df_events1, df_snapshots1, gt1 = generate_simulation_data()
@@ -163,6 +164,7 @@ def test_event_types_and_ids_valid(sim_artifacts):
         assert snap_counts[ev_id] == 601
 
 
+@pytest.mark.slow
 def test_ground_truth_recomputation_from_parquet(sim_artifacts):
     """
     Recomputes every ground truth number directly from the DataFrames / Parquet
@@ -254,6 +256,7 @@ def test_ground_truth_recomputation_from_parquet(sim_artifacts):
     assert gt["data_integrity"]["dropped_sample_count"] > 0
 
 
+@pytest.mark.slow
 def test_factor_contributions_within_10_percent_of_total(sim_artifacts):
     """
     Validates that the two-group factor contributions (cold_weather + highway_share)

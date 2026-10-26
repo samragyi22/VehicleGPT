@@ -36,3 +36,6 @@ target-version = "py311"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
+markers = [
+    "slow: marks tests that run the full simulator (deselect with -m 'not slow')",
+]
