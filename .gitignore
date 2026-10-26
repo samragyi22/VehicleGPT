@@ -37,6 +37,7 @@ htmlcov/
 data/raw/
 data/*.csv
 data/*.parquet
+data/vehicle.db*
 data/*.db
 data/*.sqlite
 *.db

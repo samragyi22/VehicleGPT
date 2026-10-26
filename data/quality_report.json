@@ -8,13 +8,581 @@
   },
   "db_path": "/Users/samragyisharma/Desktop/VehicleGPT/data/vehicle.db",
   "db_size_bytes": 33533952,
-  "elapsed_seconds": 0.42,
+  "elapsed_seconds": 0.39,
   "gap_analysis": {
-    "max_gap_seconds": 3,
-    "multi_second_gaps": 3,
-    "reconciliation": "The simulator dropped samples by random index selection before writing the Parquet file (0 raw rows missing vs expected continuous recording). The cleaned samples_1hz shows 677 single-second timestamp gaps and 3 multi-second gaps (max 3 s). No phantom rows were created to fill gaps.",
-    "single_second_gaps": 677,
-    "total_timestamp_gaps_found": 680
+    "trip_reconciliation": {
+      "boundary_drops": 1,
+      "interior_multi_gap_sizes": [
+        2,
+        2,
+        2
+      ],
+      "interior_single_gaps": 677,
+      "per_trip": {
+        "TRIP-0001": {
+          "actual_rows": 2095,
+          "boundary_drops": 0,
+          "expected_rows": 2101,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 6,
+          "missing_rows": 6
+        },
+        "TRIP-0002": {
+          "actual_rows": 922,
+          "boundary_drops": 0,
+          "expected_rows": 928,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 6,
+          "missing_rows": 6
+        },
+        "TRIP-0003": {
+          "actual_rows": 1606,
+          "boundary_drops": 0,
+          "expected_rows": 1612,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 6,
+          "missing_rows": 6
+        },
+        "TRIP-0004": {
+          "actual_rows": 2140,
+          "boundary_drops": 0,
+          "expected_rows": 2150,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 10,
+          "missing_rows": 10
+        },
+        "TRIP-0005": {
+          "actual_rows": 1697,
+          "boundary_drops": 0,
+          "expected_rows": 1702,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 5,
+          "missing_rows": 5
+        },
+        "TRIP-0006": {
+          "actual_rows": 1660,
+          "boundary_drops": 0,
+          "expected_rows": 1666,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 6,
+          "missing_rows": 6
+        },
+        "TRIP-0007": {
+          "actual_rows": 2143,
+          "boundary_drops": 0,
+          "expected_rows": 2155,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 12,
+          "missing_rows": 12
+        },
+        "TRIP-0008": {
+          "actual_rows": 3687,
+          "boundary_drops": 0,
+          "expected_rows": 3711,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 24,
+          "missing_rows": 24
+        },
+        "TRIP-0009": {
+          "actual_rows": 3489,
+          "boundary_drops": 0,
+          "expected_rows": 3512,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 23,
+          "missing_rows": 23
+        },
+        "TRIP-0010": {
+          "actual_rows": 2674,
+          "boundary_drops": 0,
+          "expected_rows": 2689,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 15,
+          "missing_rows": 15
+        },
+        "TRIP-0011": {
+          "actual_rows": 2975,
+          "boundary_drops": 0,
+          "expected_rows": 2995,
+          "interior_multi_gap_sizes": [
+            2
+          ],
+          "interior_single_gaps": 18,
+          "missing_rows": 20
+        },
+        "TRIP-0012": {
+          "actual_rows": 1880,
+          "boundary_drops": 0,
+          "expected_rows": 1886,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 6,
+          "missing_rows": 6
+        },
+        "TRIP-0013": {
+          "actual_rows": 965,
+          "boundary_drops": 0,
+          "expected_rows": 972,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 7,
+          "missing_rows": 7
+        },
+        "TRIP-0014": {
+          "actual_rows": 1995,
+          "boundary_drops": 0,
+          "expected_rows": 1996,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 1,
+          "missing_rows": 1
+        },
+        "TRIP-0015": {
+          "actual_rows": 1561,
+          "boundary_drops": 0,
+          "expected_rows": 1567,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 6,
+          "missing_rows": 6
+        },
+        "TRIP-0016": {
+          "actual_rows": 747,
+          "boundary_drops": 0,
+          "expected_rows": 754,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 7,
+          "missing_rows": 7
+        },
+        "TRIP-0017": {
+          "actual_rows": 1780,
+          "boundary_drops": 0,
+          "expected_rows": 1788,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 8,
+          "missing_rows": 8
+        },
+        "TRIP-0018": {
+          "actual_rows": 1747,
+          "boundary_drops": 0,
+          "expected_rows": 1752,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 5,
+          "missing_rows": 5
+        },
+        "TRIP-0019": {
+          "actual_rows": 920,
+          "boundary_drops": 0,
+          "expected_rows": 925,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 5,
+          "missing_rows": 5
+        },
+        "TRIP-0020": {
+          "actual_rows": 1513,
+          "boundary_drops": 0,
+          "expected_rows": 1520,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 7,
+          "missing_rows": 7
+        },
+        "TRIP-0021": {
+          "actual_rows": 2119,
+          "boundary_drops": 0,
+          "expected_rows": 2132,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 13,
+          "missing_rows": 13
+        },
+        "TRIP-0022": {
+          "actual_rows": 1543,
+          "boundary_drops": 0,
+          "expected_rows": 1552,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 9,
+          "missing_rows": 9
+        },
+        "TRIP-0023": {
+          "actual_rows": 1980,
+          "boundary_drops": 0,
+          "expected_rows": 1995,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 15,
+          "missing_rows": 15
+        },
+        "TRIP-0024": {
+          "actual_rows": 804,
+          "boundary_drops": 0,
+          "expected_rows": 807,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 3,
+          "missing_rows": 3
+        },
+        "TRIP-0025": {
+          "actual_rows": 1846,
+          "boundary_drops": 0,
+          "expected_rows": 1855,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 9,
+          "missing_rows": 9
+        },
+        "TRIP-0026": {
+          "actual_rows": 3011,
+          "boundary_drops": 0,
+          "expected_rows": 3019,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 8,
+          "missing_rows": 8
+        },
+        "TRIP-0027": {
+          "actual_rows": 3243,
+          "boundary_drops": 0,
+          "expected_rows": 3259,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 16,
+          "missing_rows": 16
+        },
+        "TRIP-0028": {
+          "actual_rows": 3766,
+          "boundary_drops": 0,
+          "expected_rows": 3777,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 11,
+          "missing_rows": 11
+        },
+        "TRIP-0029": {
+          "actual_rows": 3619,
+          "boundary_drops": 0,
+          "expected_rows": 3643,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 24,
+          "missing_rows": 24
+        },
+        "TRIP-0030": {
+          "actual_rows": 1743,
+          "boundary_drops": 0,
+          "expected_rows": 1752,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 9,
+          "missing_rows": 9
+        },
+        "TRIP-0031": {
+          "actual_rows": 954,
+          "boundary_drops": 0,
+          "expected_rows": 962,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 8,
+          "missing_rows": 8
+        },
+        "TRIP-0032": {
+          "actual_rows": 1748,
+          "boundary_drops": 0,
+          "expected_rows": 1760,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 12,
+          "missing_rows": 12
+        },
+        "TRIP-0033": {
+          "actual_rows": 1866,
+          "boundary_drops": 0,
+          "expected_rows": 1871,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 5,
+          "missing_rows": 5
+        },
+        "TRIP-0034": {
+          "actual_rows": 1004,
+          "boundary_drops": 0,
+          "expected_rows": 1012,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 8,
+          "missing_rows": 8
+        },
+        "TRIP-0035": {
+          "actual_rows": 1657,
+          "boundary_drops": 0,
+          "expected_rows": 1670,
+          "interior_multi_gap_sizes": [
+            2
+          ],
+          "interior_single_gaps": 11,
+          "missing_rows": 13
+        },
+        "TRIP-0036": {
+          "actual_rows": 1499,
+          "boundary_drops": 0,
+          "expected_rows": 1505,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 6,
+          "missing_rows": 6
+        },
+        "TRIP-0037": {
+          "actual_rows": 882,
+          "boundary_drops": 0,
+          "expected_rows": 887,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 5,
+          "missing_rows": 5
+        },
+        "TRIP-0038": {
+          "actual_rows": 2124,
+          "boundary_drops": 0,
+          "expected_rows": 2132,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 8,
+          "missing_rows": 8
+        },
+        "TRIP-0039": {
+          "actual_rows": 1756,
+          "boundary_drops": 0,
+          "expected_rows": 1767,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 11,
+          "missing_rows": 11
+        },
+        "TRIP-0040": {
+          "actual_rows": 1708,
+          "boundary_drops": 0,
+          "expected_rows": 1716,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 8,
+          "missing_rows": 8
+        },
+        "TRIP-0041": {
+          "actual_rows": 1531,
+          "boundary_drops": 0,
+          "expected_rows": 1536,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 5,
+          "missing_rows": 5
+        },
+        "TRIP-0042": {
+          "actual_rows": 1045,
+          "boundary_drops": 0,
+          "expected_rows": 1052,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 7,
+          "missing_rows": 7
+        },
+        "TRIP-0043": {
+          "actual_rows": 1951,
+          "boundary_drops": 0,
+          "expected_rows": 1960,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 9,
+          "missing_rows": 9
+        },
+        "TRIP-0044": {
+          "actual_rows": 3487,
+          "boundary_drops": 0,
+          "expected_rows": 3498,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 11,
+          "missing_rows": 11
+        },
+        "TRIP-0045": {
+          "actual_rows": 3115,
+          "boundary_drops": 0,
+          "expected_rows": 3132,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 17,
+          "missing_rows": 17
+        },
+        "TRIP-0046": {
+          "actual_rows": 3196,
+          "boundary_drops": 0,
+          "expected_rows": 3216,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 20,
+          "missing_rows": 20
+        },
+        "TRIP-0047": {
+          "actual_rows": 2807,
+          "boundary_drops": 0,
+          "expected_rows": 2818,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 11,
+          "missing_rows": 11
+        },
+        "TRIP-0048": {
+          "actual_rows": 1812,
+          "boundary_drops": 0,
+          "expected_rows": 1822,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 10,
+          "missing_rows": 10
+        },
+        "TRIP-0049": {
+          "actual_rows": 937,
+          "boundary_drops": 0,
+          "expected_rows": 938,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 1,
+          "missing_rows": 1
+        },
+        "TRIP-0050": {
+          "actual_rows": 1940,
+          "boundary_drops": 0,
+          "expected_rows": 1951,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 11,
+          "missing_rows": 11
+        },
+        "TRIP-0051": {
+          "actual_rows": 1724,
+          "boundary_drops": 0,
+          "expected_rows": 1734,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 10,
+          "missing_rows": 10
+        },
+        "TRIP-0052": {
+          "actual_rows": 1815,
+          "boundary_drops": 0,
+          "expected_rows": 1823,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 8,
+          "missing_rows": 8
+        },
+        "TRIP-0053": {
+          "actual_rows": 1599,
+          "boundary_drops": 0,
+          "expected_rows": 1607,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 8,
+          "missing_rows": 8
+        },
+        "TRIP-0054": {
+          "actual_rows": 876,
+          "boundary_drops": 0,
+          "expected_rows": 882,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 6,
+          "missing_rows": 6
+        },
+        "TRIP-0055": {
+          "actual_rows": 1503,
+          "boundary_drops": 0,
+          "expected_rows": 1515,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 12,
+          "missing_rows": 12
+        },
+        "TRIP-0056": {
+          "actual_rows": 1994,
+          "boundary_drops": 0,
+          "expected_rows": 2007,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 13,
+          "missing_rows": 13
+        },
+        "TRIP-0057": {
+          "actual_rows": 710,
+          "boundary_drops": 0,
+          "expected_rows": 712,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 2,
+          "missing_rows": 2
+        },
+        "TRIP-0058": {
+          "actual_rows": 1751,
+          "boundary_drops": 0,
+          "expected_rows": 1762,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 11,
+          "missing_rows": 11
+        },
+        "TRIP-0059": {
+          "actual_rows": 2007,
+          "boundary_drops": 0,
+          "expected_rows": 2018,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 11,
+          "missing_rows": 11
+        },
+        "TRIP-0060": {
+          "actual_rows": 1717,
+          "boundary_drops": 0,
+          "expected_rows": 1729,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 12,
+          "missing_rows": 12
+        },
+        "TRIP-0061": {
+          "actual_rows": 3124,
+          "boundary_drops": 0,
+          "expected_rows": 3140,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 16,
+          "missing_rows": 16
+        },
+        "TRIP-0062": {
+          "actual_rows": 3763,
+          "boundary_drops": 0,
+          "expected_rows": 3776,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 13,
+          "missing_rows": 13
+        },
+        "TRIP-0063": {
+          "actual_rows": 3364,
+          "boundary_drops": 0,
+          "expected_rows": 3376,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 12,
+          "missing_rows": 12
+        },
+        "TRIP-0064": {
+          "actual_rows": 3631,
+          "boundary_drops": 1,
+          "expected_rows": 3654,
+          "interior_multi_gap_sizes": [
+            2
+          ],
+          "interior_single_gaps": 20,
+          "missing_rows": 23
+        },
+        "TRIP-0065": {
+          "actual_rows": 1856,
+          "boundary_drops": 0,
+          "expected_rows": 1865,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 9,
+          "missing_rows": 9
+        },
+        "TRIP-0066": {
+          "actual_rows": 981,
+          "boundary_drops": 0,
+          "expected_rows": 990,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 9,
+          "missing_rows": 9
+        },
+        "TRIP-0067": {
+          "actual_rows": 1606,
+          "boundary_drops": 0,
+          "expected_rows": 1616,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 10,
+          "missing_rows": 10
+        },
+        "TRIP-0068": {
+          "actual_rows": 1678,
+          "boundary_drops": 0,
+          "expected_rows": 1682,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 4,
+          "missing_rows": 4
+        },
+        "TRIP-0069": {
+          "actual_rows": 1681,
+          "boundary_drops": 0,
+          "expected_rows": 1688,
+          "interior_multi_gap_sizes": [],
+          "interior_single_gaps": 7,
+          "missing_rows": 7
+        }
+      },
+      "rule": "expected_rows = int((end_ts - start_ts).total_seconds()); one row per second for the full trip duration",
+      "total_actual_rows": 136269,
+      "total_expected_rows": 136953,
+      "total_missing_rows": 684
+    }
   },
   "generated_at": "2026-10-28T18:00:00",
   "plausible_bounds": {
