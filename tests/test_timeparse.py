@@ -65,3 +65,36 @@ def test_disagreement_logged_and_overridden():
     r, dis = parse_time_range("Show all ADAS disengagements from yesterday.", model_range=model_range)
     assert r == {"kind": "yesterday"}
     assert dis is True
+
+
+def test_fortnight_maps_to_14_days():
+    r, _ = parse_time_range("in the past fortnight did range go up or down")
+    assert r == {"kind": "last_14_days"}
+
+
+def test_two_days_ago_returns_none():
+    """Unresolvable time phrase returns None (unsupported_time)."""
+    r, _ = parse_time_range("two days ago how was the range?")
+    assert r is None
+
+
+def test_this_week_returns_none():
+    r, _ = parse_time_range("this week energy numbers")
+    assert r is None
+
+
+def test_since_last_tuesday_returns_none():
+    r, _ = parse_time_range("since last tuesday what happened to the battery temp?")
+    assert r is None
+
+
+def test_current_week_returns_none():
+    r, _ = parse_time_range("pull up adas events for the current week please")
+    assert r is None
+
+
+def test_no_time_phrase_still_defaults_all_history():
+    """When no temporal phrase is present at all, all_history is used."""
+    r, _ = parse_time_range("biggest speedup ever seen")
+    assert r == {"kind": "all_history"}
+

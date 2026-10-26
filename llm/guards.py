@@ -184,7 +184,10 @@ CHANGE_DIRECTION_SYNONYMS: dict[ChangeDirection, list[str]] = {
     ],
 }
 
-# Aggregate all terms for vocabulary gating
+# Aggregate all terms for vocabulary gating.
+# Excludes generic temporal words (yesterday, history, etc.) that would cause
+# off-topic questions like "tell me what the stock market did yesterday" to
+# slip through the gate.
 ALL_VEHICLE_TERMS: set[str] = {
     "vehicle",
     "car",
@@ -221,8 +224,8 @@ ALL_VEHICLE_TERMS: set[str] = {
     "soc",
     "consumption",
     "signals",
-    "history",
-    "yesterday",
+    # "yesterday" and "history" deliberately omitted — they are too generic
+    # and let off-topic questions ("stock market yesterday") past the gate.
     "trend",
     "compare",
 }
@@ -237,6 +240,56 @@ for _d in (
     for _syns in _d.values():  # type: ignore[attr-defined]
         for _s in _syns:
             ALL_VEHICLE_TERMS.add(_s.lower())
+
+# Stem prefixes: any token starting with one of these prefixes is treated
+# as a vehicle term. This catches "speedup", "speeding", etc.
+_VEHICLE_STEM_PREFIXES: tuple[str, ...] = (
+    "speed",
+    "effici",      # efficiency, efficient
+    "discharg",    # discharging, discharge
+    "consum",      # consumption, consuming
+    "temperatur",  # temperature, temperatures
+    "batterie",    # batteries
+)
+
+
+def _edit_distance_1(a: str, b: str) -> bool:
+    """Return True if Levenshtein distance between a and b is exactly 1."""
+    la, lb = len(a), len(b)
+    if abs(la - lb) > 1:
+        return False
+    if la == lb:
+        return sum(ca != cb for ca, cb in zip(a, b)) == 1
+    # One char inserted/deleted
+    short, long_ = (a, b) if la < lb else (b, a)
+    i = j = diffs = 0
+    while i < len(short) and j < len(long_):
+        if short[i] != long_[j]:
+            diffs += 1
+            if diffs > 1:
+                return False
+            j += 1
+        else:
+            i += 1
+            j += 1
+    return True
+
+
+def _fuzzy_match_vehicle_term(token: str) -> bool:
+    """
+    Conservative fuzzy matching: accepts a token if its edit distance
+    to any vehicle term is ≤ 1, but only for tokens with ≥ 5 characters
+    (to avoid short-word false positives like "car" matching "bar").
+    """
+    if len(token) < 5:
+        return False
+    for term in ALL_VEHICLE_TERMS:
+        if len(term) < 5:
+            continue
+        if _edit_distance_1(token, term):
+            return True
+    return False
+
 
 
 # ---------------------------------------------------------------------------
@@ -345,6 +398,11 @@ OFF_TOPIC_MESSAGE = (
 def has_vehicle_terms(question: str) -> bool:
     """
     Checks if the question contains at least one vehicle-related term or synonym.
+    Uses three matching strategies:
+      1. Exact token match against ALL_VEHICLE_TERMS.
+      2. Stem-prefix match against _VEHICLE_STEM_PREFIXES (catches speedup, eficiency).
+      3. Conservative fuzzy match (edit distance ≤ 1 for tokens ≥ 5 chars).
+      4. Multi-word synonym check for phrases like "stop and go".
     """
     q_lower = question.lower()
 
@@ -354,11 +412,22 @@ def has_vehicle_terms(question: str) -> bool:
 
     tokens = set(re.findall(r"[a-z0-9_/%-]+", q_lower))
 
-    # Check tokens against vocabulary
+    # 1. Exact token match
     if tokens & ALL_VEHICLE_TERMS:
         return True
 
-    # Check multi-word synonyms
+    # 2. Stem-prefix match
+    for token in tokens:
+        for prefix in _VEHICLE_STEM_PREFIXES:
+            if token.startswith(prefix):
+                return True
+
+    # 3. Fuzzy match (edit distance ≤ 1, tokens ≥ 5 chars)
+    for token in tokens:
+        if _fuzzy_match_vehicle_term(token):
+            return True
+
+    # 4. Multi-word synonyms
     for term in ALL_VEHICLE_TERMS:
         if " " in term and term in q_lower:
             return True

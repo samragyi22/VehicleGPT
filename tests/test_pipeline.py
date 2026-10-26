@@ -43,7 +43,7 @@ def test_pipeline_out_of_scope_from_model():
     ):
         res = run_pipeline("Is it raining outside the car?")
         assert res.status == "out_of_scope"
-        assert "weather data unavailable" in res.answer
+        assert "outside the scope of VehicleGPT" in res.answer
 
 
 def test_pipeline_successful_execution_mocked():

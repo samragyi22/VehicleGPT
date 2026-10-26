@@ -58,8 +58,16 @@ def _extract_numbers(text: str) -> list[str]:
 def _output_number_set(tool_output_dict: dict[str, Any]) -> set[str]:
     """
     Collect all numeric values that appear anywhere in the tool output dict
-    (result + evidence), recursively, normalized to the same canonical form,
-    including rounded variants for floats.
+    (result + evidence), recursively, normalized to the same canonical form.
+
+    Variants added for each raw number m:
+      - The canonical normalised form (always).
+      - Rounded to 1 dp  (_normalize(f"{v:.1f}"))  — allows "29.7" to match 29.65.
+      - Rounded to 2 dp  (_normalize(f"{v:.2f}"))  — allows "29.65" to match 29.652.
+      - Integer form ONLY when v is already an exact integer (v == int(v)).
+        This means "30" is NOT added for 29.7 (round(29.7)=30), preventing
+        invented rounded integers from passing verification.
+        Definition: net power (regeneration included) is used everywhere.
     """
     serialized = json.dumps(tool_output_dict, ensure_ascii=False)
     raw_matches = _NUMBER_RE.findall(serialized)
@@ -70,10 +78,14 @@ def _output_number_set(tool_output_dict: dict[str, Any]) -> set[str]:
             v = float(m)
             numbers.add(_normalize(f"{v:.1f}"))
             numbers.add(_normalize(f"{v:.2f}"))
-            numbers.add(_normalize(f"{round(v)}"))
+            # Only add integer representation when the value is already an exact integer.
+            # Do NOT add round(v): that would let invented integers like 30 pass for 29.7.
+            if v == int(v):
+                numbers.add(_normalize(str(int(v))))
         except ValueError:
             pass
     return numbers
+
 
 
 def verify(rendered_answer: str, tool_output_dict: dict[str, Any]) -> bool:

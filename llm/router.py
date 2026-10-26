@@ -65,8 +65,19 @@ Available tools:
 - compare: compare a metric (energy use, temperature, speed, …) between city and highway driving.
 - find_largest_change: find when a metric dropped or rose the most.
 - trend: show how a metric changed over time (hourly / daily / weekly).
-- explain_factors: explain why a metric (e.g. range) changed, ranking possible contributing factors.
+- explain_factors: explain why a metric (e.g. range or efficiency) changed, ranking possible contributing factors.
 - out_of_scope: use for ANY question not answerable from vehicle telemetry data.
+
+Supported metrics:
+- energy_wh_per_km: energy efficiency, fuel economy, power consumption, Wh/km
+- estimated_range_km: driving range, km remaining
+- pack_temp_c: battery pack temperature
+- speed_kmh: vehicle speed
+
+Supported event types:
+- BATTERY_OVERHEAT_WARNING: battery overheating alarms
+- ADAS_DISENGAGEMENT: autopilot / driver-assist disengagements
+- LOW_SOC_WARNING: low battery / low state of charge warnings
 
 Time range examples (use the "kind" field):
   "yesterday", "last_7_days", "last_14_days", "last_28_days", "all_history"
@@ -76,7 +87,7 @@ Time range examples (use the "kind" field):
 Rules:
 1. Reply with ONLY one JSON object, no other text.
 2. Use out_of_scope for: general knowledge, chit-chat, vehicle control, weather, navigation.
-3. Never invent event IDs; use the exact ID the user mentions or "latest_<EVENT_TYPE>".
+3. For context_before event_id: use the exact event ID (e.g. "EV-0042") or "latest_<EVENT_TYPE>" (e.g. "latest_BATTERY_OVERHEAT_WARNING").
 
 Examples:
 Q: Show all ADAS disengagement events from yesterday.
@@ -94,15 +105,13 @@ A: {"tool": "context_before", "args": {"event_id": "latest_BATTERY_OVERHEAT_WARN
 Q: Compare energy consumption between city and highway driving.
 A: {"tool": "compare", "args": {"metric": "energy_wh_per_km", "range": {"kind": "last_14_days"}, "segment_a": "city", "segment_b": "highway"}}
 
-Q: Show the daily trend of energy consumption over the last 7 days.
-A: {"tool": "trend", "args": {"metric": "energy_wh_per_km", "range": {"kind": "last_7_days"}, "bucket": "day"}}
-
 Q: What is the capital of France?
 A: {"tool": "out_of_scope", "args": {"reason": "general knowledge question, not about vehicle data"}}
 
 Q: Turn off the air conditioning.
 A: {"tool": "out_of_scope", "args": {"reason": "vehicle control is not supported; safety-critical functions are isolated from this system"}}
 """
+
 
 _EXPLANATION_PROMPT = """\
 In one to two sentences, explain this vehicle data result to the driver.

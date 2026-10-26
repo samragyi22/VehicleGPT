@@ -67,6 +67,11 @@ def validate_tool_call(call: ToolCall | dict[str, Any]) -> tuple[ToolName, BaseM
         raise ValueError(f"Unknown or unsupported tool: {tool_name}")
 
     validated_args = model_cls.model_validate(call.args)
+    if tool_name == ToolName.compare:
+        if validated_args.segment_a == validated_args.segment_b:
+            raise ValueError(
+                f"segment_a and segment_b must be different; both are '{validated_args.segment_a.value}'"
+            )
     return tool_name, validated_args
 
 

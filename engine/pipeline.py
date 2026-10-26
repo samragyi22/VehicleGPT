@@ -192,10 +192,11 @@ def run_pipeline(
 
     # If the model explicitly routed to out_of_scope
     if call_dict.get("tool") == "out_of_scope":
-        reason = call_dict.get("args", {}).get("reason", "out_of_scope")
+        # Always use the fixed off-topic message; never expose the model's
+        # free-text "reason" field to the user.
         timings["total_ms"] = round((time.perf_counter() - t_start) * 1000, 2)
         return PipelineResult(
-            answer=f"I cannot answer this request: {reason}.",
+            answer=OFF_TOPIC_MESSAGE,
             tool_call=call_dict,
             evidence=[],
             timings=timings,
@@ -207,6 +208,7 @@ def run_pipeline(
     # =========================================================================
     # Stage 4: Deterministic Time Parsing Override
     # =========================================================================
+    from llm.timeparse import UNSUPPORTED_TIME_MESSAGE
     t0 = time.perf_counter()
     args = call_dict.get("args", {})
     if "range" in args or call_dict.get("tool") in (
@@ -218,6 +220,19 @@ def run_pipeline(
     ):
         model_range = args.get("range")
         authoritative_range, _ = parse_time_range(question, model_range=model_range)
+        if authoritative_range is None:
+            # Unresolvable temporal phrase — ask user to rephrase.
+            timings["timeparse_ms"] = round((time.perf_counter() - t0) * 1000, 2)
+            timings["total_ms"] = round((time.perf_counter() - t_start) * 1000, 2)
+            return PipelineResult(
+                answer=UNSUPPORTED_TIME_MESSAGE,
+                tool_call=call_dict,
+                evidence=[],
+                timings=timings,
+                status="unsupported_time",
+                verified=True,
+                tokens=tokens,
+            )
         args["range"] = authoritative_range
     args = normalize_tool_args(args, question=question, tool_name=call_dict.get("tool", ""))
     call_dict["args"] = args
