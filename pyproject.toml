@@ -32,6 +32,7 @@ packages = ["sim", "ingest", "engine", "llm", "app", "eval"]
 [tool.ruff]
 line-length = 100
 target-version = "py311"
+extend-exclude = ["llm/grammar_test.py"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
