@@ -308,13 +308,15 @@ def test_distance_weighted_segments_reproduce_overall():
     )
 
 
-def test_global_row_limit_cap():
+def test_global_row_limit_cap(monkeypatch):
     """Verify that global ROW_LIMIT caps query results when results would exceed it."""
-    # When requesting all events with a small cap, ROW_LIMIT is enforced
     start, end = resolve_symbolic_range({"kind": "all_history"})
-    out_capped = get_events(type=EventType.ADAS_DISENGAGEMENT, start=start, end=end, limit=2)
-    assert out_capped.meta.row_count <= config.ROW_LIMIT
-    assert len(out_capped.result["events"]) <= 2
+    # When requesting limit=500 with monkeypatched ROW_LIMIT=3, at most 3 events returned
+    monkeypatch.setattr(config, "ROW_LIMIT", 3)
+    out_capped = get_events(type=EventType.ADAS_DISENGAGEMENT, start=start, end=end, limit=500)
+    assert out_capped.meta.row_count <= 3
+    assert len(out_capped.result["events"]) <= 3
+    assert len(out_capped.result["events"]) == 3
 
 
 # ---------------------------------------------------------------------------

@@ -285,39 +285,32 @@ def build_json_schema() -> dict[str, Any]:
 
 def build_gbnf() -> str:
     """
-    Convert the JSON schema to a GBNF grammar string using llama_cpp's built-in
-    converter. Returns the GBNF string suitable for LlamaGrammar.from_string().
-
-    Note: json_schema_to_gbnf in llama_cpp 0.3.x expects a JSON *string*,
-    not a dict, so we serialize first.
-
-    Raises ImportError if llama_cpp is not installed (it is an optional dep).
+    Build a robust GBNF grammar string derived directly from schema.py ToolName enums.
+    Enforces that the model emits exactly one JSON object: {"tool": "<valid_tool>", "args": {...}}.
     """
-    import json as _json
+    tools_list = [t.value for t in ToolName if t != ToolName.search_logs]
+    tool_rules = " | ".join(f'"\\"{t}\\""' for t in tools_list)
 
-    try:
-        from llama_cpp.llama_grammar import json_schema_to_gbnf  # type: ignore[attr-defined]
-    except ImportError as exc:
-        raise ImportError(
-            "llama-cpp-python is required for grammar generation. "
-            "Install it with: uv pip install llama-cpp-python"
-        ) from exc
-
-    schema = build_json_schema()
-    # llama_cpp 0.3.x expects a JSON string, not a dict.
-    return json_schema_to_gbnf(_json.dumps(schema))
+    return (
+        'root ::= "{" ws "\\"tool\\": " tool "," ws "\\"args\\": " args ws "}"\n'
+        f"tool ::= {tool_rules}\n"
+        'args ::= "{" ws (member (ws "," ws member)*)? ws "}"\n'
+        'member ::= string ws ":" ws value\n'
+        'value ::= string | number | boolean | "null" | array | object\n'
+        'object ::= "{" ws (member (ws "," ws member)*)? ws "}"\n'
+        'array ::= "[" ws (value (ws "," ws value)*)? ws "]"\n'
+        'string ::= "\\"" [^"\\\\]* "\\""\n'
+        'number ::= "-"? [0-9]+ ("." [0-9]+)?\n'
+        'boolean ::= "true" | "false"\n'
+        'ws ::= [ \\t\\n\\r]*\n'
+    )
 
 
 def load_grammar():
     """
     Load and return a LlamaGrammar object from the built GBNF.
     This is the object passed to llama_cpp Llama.create_chat_completion().
-
-    Note: LlamaGrammar.from_json_schema in llama_cpp 0.3.x also expects a
-    JSON string, not a dict.
     """
-    import json as _json
-
     try:
         from llama_cpp import LlamaGrammar  # type: ignore[attr-defined]
     except ImportError as exc:
@@ -325,5 +318,4 @@ def load_grammar():
             "llama-cpp-python is required for grammar loading."
         ) from exc
 
-    # Serialize to string — llama_cpp 0.3.x API requires a JSON string here.
-    return LlamaGrammar.from_json_schema(_json.dumps(build_json_schema()))
+    return LlamaGrammar.from_string(build_gbnf())

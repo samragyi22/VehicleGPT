@@ -446,8 +446,9 @@ class TestRouterE2E:
     These are skipped in the fast suite (pytest -m 'not slow').
     """
 
+    @classmethod
     @pytest.fixture(scope="class", autouse=True)
-    def model_available(self):
+    def model_available(cls):
         """Skip if the default GGUF is not present."""
         if not config.DEFAULT_MODEL_PATH.exists():
             pytest.skip(f"Model not found: {config.DEFAULT_MODEL_PATH}")

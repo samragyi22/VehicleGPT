@@ -94,6 +94,9 @@ A: {"tool": "context_before", "args": {"event_id": "latest_BATTERY_OVERHEAT_WARN
 Q: Compare energy consumption between city and highway driving.
 A: {"tool": "compare", "args": {"metric": "energy_wh_per_km", "range": {"kind": "last_14_days"}, "segment_a": "city", "segment_b": "highway"}}
 
+Q: Show the daily trend of energy consumption over the last 7 days.
+A: {"tool": "trend", "args": {"metric": "energy_wh_per_km", "range": {"kind": "last_7_days"}, "bucket": "day"}}
+
 Q: What is the capital of France?
 A: {"tool": "out_of_scope", "args": {"reason": "general knowledge question, not about vehicle data"}}
 
@@ -317,6 +320,14 @@ def route(
     except json.JSONDecodeError as exc:
         result.error = f"Model output is not valid JSON: {exc}. Raw: {raw_json!r}"
         return result
+
+    # --- Step 3.5: Normalize tool args ---
+    from llm.guards import normalize_tool_args
+    call_dict["args"] = normalize_tool_args(
+        call_dict.get("args", {}),
+        question=question,
+        tool_name=call_dict.get("tool", ""),
+    )
 
     # --- Step 4: Schema validation (second gate after grammar) ---
     try:

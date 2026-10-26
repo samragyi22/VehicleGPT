@@ -58,11 +58,22 @@ def _extract_numbers(text: str) -> list[str]:
 def _output_number_set(tool_output_dict: dict[str, Any]) -> set[str]:
     """
     Collect all numeric values that appear anywhere in the tool output dict
-    (result + evidence), recursively, normalized to the same canonical form.
+    (result + evidence), recursively, normalized to the same canonical form,
+    including rounded variants for floats.
     """
     serialized = json.dumps(tool_output_dict, ensure_ascii=False)
     raw_matches = _NUMBER_RE.findall(serialized)
-    return {_normalize(m) for m in raw_matches}
+    numbers: set[str] = set()
+    for m in raw_matches:
+        numbers.add(_normalize(m))
+        try:
+            v = float(m)
+            numbers.add(_normalize(f"{v:.1f}"))
+            numbers.add(_normalize(f"{v:.2f}"))
+            numbers.add(_normalize(f"{round(v)}"))
+        except ValueError:
+            pass
+    return numbers
 
 
 def verify(rendered_answer: str, tool_output_dict: dict[str, Any]) -> bool:

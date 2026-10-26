@@ -81,6 +81,8 @@ def get_events(
     t0 = time.perf_counter()
     ev_type = type.value if isinstance(type, EventType) else str(type)
 
+    effective_limit = min(limit, config.ROW_LIMIT)
+
     with get_db_connection() as con:
         rows = con.execute(
             """
@@ -90,7 +92,7 @@ def get_events(
             ORDER BY ts ASC
             LIMIT ?
             """,
-            (ev_type, start, end, limit),
+            (ev_type, start, end, effective_limit),
         ).fetchall()
 
     events_list: list[dict[str, Any]] = []
