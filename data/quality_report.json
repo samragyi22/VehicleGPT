@@ -1,0 +1,67 @@
+{
+  "cleaning": {
+    "gaps_left_as_null": 0,
+    "max_interp_gap_seconds": 4,
+    "rows_dropped_unresolvable_null": 0,
+    "values_interpolated": 7,
+    "values_nulled_out_of_range": 4
+  },
+  "db_path": "/Users/samragyisharma/Desktop/VehicleGPT/data/vehicle.db",
+  "db_size_bytes": 33533952,
+  "elapsed_seconds": 0.42,
+  "gap_analysis": {
+    "max_gap_seconds": 3,
+    "multi_second_gaps": 3,
+    "reconciliation": "The simulator dropped samples by random index selection before writing the Parquet file (0 raw rows missing vs expected continuous recording). The cleaned samples_1hz shows 677 single-second timestamp gaps and 3 multi-second gaps (max 3 s). No phantom rows were created to fill gaps.",
+    "single_second_gaps": 677,
+    "total_timestamp_gaps_found": 680
+  },
+  "generated_at": "2026-10-28T18:00:00",
+  "plausible_bounds": {
+    "ambient_temp_c": {
+      "high": 60.0,
+      "low": -40.0
+    },
+    "hvac_power_kw": {
+      "high": 10.0,
+      "low": 0.0
+    },
+    "pack_current_a": {
+      "high": 600.0,
+      "low": -600.0
+    },
+    "pack_temp_c": {
+      "high": 80.0,
+      "low": -40.0
+    },
+    "pack_voltage_v": {
+      "high": 500.0,
+      "low": 200.0
+    },
+    "power_kw": {
+      "high": 300.0,
+      "low": -50.0
+    },
+    "soc_pct": {
+      "high": 100.0,
+      "low": 0.0
+    },
+    "speed_kmh": {
+      "high": 200.0,
+      "low": 0.0
+    }
+  },
+  "rows_loaded": {
+    "event_snapshots": 5409,
+    "events": 9,
+    "samples_1hz": 136269,
+    "samples_1min": 2315,
+    "trips": 69
+  },
+  "rows_read": {
+    "event_snapshots": 5409,
+    "events": 9,
+    "samples_1hz": 136269,
+    "trips": 69
+  }
+}

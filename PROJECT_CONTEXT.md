@@ -208,7 +208,20 @@ vehiclegpt/
 
 ---
 
-## 10. Working rules for the coding agent
+## 10. Locked decisions (do not reopen without explicit user instruction)
+
+These were resolved during Phase 1a and must not be changed silently.
+
+| Decision | Detail |
+|---|---|
+| **`explain_factors` comparison window** | Always compares the requested window with the equal-length window immediately before it (e.g. last 14 days vs. the 14 days before that). The two groups reported are **cold_weather** and **highway_share**. |
+| **Efficiency formula** | Exactly one formula everywhere: **total energy (Wh) ÷ total distance (km)** across the window. Never use a per-sample rolling mean or a different denominator. Simulator, ground truth, tests, and the engine tool must all use this definition. |
+| **`today` removed from schema** | `TimeRangeKind` has no `today` entry. Simulation history runs through 27 Oct (the last complete day before `SIMULATED_NOW = 2026-10-28 18:00:00`). Adding morning trips for 28 Oct to fill a `today` bucket is explicitly ruled out. |
+| **Default model** | The default inference model is the **0.5 B GGUF** (qwen2.5-0.5b-instruct-q4_k_m.gguf). The **1.5 B** variant (qwen2.5-1.5b-instruct-q4_k_m.gguf) is the comparison candidate used in the Phase 4 benchmark. |
+
+---
+
+## 11. Working rules for the coding agent
 
 1. Read this file first; re-read the relevant section before each phase.
 2. **Ask before** changing the tool list, enums, table schemas, or scope. Do not add features not listed here.
@@ -224,7 +237,7 @@ vehiclegpt/
 
 ---
 
-## 11. Context for the slide (for reference, not for coding)
+## 12. Context for the slide (for reference, not for coding)
 
 - Differentiator: **auditable answers from local vehicle data**, not just a chatbot in a car.
 - Lead users: service engineers and validation teams; also drivers and fleet operators (one compact line).
