@@ -1,0 +1,75 @@
+================================================================================
+STEP 3: METRIC ANALYSIS FROM 200 GRAMMAR GENERATIONS (0.7°, 0.5B)
+================================================================================
+
+### OVERALL METRIC COVERAGE ###
+
+Total samples with metric field: 138
+Unique metrics seen: 5
+
+Metrics in order of frequency:
+
+  speed_kmh                  68 times ( 49.3%)
+  energy_wh_per_km           54 times ( 39.1%)
+  soc_pct                    12 times (  8.7%)
+  pack_temp_c                 3 times (  2.2%)
+  hvac_power_kw               1 times (  0.7%)
+
+### METRICS BY TOOL ###
+
+explain_factors:
+  energy_wh_per_km            6 times
+  speed_kmh                   3 times
+
+find_largest_change:
+  speed_kmh                  51 times
+  energy_wh_per_km           24 times
+  soc_pct                     7 times
+  pack_temp_c                 2 times
+  hvac_power_kw               1 times
+
+trend:
+  speed_kmh                  13 times
+  energy_wh_per_km           11 times
+  soc_pct                     3 times
+  pack_temp_c                 1 times
+
+compare:
+  energy_wh_per_km           13 times
+  soc_pct                     2 times
+  speed_kmh                   1 times
+
+
+### METRIC COVERAGE ANALYSIS ###
+
+Expected metrics (schema.py): ['energy_wh_per_km', 'estimated_range_km', 'hvac_power_kw', 'pack_temp_c', 'soc_pct', 'speed_kmh']
+Actually seen:                ['energy_wh_per_km', 'hvac_power_kw', 'pack_temp_c', 'soc_pct', 'speed_kmh']
+
+Missing metrics:              ['estimated_range_km']
+
+### DIAGNOSIS: WHY METRICS WERE MISSED ###
+
+
+estimated_range_km:
+  Reason: Test prompts did not exercise this metric
+  Tools that could use it:
+    - explain_factors: compare window efficiency for any metric
+    - find_largest_change: find when metric dropped/rose most
+    - trend: show metric trend over time
+    - compare: compare metric between city/highway
+
+  Suggested prompt to trigger:
+    'Show the trend of estimated range over the last 7 days'
+    'When did estimated range drop the most?'
+    'Why has estimated range decreased?'
+
+### CONCLUSION ###
+
+Coverage: 5/6 metrics (missing: estimated_range_km)
+
+Action: Missing metrics are fine in a 200-sample test. The grammar
+        accepts all 6 metrics. The test prompts simply didn't sample
+        estimated_range_km uniformly. This is acceptable given:
+        1. Grammar validity test passed (0 enum violations)
+        2. estimated_range_km is used in dev/stress sets and works
+        3. Other metrics have good coverage
