@@ -1,0 +1,966 @@
+{
+  "0.5b_dev": {
+    "model": "0.5b",
+    "set_name": "dev",
+    "total_questions": 40,
+    "questions": [
+      {
+        "id": "dev_01",
+        "classification": "wrong",
+        "expected_tool": "explain_factors",
+        "actual_tool": "",
+        "latency_ms": 1147.6
+      },
+      {
+        "id": "dev_02",
+        "classification": "correct",
+        "expected_tool": "find_largest_change",
+        "actual_tool": "find_largest_change",
+        "latency_ms": 471.4
+      },
+      {
+        "id": "dev_03",
+        "classification": "correct",
+        "expected_tool": "get_events",
+        "actual_tool": "get_events",
+        "latency_ms": 380.0
+      },
+      {
+        "id": "dev_04",
+        "classification": "correct",
+        "expected_tool": "context_before",
+        "actual_tool": "context_before",
+        "latency_ms": 514.7
+      },
+      {
+        "id": "dev_05",
+        "classification": "correct",
+        "expected_tool": "compare",
+        "actual_tool": "compare",
+        "latency_ms": 566.0
+      },
+      {
+        "id": "dev_06",
+        "classification": "wrong",
+        "expected_tool": "explain_factors",
+        "actual_tool": "",
+        "latency_ms": 341.4
+      },
+      {
+        "id": "dev_07",
+        "classification": "wrong",
+        "expected_tool": "explain_factors",
+        "actual_tool": "",
+        "latency_ms": 346.3
+      },
+      {
+        "id": "dev_08",
+        "classification": "correct",
+        "expected_tool": "find_largest_change",
+        "actual_tool": "find_largest_change",
+        "latency_ms": 488.4
+      },
+      {
+        "id": "dev_09",
+        "classification": "correct",
+        "expected_tool": "find_largest_change",
+        "actual_tool": "find_largest_change",
+        "latency_ms": 478.0
+      },
+      {
+        "id": "dev_10",
+        "classification": "correct",
+        "expected_tool": "get_events",
+        "actual_tool": "get_events",
+        "latency_ms": 380.6
+      },
+      {
+        "id": "dev_11",
+        "classification": "correct",
+        "expected_tool": "get_events",
+        "actual_tool": "get_events",
+        "latency_ms": 384.2
+      },
+      {
+        "id": "dev_12",
+        "classification": "correct",
+        "expected_tool": "context_before",
+        "actual_tool": "context_before",
+        "latency_ms": 521.5
+      },
+      {
+        "id": "dev_13",
+        "classification": "correct",
+        "expected_tool": "context_before",
+        "actual_tool": "context_before",
+        "latency_ms": 557.1
+      },
+      {
+        "id": "dev_14",
+        "classification": "correct",
+        "expected_tool": "compare",
+        "actual_tool": "compare",
+        "latency_ms": 575.6
+      },
+      {
+        "id": "dev_15",
+        "classification": "correct",
+        "expected_tool": "compare",
+        "actual_tool": "compare",
+        "latency_ms": 568.2
+      },
+      {
+        "id": "dev_16",
+        "classification": "correct",
+        "expected_tool": "trend",
+        "actual_tool": "trend",
+        "latency_ms": 441.7
+      },
+      {
+        "id": "dev_17",
+        "classification": "correct",
+        "expected_tool": "trend",
+        "actual_tool": "trend",
+        "latency_ms": 460.0
+      },
+      {
+        "id": "dev_18",
+        "classification": "correct",
+        "expected_tool": "trend",
+        "actual_tool": "trend",
+        "latency_ms": 426.9
+      },
+      {
+        "id": "dev_19",
+        "classification": "correct",
+        "expected_tool": "get_events",
+        "actual_tool": "get_events",
+        "latency_ms": 336.7
+      },
+      {
+        "id": "dev_20",
+        "classification": "correct",
+        "expected_tool": "get_events",
+        "actual_tool": "get_events",
+        "latency_ms": 377.4
+      },
+      {
+        "id": "dev_21",
+        "classification": "correct",
+        "expected_tool": "context_before",
+        "actual_tool": "context_before",
+        "latency_ms": 510.9
+      },
+      {
+        "id": "dev_22",
+        "classification": "correct",
+        "expected_tool": "compare",
+        "actual_tool": "compare",
+        "latency_ms": 547.5
+      },
+      {
+        "id": "dev_23",
+        "classification": "correct",
+        "expected_tool": "find_largest_change",
+        "actual_tool": "find_largest_change",
+        "latency_ms": 467.9
+      },
+      {
+        "id": "dev_24",
+        "classification": "correct",
+        "expected_tool": "trend",
+        "actual_tool": "trend",
+        "latency_ms": 480.5
+      },
+      {
+        "id": "dev_25",
+        "classification": "correct",
+        "expected_tool": "get_events",
+        "actual_tool": "get_events",
+        "latency_ms": 365.0
+      },
+      {
+        "id": "dev_26",
+        "classification": "correct",
+        "expected_tool": "compare",
+        "actual_tool": "compare",
+        "latency_ms": 561.8
+      },
+      {
+        "id": "dev_27",
+        "classification": "correct",
+        "expected_tool": "find_largest_change",
+        "actual_tool": "find_largest_change",
+        "latency_ms": 482.8
+      },
+      {
+        "id": "dev_28",
+        "classification": "correct",
+        "expected_tool": "context_before",
+        "actual_tool": "context_before",
+        "latency_ms": 520.7
+      },
+      {
+        "id": "dev_29",
+        "classification": "correct",
+        "expected_tool": "out_of_scope",
+        "actual_tool": "out_of_scope",
+        "latency_ms": 342.0
+      },
+      {
+        "id": "dev_30",
+        "classification": "correct",
+        "expected_tool": "out_of_scope",
+        "actual_tool": "out_of_scope",
+        "latency_ms": 340.7
+      },
+      {
+        "id": "dev_31",
+        "classification": "correct",
+        "expected_tool": "out_of_scope",
+        "actual_tool": "out_of_scope",
+        "latency_ms": 346.1
+      },
+      {
+        "id": "dev_32",
+        "classification": "correct",
+        "expected_tool": "out_of_scope",
+        "actual_tool": "out_of_scope",
+        "latency_ms": 346.7
+      },
+      {
+        "id": "dev_33",
+        "classification": "correct",
+        "expected_tool": "out_of_scope",
+        "actual_tool": "out_of_scope",
+        "latency_ms": 343.0
+      },
+      {
+        "id": "dev_34",
+        "classification": "correct",
+        "expected_tool": "out_of_scope",
+        "actual_tool": "out_of_scope",
+        "latency_ms": 321.7
+      },
+      {
+        "id": "dev_35",
+        "classification": "correct",
+        "expected_tool": "out_of_scope",
+        "actual_tool": "out_of_scope",
+        "latency_ms": 329.1
+      },
+      {
+        "id": "dev_36",
+        "classification": "correct",
+        "expected_tool": "out_of_scope",
+        "actual_tool": "out_of_scope",
+        "latency_ms": 324.0
+      },
+      {
+        "id": "dev_37",
+        "classification": "wrong",
+        "expected_tool": "out_of_scope",
+        "actual_tool": "find_largest_change",
+        "latency_ms": 488.2
+      },
+      {
+        "id": "dev_38",
+        "classification": "correct",
+        "expected_tool": "out_of_scope",
+        "actual_tool": "out_of_scope",
+        "latency_ms": 333.7
+      },
+      {
+        "id": "dev_39",
+        "classification": "correct",
+        "expected_tool": "out_of_scope",
+        "actual_tool": "out_of_scope",
+        "latency_ms": 348.5
+      },
+      {
+        "id": "dev_40",
+        "classification": "correct",
+        "expected_tool": "out_of_scope",
+        "actual_tool": "out_of_scope",
+        "latency_ms": 335.7
+      }
+    ],
+    "statistics": {
+      "correct": 36,
+      "wrong": 4,
+      "correct_refusal": 0,
+      "false_refusal": 0,
+      "partial": 0,
+      "unsupported_time": 0,
+      "latency_median_ms": 441.7,
+      "latency_p95_ms": 575.6,
+      "latency_mean_ms": 447.5
+    },
+    "latencies_ms": [
+      1147.5612499634735,
+      471.36029100511223,
+      379.9592080176808,
+      514.7184579982422,
+      565.9796660183929,
+      341.3597500184551,
+      346.30383300827816,
+      488.42416697880253,
+      478.04958396591246,
+      380.5899160215631,
+      384.1716659953818,
+      521.455041016452,
+      557.1083749528043,
+      575.5848750122823,
+      568.2285830262117,
+      441.69029203476384,
+      460.0464999675751,
+      426.8620410002768,
+      336.66270901449025,
+      377.4406670127064,
+      510.8577909995802,
+      547.5116249872372,
+      467.87866699742153,
+      480.4627079865895,
+      365.0222079595551,
+      561.8114169919863,
+      482.7763329958543,
+      520.6752080121078,
+      342.0316660194658,
+      340.74691601563245,
+      346.05916700093076,
+      346.7343339580111,
+      342.95487497001886,
+      321.73808297375217,
+      329.109292011708,
+      323.99900001473725,
+      488.24962496291846,
+      333.719874965027,
+      348.5452909953892,
+      335.7083339942619
+    ],
+    "errors": []
+  },
+  "0.5b_stress": {
+    "model": "0.5b",
+    "set_name": "stress",
+    "total_questions": 15,
+    "questions": [
+      {
+        "id": "stress_01",
+        "classification": "correct_refusal",
+        "expected_tool": "explain_factors",
+        "actual_tool": "",
+        "latency_ms": 0.2
+      },
+      {
+        "id": "stress_02",
+        "classification": "correct_refusal",
+        "expected_tool": "trend",
+        "actual_tool": "",
+        "latency_ms": 0.1
+      },
+      {
+        "id": "stress_03",
+        "classification": "correct_refusal",
+        "expected_tool": "trend",
+        "actual_tool": "",
+        "latency_ms": 0.1
+      },
+      {
+        "id": "stress_04",
+        "classification": "wrong",
+        "expected_tool": "trend",
+        "actual_tool": "out_of_scope",
+        "latency_ms": 339.2
+      },
+      {
+        "id": "stress_05",
+        "classification": "correct",
+        "expected_tool": "get_events",
+        "actual_tool": "get_events",
+        "latency_ms": 368.8
+      },
+      {
+        "id": "stress_06",
+        "classification": "correct",
+        "expected_tool": "compare",
+        "actual_tool": "compare",
+        "latency_ms": 570.0
+      },
+      {
+        "id": "stress_07",
+        "classification": "correct",
+        "expected_tool": "find_largest_change",
+        "actual_tool": "find_largest_change",
+        "latency_ms": 459.0
+      },
+      {
+        "id": "stress_08",
+        "classification": "correct_refusal",
+        "expected_tool": "get_events",
+        "actual_tool": "",
+        "latency_ms": 0.2
+      },
+      {
+        "id": "stress_09",
+        "classification": "correct",
+        "expected_tool": "context_before",
+        "actual_tool": "context_before",
+        "latency_ms": 498.0
+      },
+      {
+        "id": "stress_10",
+        "classification": "correct",
+        "expected_tool": "trend",
+        "actual_tool": "trend",
+        "latency_ms": 470.9
+      },
+      {
+        "id": "stress_11",
+        "classification": "wrong",
+        "expected_tool": "find_largest_change",
+        "actual_tool": "",
+        "latency_ms": 323.7
+      },
+      {
+        "id": "stress_12",
+        "classification": "correct_refusal",
+        "expected_tool": "compare",
+        "actual_tool": "",
+        "latency_ms": 0.2
+      },
+      {
+        "id": "stress_13",
+        "classification": "correct",
+        "expected_tool": "out_of_scope",
+        "actual_tool": "out_of_scope",
+        "latency_ms": 330.2
+      },
+      {
+        "id": "stress_14",
+        "classification": "correct",
+        "expected_tool": "out_of_scope",
+        "actual_tool": "out_of_scope",
+        "latency_ms": 336.5
+      },
+      {
+        "id": "stress_15",
+        "classification": "correct",
+        "expected_tool": "context_before",
+        "actual_tool": "context_before",
+        "latency_ms": 516.8
+      }
+    ],
+    "statistics": {
+      "correct": 8,
+      "wrong": 2,
+      "correct_refusal": 5,
+      "false_refusal": 0,
+      "partial": 0,
+      "unsupported_time": 0,
+      "latency_median_ms": 336.5,
+      "latency_p95_ms": 570.0,
+      "latency_mean_ms": 280.9
+    },
+    "latencies_ms": [
+      0.18041604198515415,
+      0.07149996235966682,
+      0.06345799192786217,
+      339.1770829912275,
+      368.84700000518933,
+      570.0162079883739,
+      458.97591701941565,
+      0.15883299056440592,
+      497.95516597805545,
+      470.9172920556739,
+      323.69754096725956,
+      0.17516600200906396,
+      330.2254159934819,
+      336.49591595167294,
+      516.8199160252698
+    ],
+    "errors": []
+  },
+  "1.5b_dev": {
+    "model": "1.5b",
+    "set_name": "dev",
+    "total_questions": 40,
+    "questions": [
+      {
+        "id": "dev_01",
+        "classification": "correct",
+        "expected_tool": "explain_factors",
+        "actual_tool": "explain_factors",
+        "latency_ms": 2674.1
+      },
+      {
+        "id": "dev_02",
+        "classification": "correct",
+        "expected_tool": "find_largest_change",
+        "actual_tool": "find_largest_change",
+        "latency_ms": 700.8
+      },
+      {
+        "id": "dev_03",
+        "classification": "correct",
+        "expected_tool": "get_events",
+        "actual_tool": "get_events",
+        "latency_ms": 532.0
+      },
+      {
+        "id": "dev_04",
+        "classification": "correct",
+        "expected_tool": "context_before",
+        "actual_tool": "context_before",
+        "latency_ms": 761.6
+      },
+      {
+        "id": "dev_05",
+        "classification": "correct",
+        "expected_tool": "compare",
+        "actual_tool": "compare",
+        "latency_ms": 1091.5
+      },
+      {
+        "id": "dev_06",
+        "classification": "correct",
+        "expected_tool": "explain_factors",
+        "actual_tool": "explain_factors",
+        "latency_ms": 520.0
+      },
+      {
+        "id": "dev_07",
+        "classification": "correct",
+        "expected_tool": "explain_factors",
+        "actual_tool": "explain_factors",
+        "latency_ms": 513.7
+      },
+      {
+        "id": "dev_08",
+        "classification": "correct",
+        "expected_tool": "find_largest_change",
+        "actual_tool": "find_largest_change",
+        "latency_ms": 928.0
+      },
+      {
+        "id": "dev_09",
+        "classification": "correct",
+        "expected_tool": "find_largest_change",
+        "actual_tool": "find_largest_change",
+        "latency_ms": 703.7
+      },
+      {
+        "id": "dev_10",
+        "classification": "correct",
+        "expected_tool": "get_events",
+        "actual_tool": "get_events",
+        "latency_ms": 538.5
+      },
+      {
+        "id": "dev_11",
+        "classification": "correct",
+        "expected_tool": "get_events",
+        "actual_tool": "get_events",
+        "latency_ms": 549.6
+      },
+      {
+        "id": "dev_12",
+        "classification": "correct",
+        "expected_tool": "context_before",
+        "actual_tool": "context_before",
+        "latency_ms": 778.1
+      },
+      {
+        "id": "dev_13",
+        "classification": "correct",
+        "expected_tool": "context_before",
+        "actual_tool": "context_before",
+        "latency_ms": 765.7
+      },
+      {
+        "id": "dev_14",
+        "classification": "correct",
+        "expected_tool": "compare",
+        "actual_tool": "compare",
+        "latency_ms": 1090.8
+      },
+      {
+        "id": "dev_15",
+        "classification": "correct",
+        "expected_tool": "compare",
+        "actual_tool": "compare",
+        "latency_ms": 833.8
+      },
+      {
+        "id": "dev_16",
+        "classification": "correct",
+        "expected_tool": "trend",
+        "actual_tool": "trend",
+        "latency_ms": 654.6
+      },
+      {
+        "id": "dev_17",
+        "classification": "correct",
+        "expected_tool": "trend",
+        "actual_tool": "trend",
+        "latency_ms": 647.7
+      },
+      {
+        "id": "dev_18",
+        "classification": "correct",
+        "expected_tool": "trend",
+        "actual_tool": "trend",
+        "latency_ms": 614.4
+      },
+      {
+        "id": "dev_19",
+        "classification": "correct",
+        "expected_tool": "get_events",
+        "actual_tool": "get_events",
+        "latency_ms": 478.8
+      },
+      {
+        "id": "dev_20",
+        "classification": "correct",
+        "expected_tool": "get_events",
+        "actual_tool": "get_events",
+        "latency_ms": 543.8
+      },
+      {
+        "id": "dev_21",
+        "classification": "correct",
+        "expected_tool": "context_before",
+        "actual_tool": "context_before",
+        "latency_ms": 751.4
+      },
+      {
+        "id": "dev_22",
+        "classification": "correct",
+        "expected_tool": "compare",
+        "actual_tool": "compare",
+        "latency_ms": 811.5
+      },
+      {
+        "id": "dev_23",
+        "classification": "correct",
+        "expected_tool": "find_largest_change",
+        "actual_tool": "find_largest_change",
+        "latency_ms": 686.8
+      },
+      {
+        "id": "dev_24",
+        "classification": "correct",
+        "expected_tool": "trend",
+        "actual_tool": "trend",
+        "latency_ms": 674.9
+      },
+      {
+        "id": "dev_25",
+        "classification": "correct",
+        "expected_tool": "get_events",
+        "actual_tool": "get_events",
+        "latency_ms": 534.3
+      },
+      {
+        "id": "dev_26",
+        "classification": "correct",
+        "expected_tool": "compare",
+        "actual_tool": "compare",
+        "latency_ms": 818.4
+      },
+      {
+        "id": "dev_27",
+        "classification": "correct",
+        "expected_tool": "find_largest_change",
+        "actual_tool": "find_largest_change",
+        "latency_ms": 675.9
+      },
+      {
+        "id": "dev_28",
+        "classification": "correct",
+        "expected_tool": "context_before",
+        "actual_tool": "context_before",
+        "latency_ms": 774.9
+      },
+      {
+        "id": "dev_29",
+        "classification": "correct",
+        "expected_tool": "out_of_scope",
+        "actual_tool": "out_of_scope",
+        "latency_ms": 511.1
+      },
+      {
+        "id": "dev_30",
+        "classification": "correct",
+        "expected_tool": "out_of_scope",
+        "actual_tool": "out_of_scope",
+        "latency_ms": 510.9
+      },
+      {
+        "id": "dev_31",
+        "classification": "correct",
+        "expected_tool": "out_of_scope",
+        "actual_tool": "out_of_scope",
+        "latency_ms": 513.6
+      },
+      {
+        "id": "dev_32",
+        "classification": "correct",
+        "expected_tool": "out_of_scope",
+        "actual_tool": "out_of_scope",
+        "latency_ms": 514.8
+      },
+      {
+        "id": "dev_33",
+        "classification": "correct",
+        "expected_tool": "out_of_scope",
+        "actual_tool": "out_of_scope",
+        "latency_ms": 504.9
+      },
+      {
+        "id": "dev_34",
+        "classification": "wrong",
+        "expected_tool": "out_of_scope",
+        "actual_tool": "find_largest_change",
+        "latency_ms": 697.6
+      },
+      {
+        "id": "dev_35",
+        "classification": "correct",
+        "expected_tool": "out_of_scope",
+        "actual_tool": "out_of_scope",
+        "latency_ms": 481.4
+      },
+      {
+        "id": "dev_36",
+        "classification": "correct",
+        "expected_tool": "out_of_scope",
+        "actual_tool": "out_of_scope",
+        "latency_ms": 499.0
+      },
+      {
+        "id": "dev_37",
+        "classification": "correct",
+        "expected_tool": "out_of_scope",
+        "actual_tool": "out_of_scope",
+        "latency_ms": 496.6
+      },
+      {
+        "id": "dev_38",
+        "classification": "correct",
+        "expected_tool": "out_of_scope",
+        "actual_tool": "out_of_scope",
+        "latency_ms": 496.6
+      },
+      {
+        "id": "dev_39",
+        "classification": "correct",
+        "expected_tool": "out_of_scope",
+        "actual_tool": "out_of_scope",
+        "latency_ms": 490.1
+      },
+      {
+        "id": "dev_40",
+        "classification": "correct",
+        "expected_tool": "out_of_scope",
+        "actual_tool": "out_of_scope",
+        "latency_ms": 514.3
+      }
+    ],
+    "statistics": {
+      "correct": 39,
+      "wrong": 1,
+      "correct_refusal": 0,
+      "false_refusal": 0,
+      "partial": 0,
+      "unsupported_time": 0,
+      "latency_median_ms": 647.7,
+      "latency_p95_ms": 1091.5,
+      "latency_mean_ms": 697.0
+    },
+    "latencies_ms": [
+      2674.1292910301127,
+      700.785499997437,
+      531.9623749819584,
+      761.5729999961331,
+      1091.5231659892015,
+      519.9675420299172,
+      513.6963339755312,
+      928.0497910222039,
+      703.695458942093,
+      538.4991250466555,
+      549.552834010683,
+      778.1243329518475,
+      765.7430410035886,
+      1090.7933329581283,
+      833.7530830176547,
+      654.6209999942221,
+      647.6910000201315,
+      614.36758300988,
+      478.7922920077108,
+      543.7686669756658,
+      751.4221250312403,
+      811.4501250092871,
+      686.8124160100706,
+      674.9477080302313,
+      534.2621669988148,
+      818.3788749738596,
+      675.920124980621,
+      774.9055000022054,
+      511.1058329930529,
+      510.9324579825625,
+      513.6383749777451,
+      514.7788329632021,
+      504.9307500012219,
+      697.5746669922955,
+      481.38725000899285,
+      498.96266602445394,
+      496.6293330071494,
+      496.6002500150353,
+      490.11120799696073,
+      514.2762089963071
+    ],
+    "errors": []
+  },
+  "1.5b_stress": {
+    "model": "1.5b",
+    "set_name": "stress",
+    "total_questions": 15,
+    "questions": [
+      {
+        "id": "stress_01",
+        "classification": "correct_refusal",
+        "expected_tool": "explain_factors",
+        "actual_tool": "",
+        "latency_ms": 0.2
+      },
+      {
+        "id": "stress_02",
+        "classification": "correct_refusal",
+        "expected_tool": "trend",
+        "actual_tool": "",
+        "latency_ms": 0.1
+      },
+      {
+        "id": "stress_03",
+        "classification": "correct_refusal",
+        "expected_tool": "trend",
+        "actual_tool": "",
+        "latency_ms": 0.1
+      },
+      {
+        "id": "stress_04",
+        "classification": "correct",
+        "expected_tool": "trend",
+        "actual_tool": "trend",
+        "latency_ms": 906.2
+      },
+      {
+        "id": "stress_05",
+        "classification": "correct",
+        "expected_tool": "get_events",
+        "actual_tool": "get_events",
+        "latency_ms": 544.8
+      },
+      {
+        "id": "stress_06",
+        "classification": "correct",
+        "expected_tool": "compare",
+        "actual_tool": "compare",
+        "latency_ms": 854.5
+      },
+      {
+        "id": "stress_07",
+        "classification": "wrong",
+        "expected_tool": "find_largest_change",
+        "actual_tool": "trend",
+        "latency_ms": 630.4
+      },
+      {
+        "id": "stress_08",
+        "classification": "correct_refusal",
+        "expected_tool": "get_events",
+        "actual_tool": "",
+        "latency_ms": 0.2
+      },
+      {
+        "id": "stress_09",
+        "classification": "correct",
+        "expected_tool": "context_before",
+        "actual_tool": "context_before",
+        "latency_ms": 1018.5
+      },
+      {
+        "id": "stress_10",
+        "classification": "correct",
+        "expected_tool": "trend",
+        "actual_tool": "trend",
+        "latency_ms": 691.1
+      },
+      {
+        "id": "stress_11",
+        "classification": "correct",
+        "expected_tool": "find_largest_change",
+        "actual_tool": "find_largest_change",
+        "latency_ms": 685.9
+      },
+      {
+        "id": "stress_12",
+        "classification": "correct_refusal",
+        "expected_tool": "compare",
+        "actual_tool": "",
+        "latency_ms": 0.2
+      },
+      {
+        "id": "stress_13",
+        "classification": "correct",
+        "expected_tool": "out_of_scope",
+        "actual_tool": "out_of_scope",
+        "latency_ms": 507.7
+      },
+      {
+        "id": "stress_14",
+        "classification": "correct",
+        "expected_tool": "out_of_scope",
+        "actual_tool": "out_of_scope",
+        "latency_ms": 514.7
+      },
+      {
+        "id": "stress_15",
+        "classification": "correct",
+        "expected_tool": "context_before",
+        "actual_tool": "context_before",
+        "latency_ms": 990.0
+      }
+    ],
+    "statistics": {
+      "correct": 9,
+      "wrong": 1,
+      "correct_refusal": 5,
+      "false_refusal": 0,
+      "partial": 0,
+      "unsupported_time": 0,
+      "latency_median_ms": 544.8,
+      "latency_p95_ms": 1018.5,
+      "latency_mean_ms": 489.6
+    },
+    "latencies_ms": [
+      0.20037498325109482,
+      0.06995798321440816,
+      0.06716698408126831,
+      906.1607500188984,
+      544.7990829707123,
+      854.5152089791372,
+      630.4269999964163,
+      0.16962504014372826,
+      1018.4752499917522,
+      691.0668750060722,
+      685.9425839502364,
+      0.193667015992105,
+      507.7434590202756,
+      514.7274159826338,
+      989.969165995717
+    ],
+    "errors": []
+  }
+}
