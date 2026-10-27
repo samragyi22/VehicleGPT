@@ -8,8 +8,6 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from llm.router import route
-
 
 def load_results(results_file: Path) -> dict:
     """Load Part C results."""
@@ -99,7 +97,7 @@ def analyze_prototype():
         failures = [q for q in proto_result["questions"] if q["classification"] != "correct"]
         
         if not failures:
-            output.append(f"  NO FAILURES (all 15/15 correct)\n")
+            output.append("  NO FAILURES (all 15/15 correct)\n")
             continue
         
         output.append(f"  Total failures: {len(failures)}/15\n")
