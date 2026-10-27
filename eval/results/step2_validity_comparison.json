@@ -1,0 +1,176 @@
+{
+  "0.5b": {
+    "model": "0.5b",
+    "n_questions": 10,
+    "questions": [
+      {
+        "question": "Why has my driving range reduced?",
+        "tool": "explain_factors",
+        "has_range": false,
+        "latency_ms": 1198.9
+      },
+      {
+        "question": "When did energy efficiency show the largest drop?",
+        "tool": "find_largest_change",
+        "has_range": false,
+        "latency_ms": 491.7
+      },
+      {
+        "question": "Show all ADAS disengagement events.",
+        "tool": "get_events",
+        "has_range": false,
+        "latency_ms": 365.6
+      },
+      {
+        "question": "What happened before the battery overheating?",
+        "tool": "context_before",
+        "has_range": false,
+        "latency_ms": 516.7
+      },
+      {
+        "question": "Compare energy consumption between city and highway.",
+        "tool": "compare",
+        "has_range": false,
+        "latency_ms": 568.2
+      },
+      {
+        "question": "Show the daily trend of battery temperature.",
+        "tool": "trend",
+        "has_range": false,
+        "latency_ms": 459.5
+      },
+      {
+        "question": "List all low battery warnings.",
+        "tool": "get_events",
+        "has_range": false,
+        "latency_ms": 314.9
+      },
+      {
+        "question": "When did pack temperature rise the most?",
+        "tool": "find_largest_change",
+        "has_range": false,
+        "latency_ms": 479.7
+      },
+      {
+        "question": "Compare pack temperature between city and highway.",
+        "tool": "compare",
+        "has_range": false,
+        "latency_ms": 563.9
+      },
+      {
+        "question": "What caused the reduction in range?",
+        "tool": "explain_factors",
+        "has_range": false,
+        "latency_ms": 334.6
+      }
+    ],
+    "statistics": {
+      "out_of_enum_values": 0,
+      "range_keys_found": 0,
+      "valid_json": 10,
+      "errors": 0,
+      "latency_median_ms": 491.7,
+      "latency_p95_ms": 1198.9,
+      "latency_mean_ms": 529.4
+    },
+    "latencies_ms": [
+      1198.900582967326,
+      491.71612499048933,
+      365.5508329975419,
+      516.6971249855123,
+      568.2122919824906,
+      459.49133299291134,
+      314.9162079789676,
+      479.7348330030218,
+      563.9292499981821,
+      334.59312497870997
+    ]
+  },
+  "1.5b": {
+    "model": "1.5b",
+    "n_questions": 10,
+    "questions": [
+      {
+        "question": "Why has my driving range reduced?",
+        "tool": "explain_factors",
+        "has_range": false,
+        "latency_ms": 2345.4
+      },
+      {
+        "question": "When did energy efficiency show the largest drop?",
+        "tool": "find_largest_change",
+        "has_range": false,
+        "latency_ms": 907.2
+      },
+      {
+        "question": "Show all ADAS disengagement events.",
+        "tool": "get_events",
+        "has_range": false,
+        "latency_ms": 536.0
+      },
+      {
+        "question": "What happened before the battery overheating?",
+        "tool": "context_before",
+        "has_range": false,
+        "latency_ms": 744.8
+      },
+      {
+        "question": "Compare energy consumption between city and highway.",
+        "tool": "compare",
+        "has_range": false,
+        "latency_ms": 811.6
+      },
+      {
+        "question": "Show the daily trend of battery temperature.",
+        "tool": "trend",
+        "has_range": false,
+        "latency_ms": 628.5
+      },
+      {
+        "question": "List all low battery warnings.",
+        "tool": "get_events",
+        "has_range": false,
+        "latency_ms": 465.6
+      },
+      {
+        "question": "When did pack temperature rise the most?",
+        "tool": "find_largest_change",
+        "has_range": false,
+        "latency_ms": 667.9
+      },
+      {
+        "question": "Compare pack temperature between city and highway.",
+        "tool": "compare",
+        "has_range": false,
+        "latency_ms": 1029.7
+      },
+      {
+        "question": "What caused the reduction in range?",
+        "tool": "explain_factors",
+        "has_range": false,
+        "latency_ms": 463.3
+      }
+    ],
+    "statistics": {
+      "out_of_enum_values": 0,
+      "range_keys_found": 0,
+      "valid_json": 10,
+      "errors": 0,
+      "latency_median_ms": 744.8,
+      "latency_p95_ms": 2345.4,
+      "latency_mean_ms": 860.0
+    },
+    "latencies_ms": [
+      2345.38541600341,
+      907.1981250308454,
+      536.0465419944376,
+      744.7912920033559,
+      811.5934579982422,
+      628.4917499870062,
+      465.63666698057204,
+      667.8995830006897,
+      1029.6736669843085,
+      463.2543750340119
+    ]
+  }
+}
