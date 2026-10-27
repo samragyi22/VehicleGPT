@@ -8,7 +8,7 @@
   },
   "db_path": "/Users/samragyisharma/Desktop/VehicleGPT/data/vehicle.db",
   "db_size_bytes": 33533952,
-  "elapsed_seconds": 0.42,
+  "elapsed_seconds": 0.47,
   "gap_analysis": {
     "trip_reconciliation": {
       "boundary_drops": 1,

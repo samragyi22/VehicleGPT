@@ -217,6 +217,7 @@ def test_yesterday_with_vehicle_terms_still_passes():
 def test_compare_same_segment_rejected():
     """CompareArgs.segments_must_differ must reject segment_a == segment_b."""
     from pydantic import ValidationError
+
     from engine.validate import validate_tool_call
     with pytest.raises((ValueError, ValidationError), match="segment_a and segment_b must be different"):
         validate_tool_call({
@@ -249,6 +250,7 @@ def test_out_of_scope_uses_fixed_message():
 def test_unknown_key_in_args_rejected():
     """Unknown keys like 'hack' must be rejected with extra_forbidden."""
     from pydantic import ValidationError
+
     from engine.validate import validate_tool_call
     with pytest.raises((ValueError, ValidationError), match="Extra inputs are not permitted|extra_forbidden"):
         validate_tool_call({

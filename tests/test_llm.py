@@ -29,7 +29,6 @@ from schema import (
     EventType,
     Metric,
     Segment,
-    TimeRangeKind,
     ToolName,
 )
 
@@ -78,7 +77,6 @@ class TestGrammarSchema:
         schema = build_json_schema()
         expected_metrics = set(_enum(Metric))
 
-        # find the compare branch
         compare_branch = next(
             b for b in schema["anyOf"]
             if b["properties"]["tool"]["const"] == "compare"
@@ -106,21 +104,14 @@ class TestGrammarSchema:
         assert set(args_props["segment_b"]["enum"]) == set(_enum(Segment))
 
     def test_time_range_kind_enum_in_schema(self):
-        """Fixed kinds (not last_n_days/hours) must appear in the fixed-kinds branch."""
+        """JSON schema no longer includes range; this test verifies that."""
         schema = build_json_schema()
         ge_branch = next(
             b for b in schema["anyOf"]
             if b["properties"]["tool"]["const"] == "get_events"
         )
-        # range schema is anyOf; first branch has fixed kinds
-        range_schema = ge_branch["properties"]["args"]["properties"]["range"]
-        fixed_branch = range_schema["anyOf"][0]
-        schema_kinds = set(fixed_branch["properties"]["kind"]["enum"])
-        expected_fixed = {
-            k.value for k in TimeRangeKind
-            if k not in (TimeRangeKind.last_n_days, TimeRangeKind.last_n_hours)
-        }
-        assert expected_fixed == schema_kinds
+        # range must NOT be present — it is injected by the time parser
+        assert "range" not in ge_branch["properties"]["args"]["properties"]
 
     def test_bucket_size_enum_matches_schema(self):
         schema = build_json_schema()
@@ -148,21 +139,65 @@ class TestGrammarSchema:
                 f"Branch for {branch['properties']['tool']} allows extra properties"
             )
 
-    def test_out_of_scope_requires_reason(self):
+    def test_out_of_scope_reason_is_enum_not_free_text(self):
+        """out_of_scope reason must be one of the three fixed literals, not free text."""
+        from llm.grammar import OUT_OF_SCOPE_REASONS
         schema = build_json_schema()
         oos_branch = next(
             b for b in schema["anyOf"]
             if b["properties"]["tool"]["const"] == "out_of_scope"
         )
-        assert "reason" in oos_branch["properties"]["args"]["required"]
+        reason_schema = oos_branch["properties"]["args"]["properties"]["reason"]
+        assert "enum" in reason_schema, "reason must be an enum, not free text"
+        assert set(reason_schema["enum"]) == set(OUT_OF_SCOPE_REASONS)
 
     def test_gbnf_is_nonempty_string(self):
-        """GBNF string can be built without errors (requires llama-cpp-python)."""
+        """GBNF string can be built without errors."""
         gbnf = build_gbnf()
         assert isinstance(gbnf, str)
         assert len(gbnf) > 100, "GBNF string looks suspiciously short"
-        # Must contain a root rule
         assert "root" in gbnf
+
+    def test_gbnf_contains_no_range_key(self):
+        """range must not appear in the GBNF — it is injected by the time parser."""
+        gbnf = build_gbnf()
+        assert '"range"' not in gbnf
+
+    def test_gbnf_all_metric_values_present(self):
+        gbnf = build_gbnf()
+        for m in _enum(Metric):
+            assert m in gbnf, f"Metric {m!r} missing from GBNF"
+
+    def test_gbnf_all_event_types_present(self):
+        gbnf = build_gbnf()
+        for et in _enum(EventType):
+            assert et in gbnf, f"EventType {et!r} missing from GBNF"
+
+    def test_gbnf_all_directions_present(self):
+        gbnf = build_gbnf()
+        for d in _enum(ChangeDirection):
+            assert d in gbnf, f"Direction {d!r} missing from GBNF"
+
+    def test_gbnf_all_buckets_present(self):
+        gbnf = build_gbnf()
+        for b in _enum(BucketSize):
+            assert b in gbnf, f"Bucket {b!r} missing from GBNF"
+
+    def test_gbnf_compare_only_two_segment_orderings(self):
+        """compare must only allow city->highway and highway->city."""
+        gbnf = build_gbnf()
+        # Both orderings must be present
+        assert 'city' in gbnf and 'highway' in gbnf
+        # city->city and highway->highway must not appear as adjacent literals
+        assert '"city"," ws "\\"segment_b\\": \\"city' not in gbnf
+        assert '"highway"," ws "\\"segment_b\\": \\"highway' not in gbnf
+
+    def test_gbnf_out_of_scope_fixed_reasons(self):
+        """GBNF must contain all three fixed reason literals."""
+        from llm.grammar import OUT_OF_SCOPE_REASONS
+        gbnf = build_gbnf()
+        for r in OUT_OF_SCOPE_REASONS:
+            assert r in gbnf, f"Fixed reason {r!r} missing from GBNF"
 
     def test_schema_serializable_to_json(self):
         """schema dict must be JSON-serializable (no Python-only types)."""

@@ -51,7 +51,7 @@ from llm.guards import (
     is_grounded,
     normalize_tool_args,
 )
-from llm.timeparse import parse_time_range
+from llm.timeparse import UNSUPPORTED_TIME_MESSAGE, parse_time_range
 from schema import ToolName, ToolOutput
 
 logger = logging.getLogger(__name__)
@@ -145,7 +145,31 @@ def run_pipeline(
         )
 
     # =========================================================================
-    # Stage 3: SLM Router (Grammar-constrained JSON decoding)
+    # Stage 3: Deterministic Time Parsing (BEFORE the model)
+    # =========================================================================
+    t0 = time.perf_counter()
+    authoritative_range, _ = parse_time_range(question, model_range=None)
+    timings["timeparse_ms"] = round((time.perf_counter() - t0) * 1000, 2)
+    if authoritative_range is None:
+        timings["total_ms"] = round((time.perf_counter() - t_start) * 1000, 2)
+        return PipelineResult(
+            answer=UNSUPPORTED_TIME_MESSAGE,
+            tool_call=None,
+            evidence=[],
+            timings=timings,
+            status="unsupported_time",
+            verified=True,
+            tokens=tokens,
+        )
+
+    # =========================================================================
+    # Stage 4: Deterministic tool override (why -> explain_factors, when -> find_largest_change)
+    # =========================================================================
+    from llm.router import _deterministic_tool_override
+    forced_tool = _deterministic_tool_override(question)
+
+    # =========================================================================
+    # Stage 5: SLM Router (Grammar-constrained JSON decoding)
     # =========================================================================
     from llm.grammar import load_grammar
     from llm.router import _SYSTEM_PROMPT, _get_llm
@@ -190,10 +214,22 @@ def run_pipeline(
             tokens=tokens,
         )
 
-    # If the model explicitly routed to out_of_scope
+    # Apply deterministic tool override if triggered
+    if forced_tool is not None and call_dict.get("tool") != forced_tool:
+        logger.info(
+            "Deterministic override: %s -> %s for: %s",
+            call_dict.get("tool"), forced_tool, question,
+        )
+        call_dict["tool"] = forced_tool
+        if "metric" not in call_dict.get("args", {}):
+            call_dict.setdefault("args", {})["metric"] = "estimated_range_km"
+
+    # Inject authoritative time range (model never emits range)
+    if call_dict.get("tool") not in ("context_before", "out_of_scope"):
+        call_dict.setdefault("args", {})["range"] = authoritative_range
+
+    # If the model explicitly routed to out_of_scope, use fixed message; never show reason
     if call_dict.get("tool") == "out_of_scope":
-        # Always use the fixed off-topic message; never expose the model's
-        # free-text "reason" field to the user.
         timings["total_ms"] = round((time.perf_counter() - t_start) * 1000, 2)
         return PipelineResult(
             answer=OFF_TOPIC_MESSAGE,
@@ -206,41 +242,11 @@ def run_pipeline(
         )
 
     # =========================================================================
-    # Stage 4: Deterministic Time Parsing Override
+    # Stage 6: Normalize args then Schema Validation
     # =========================================================================
-    from llm.timeparse import UNSUPPORTED_TIME_MESSAGE
-    t0 = time.perf_counter()
     args = call_dict.get("args", {})
-    if "range" in args or call_dict.get("tool") in (
-        "get_events",
-        "compare",
-        "find_largest_change",
-        "trend",
-        "explain_factors",
-    ):
-        model_range = args.get("range")
-        authoritative_range, _ = parse_time_range(question, model_range=model_range)
-        if authoritative_range is None:
-            # Unresolvable temporal phrase — ask user to rephrase.
-            timings["timeparse_ms"] = round((time.perf_counter() - t0) * 1000, 2)
-            timings["total_ms"] = round((time.perf_counter() - t_start) * 1000, 2)
-            return PipelineResult(
-                answer=UNSUPPORTED_TIME_MESSAGE,
-                tool_call=call_dict,
-                evidence=[],
-                timings=timings,
-                status="unsupported_time",
-                verified=True,
-                tokens=tokens,
-            )
-        args["range"] = authoritative_range
     args = normalize_tool_args(args, question=question, tool_name=call_dict.get("tool", ""))
     call_dict["args"] = args
-    timings["timeparse_ms"] = round((time.perf_counter() - t0) * 1000, 2)
-
-    # =========================================================================
-    # Stage 5: Schema Validation
-    # =========================================================================
     t0 = time.perf_counter()
     try:
         tool_name, validated_sym_args = validate_tool_call(call_dict)

@@ -60,56 +60,48 @@ You are VehicleGPT, an on-device assistant for a single electric vehicle.
 You route the driver's question to exactly one tool and return only a JSON tool call.
 
 Available tools:
-- get_events: list battery overheating warnings, ADAS disengagements, or low-charge warnings in a time range.
-- context_before: show signals (speed, temperature, power, …) in the seconds before a specific event.
-- compare: compare a metric (energy use, temperature, speed, …) between city and highway driving.
+- get_events: list battery overheating warnings, ADAS disengagements, or low-charge warnings.
+- context_before: show signals in the seconds before a specific event.
+- compare: compare a metric between city and highway driving.
 - find_largest_change: find when a metric dropped or rose the most.
 - trend: show how a metric changed over time (hourly / daily / weekly).
-- explain_factors: explain why a metric (e.g. range or efficiency) changed, ranking possible contributing factors.
+- explain_factors: explain why a metric changed, ranking possible contributing factors.
 - out_of_scope: use for ANY question not answerable from vehicle telemetry data.
 
-Supported metrics:
-- energy_wh_per_km: energy efficiency, fuel economy, power consumption, Wh/km
-- estimated_range_km: driving range, km remaining
-- pack_temp_c: battery pack temperature
-- speed_kmh: vehicle speed
+Supported metrics: energy_wh_per_km, estimated_range_km, pack_temp_c, soc_pct, speed_kmh, hvac_power_kw
+Supported event types: BATTERY_OVERHEAT_WARNING, ADAS_DISENGAGEMENT, LOW_SOC_WARNING
+Supported directions: drop, rise
+Supported buckets: hour, day, week
 
-Supported event types:
-- BATTERY_OVERHEAT_WARNING: battery overheating alarms
-- ADAS_DISENGAGEMENT: autopilot / driver-assist disengagements
-- LOW_SOC_WARNING: low battery / low state of charge warnings
-
-Time range examples (use the "kind" field):
-  "yesterday", "last_7_days", "last_14_days", "last_28_days", "all_history"
-  {"kind": "last_n_days", "n": 10}   <- last 10 days
-  {"kind": "last_n_hours", "n": 6}   <- last 6 hours
+Do NOT include a "range" field. The time range is handled separately.
 
 Rules:
 1. Reply with ONLY one JSON object, no other text.
 2. Use out_of_scope for: general knowledge, chit-chat, vehicle control, weather, navigation.
-3. For context_before event_id: use the exact event ID (e.g. "EV-0042") or "latest_<EVENT_TYPE>" (e.g. "latest_BATTERY_OVERHEAT_WARNING").
+3. For context_before: use exact event ID (e.g. "EV-0042") or "latest_<EVENT_TYPE>".
+4. out_of_scope reason must be exactly one of: not_vehicle_data, vehicle_control_prohibited, ambiguous_query.
 
 Examples:
-Q: Show all ADAS disengagement events from yesterday.
-A: {"tool": "get_events", "args": {"type": "ADAS_DISENGAGEMENT", "range": {"kind": "yesterday"}}}
+Q: Show all ADAS disengagement events.
+A: {"tool": "get_events", "args": {"type": "ADAS_DISENGAGEMENT"}}
 
-Q: Why has my driving range reduced over the last two weeks?
-A: {"tool": "explain_factors", "args": {"metric": "estimated_range_km", "range": {"kind": "last_14_days"}}}
+Q: Why has my driving range reduced?
+A: {"tool": "explain_factors", "args": {"metric": "estimated_range_km"}}
 
 Q: When did energy efficiency show the largest drop?
-A: {"tool": "find_largest_change", "args": {"metric": "energy_wh_per_km", "range": {"kind": "last_28_days"}, "direction": "drop"}}
+A: {"tool": "find_largest_change", "args": {"metric": "energy_wh_per_km", "direction": "drop"}}
 
 Q: What happened before the battery overheating warning?
 A: {"tool": "context_before", "args": {"event_id": "latest_BATTERY_OVERHEAT_WARNING", "seconds": 300}}
 
 Q: Compare energy consumption between city and highway driving.
-A: {"tool": "compare", "args": {"metric": "energy_wh_per_km", "range": {"kind": "last_14_days"}, "segment_a": "city", "segment_b": "highway"}}
+A: {"tool": "compare", "args": {"metric": "energy_wh_per_km", "segment_a": "city", "segment_b": "highway"}}
 
 Q: What is the capital of France?
-A: {"tool": "out_of_scope", "args": {"reason": "general knowledge question, not about vehicle data"}}
+A: {"tool": "out_of_scope", "args": {"reason": "not_vehicle_data"}}
 
 Q: Turn off the air conditioning.
-A: {"tool": "out_of_scope", "args": {"reason": "vehicle control is not supported; safety-critical functions are isolated from this system"}}
+A: {"tool": "out_of_scope", "args": {"reason": "vehicle_control_prohibited"}}
 """
 
 
@@ -205,6 +197,42 @@ class RouterResult:
     model_ms: float = 0.0
     query_ms: float = 0.0
     render_ms: float = 0.0
+
+
+# ---------------------------------------------------------------------------
+# Deterministic pre-model routing rules (handoff §6 items 3, 6)
+# ---------------------------------------------------------------------------
+
+import re as _re
+
+_WHY_PATTERN = _re.compile(
+    r"\b(why|reason|cause|factors?|what\s+caused|how\s+come)\b", _re.IGNORECASE
+)
+_WHEN_PATTERN = _re.compile(
+    r"\b(when|biggest|largest|most|highest|lowest)\b", _re.IGNORECASE
+)
+
+# Metrics that pair naturally with explain_factors vs find_largest_change
+_RANGE_EFFICIENCY_PATTERN = _re.compile(
+    r"\b(range|efficiency|consumption|energy|wh)\b", _re.IGNORECASE
+)
+
+
+def _deterministic_tool_override(question: str) -> str | None:
+    """
+    Return a forced tool name string when the question matches a deterministic
+    rule, or None to let the model decide.
+
+    Rules (handoff §6 item 6):
+    - "why" + range/efficiency keyword  -> explain_factors
+    - "when" / "biggest" / "largest"    -> find_largest_change
+    """
+    q = question
+    if _WHY_PATTERN.search(q) and _RANGE_EFFICIENCY_PATTERN.search(q):
+        return "explain_factors"
+    if _WHEN_PATTERN.search(q):
+        return "find_largest_change"
+    return None
 
 
 # ---------------------------------------------------------------------------
@@ -314,6 +342,17 @@ def route(
         result.error = f"Model/grammar load failed: {exc}"
         return result
 
+    # --- Step 1.5: Time parser runs BEFORE the model ---
+    from llm.timeparse import UNSUPPORTED_TIME_MESSAGE, parse_time_range
+    authoritative_range, _ = parse_time_range(question, model_range=None)
+    if authoritative_range is None:
+        result.answer = UNSUPPORTED_TIME_MESSAGE
+        result.error = "unsupported_time"
+        return result
+
+    # --- Step 1.6: Deterministic tool override (why -> explain_factors, when -> find_largest_change) ---
+    forced_tool = _deterministic_tool_override(question)
+
     # --- Step 2: Grammar-constrained tool call ---
     try:
         raw_json, model_ms = _call_model_for_tool(llm, question, grammar)
@@ -328,6 +367,29 @@ def route(
         call_dict = json.loads(raw_json)
     except json.JSONDecodeError as exc:
         result.error = f"Model output is not valid JSON: {exc}. Raw: {raw_json!r}"
+        return result
+
+    # Apply deterministic tool override if triggered
+    if forced_tool is not None and call_dict.get("tool") != forced_tool:
+        logger.info(
+            "Deterministic override: %s -> %s for question: %s",
+            call_dict.get("tool"), forced_tool, question,
+        )
+        call_dict["tool"] = forced_tool
+        # Ensure metric is present for explain_factors / find_largest_change
+        if "metric" not in call_dict.get("args", {}):
+            call_dict.setdefault("args", {})["metric"] = "estimated_range_km"
+
+    # Inject the authoritative time range (model never emits range)
+    if call_dict.get("tool") not in ("context_before", "out_of_scope"):
+        call_dict.setdefault("args", {})["range"] = authoritative_range
+
+    # Early exit: model returned out_of_scope — use fixed message, never show reason
+    if call_dict.get("tool") == "out_of_scope":
+        from llm.guards import OFF_TOPIC_MESSAGE
+        result.tool_name = ToolName.out_of_scope
+        result.answer = OFF_TOPIC_MESSAGE
+        result.verified = True
         return result
 
     # --- Step 3.5: Normalize tool args ---

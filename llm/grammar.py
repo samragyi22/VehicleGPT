@@ -1,21 +1,20 @@
 """
-llm/grammar.py - JSON Schema and GBNF Grammar Builder for VehicleGPT.
+llm/grammar.py - GBNF Grammar Builder for VehicleGPT.
 
-Generates the grammar that constrains the SLM to emit exactly one valid tool call
-as a JSON object: {"tool": "<name>", "args": {...}}.
+build_gbnf() generates a flat, non-recursive GBNF that constrains the SLM to
+emit exactly one valid tool call.  Key design decisions (per handoff §6 item 2):
 
-The schema is derived entirely from schema.py enums and arg models so that
-adding a new enum value in schema.py automatically updates the grammar.
+- "range" is NOT in the grammar.  The time parser fills it before the model is
+  called; the model never needs to emit it.
+- out_of_scope.reason is one of three fixed string literals, never free text.
+- compare allows only city->highway or highway->city (two orderings, not four).
+- All enum fields (metric, event type, direction, bucket, segment) are inline
+  alternations of quoted literals generated from schema.py at import time.
+- event_id accepts EV-<digits> or latest_<EVENT_TYPE> via explicit rules.
+- No recursive rules: object/array helpers are not used.
 
-Design notes:
-- We use JSON Schema (anyOf over all tool branches) and convert to GBNF via
-  llama_cpp.llama_grammar.json_schema_to_gbnf.
-- Each branch has "tool": {"const": "<name>"} and an "args" object tailored to
-  that tool's required and optional arguments.
-- LlamaGrammar.from_json_schema is the clean public API; build_json_schema()
-  is exposed so tests can inspect the schema without loading a model.
-- SymbolicTimeRange is inlined as an object with a "kind" enum, so the grammar
-  rejects unknown kinds at generation time.
+build_json_schema() is kept for test inspection only; it is not used at
+inference time.
 """
 
 from __future__ import annotations
@@ -41,30 +40,192 @@ def _enum(cls) -> list[str]:
     return sorted(v.value for v in cls)
 
 
-def _symbolic_time_range() -> dict[str, Any]:
+def _q(s: str) -> str:
     """
-    Inline JSON Schema for SymbolicTimeRange.
+    Wrap a value string in GBNF-escaped double quotes.
 
-    Using anyOf so that:
-    - Kinds that require 'n' (last_n_days, last_n_hours) must include it.
-    - All other kinds must NOT include 'n'.
+    In GBNF, a terminal that matches the JSON string "foo" is written:
+        "\"foo\""
+    which in a Python string literal is:
+        '"\\\"foo\\\""'
     """
+    return '"\\\"' + s + '\\\""'
+
+
+def _alt(values: list[str]) -> str:
+    """Build a GBNF alternation of quoted string literals."""
+    return " | ".join(_q(v) for v in sorted(values))
+
+
+def _kv(key: str, val: str) -> str:
+    """
+    GBNF terminal matching a JSON key:value pair with trailing comma.
+    e.g. _kv("tool", "get_events") matches: "tool": "get_events",
+    In GBNF: "\"tool\": \"get_events\","
+    Python:  '"\\\"tool\\\": \\\"get_events\\\","'
+    """
+    return '"\\\"' + key + '\\\": \\\"' + val + '\\\","'
+
+
+def _key(k: str) -> str:
+    """
+    GBNF terminal matching a JSON key prefix (no value).
+    e.g. _key("type") matches: "type":
+    In GBNF: "\"type\": "
+    Python:  '"\\\"type\\\": "'
+    """
+    return '"\\\"' + k + '\\\": "'
+
+
+# ---------------------------------------------------------------------------
+# GBNF builder
+# ---------------------------------------------------------------------------
+
+# Fixed reason phrases for out_of_scope — never free text, never shown to user.
+OUT_OF_SCOPE_REASONS = [
+    "not_vehicle_data",
+    "vehicle_control_prohibited",
+    "ambiguous_query",
+]
+
+
+def build_gbnf() -> str:
+    """
+    Build a flat, non-recursive GBNF grammar for VehicleGPT tool calls.
+
+    The grammar enforces:
+    - Exactly one of 7 tool branches (search_logs excluded).
+    - All enum fields constrained to schema.py values.
+    - "range" key absent — filled by the time parser before inference.
+    - out_of_scope.reason is one of three fixed literals.
+    - compare segments: only city->highway or highway->city.
+    - event_id: EV-<digits> or latest_<EVENT_TYPE>.
+    """
+    metrics  = _alt(_enum(Metric))
+    ev_types = _alt(_enum(EventType))
+    dirs     = _alt(_enum(ChangeDirection))
+    buckets  = _alt(_enum(BucketSize))
+    reasons  = _alt(OUT_OF_SCOPE_REASONS)
+
+    # event_id: latest_<TYPE> literals or EV-DDDD
+    # latest_X matches the bare string latest_BATTERY_OVERHEAT_WARNING etc.
+    # (no surrounding quotes in the rule — the quotes come from _q)
+    ev_latest = " | ".join(_q("latest_" + t.value) for t in EventType)
+    # EV-DDDD: matches "EV-" followed by 4 digits, surrounded by JSON quotes
+    ev_id_digits = '"\\\"EV-" [0-9] [0-9] [0-9] [0-9] "\\\"" '
+    event_id_rule = "event-id ::= " + ev_latest + " | " + ev_id_digits
+
+    lines = [
+        (
+            "root ::= get-events-call | context-before-call | compare-call"
+            " | find-largest-change-call | trend-call | explain-factors-call"
+            " | out-of-scope-call"
+        ),
+        "",
+        # ---- get_events ----
+        (
+            'get-events-call ::= "{" ws '
+            + _kv("tool", "get_events")
+            + ' ws "\"args\": {" ws '
+            + _key("type")
+            + " event-type ws \"}\" ws \"}\""
+        ),
+        "event-type ::= " + ev_types,
+        "",
+        # ---- context_before ----
+        (
+            'context-before-call ::= "{" ws '
+            + _kv("tool", "context_before")
+            + ' ws "\"args\": {" ws '
+            + _key("event_id")
+            + " event-id cb-opt ws \"}\" ws \"}\""
+        ),
+        event_id_rule,
+        'cb-opt ::= ("," ws ' + _key("seconds") + " cb-seconds)?",
+        'cb-seconds ::= "60" | "120" | "180" | "240" | "300"',
+        "",
+        # ---- compare (only city->highway or highway->city) ----
+        (
+            'compare-call ::= "{" ws '
+            + _kv("tool", "compare")
+            + ' ws "\"args\": {" ws '
+            + _key("metric")
+            + " metric ws \",\" ws"
+            + ' "\"segment_a\": \"city\"," ws "\"segment_b\": \"highway\"" ws "}" ws "}"'
+            + ' | "{" ws '
+            + _kv("tool", "compare")
+            + ' ws "\"args\": {" ws '
+            + _key("metric")
+            + " metric ws \",\" ws"
+            + ' "\"segment_a\": \"highway\"," ws "\"segment_b\": \"city\"" ws "}" ws "}"'
+        ),
+        "metric ::= " + metrics,
+        "",
+        # ---- find_largest_change ----
+        (
+            'find-largest-change-call ::= "{" ws '
+            + _kv("tool", "find_largest_change")
+            + ' ws "\"args\": {" ws '
+            + _key("metric")
+            + " metric ws \",\" ws "
+            + _key("direction")
+            + " direction ws \"}\" ws \"}\""
+        ),
+        "direction ::= " + dirs,
+        "",
+        # ---- trend ----
+        (
+            'trend-call ::= "{" ws '
+            + _kv("tool", "trend")
+            + ' ws "\"args\": {" ws '
+            + _key("metric")
+            + " metric ws \",\" ws "
+            + _key("bucket")
+            + " bucket ws \"}\" ws \"}\""
+        ),
+        "bucket ::= " + buckets,
+        "",
+        # ---- explain_factors ----
+        (
+            'explain-factors-call ::= "{" ws '
+            + _kv("tool", "explain_factors")
+            + ' ws "\"args\": {" ws '
+            + _key("metric")
+            + " metric ws \"}\" ws \"}\""
+        ),
+        "",
+        # ---- out_of_scope ----
+        (
+            'out-of-scope-call ::= "{" ws '
+            + _kv("tool", "out_of_scope")
+            + ' ws "\"args\": {" ws '
+            + _key("reason")
+            + " oos-reason ws \"}\" ws \"}\""
+        ),
+        "oos-reason ::= " + reasons,
+        "",
+        "ws ::= [ \\t\\n\\r]*",
+    ]
+    return "\n".join(lines)
+
+
+# ---------------------------------------------------------------------------
+# JSON Schema (used by tests only, not at inference time)
+# ---------------------------------------------------------------------------
+
+def _symbolic_time_range() -> dict[str, Any]:
     fixed_kinds = [
         k.value for k in TimeRangeKind
         if k not in (TimeRangeKind.last_n_days, TimeRangeKind.last_n_hours)
     ]
     return {
         "anyOf": [
-            # Fixed kinds: no 'n' field allowed
             {
                 "type": "object",
-                "properties": {
-                    "kind": {"enum": fixed_kinds},
-                },
+                "properties": {"kind": {"enum": fixed_kinds}},
                 "required": ["kind"],
                 "additionalProperties": False,
             },
-            # last_n_days: n required in [1, 28]
             {
                 "type": "object",
                 "properties": {
@@ -74,7 +235,6 @@ def _symbolic_time_range() -> dict[str, Any]:
                 "required": ["kind", "n"],
                 "additionalProperties": False,
             },
-            # last_n_hours: n required in [1, 72]
             {
                 "type": "object",
                 "properties": {
@@ -88,10 +248,6 @@ def _symbolic_time_range() -> dict[str, Any]:
     }
 
 
-# ---------------------------------------------------------------------------
-# Per-tool branches
-# ---------------------------------------------------------------------------
-
 def _branch_get_events() -> dict[str, Any]:
     return {
         "type": "object",
@@ -99,11 +255,8 @@ def _branch_get_events() -> dict[str, Any]:
             "tool": {"const": ToolName.get_events.value},
             "args": {
                 "type": "object",
-                "properties": {
-                    "type": {"enum": _enum(EventType)},
-                    "range": _symbolic_time_range(),
-                },
-                "required": ["type", "range"],
+                "properties": {"type": {"enum": _enum(EventType)}},
+                "required": ["type"],
                 "additionalProperties": False,
             },
         },
@@ -122,27 +275,9 @@ def _branch_context_before() -> dict[str, Any]:
                 "properties": {
                     "event_id": {
                         "type": "string",
-                        # Rough pattern accepted by the model; code validates exactly.
                         "pattern": "^(EV-\\d+|latest_(BATTERY_OVERHEAT_WARNING|ADAS_DISENGAGEMENT|LOW_SOC_WARNING))$",
                     },
                     "seconds": {"type": "integer", "minimum": 1, "maximum": 300},
-                    "signals": {
-                        "type": "array",
-                        "items": {
-                            "enum": [
-                                "adas_active",
-                                "ambient_temp_c",
-                                "hvac_power_kw",
-                                "pack_current_a",
-                                "pack_temp_c",
-                                "pack_voltage_v",
-                                "power_kw",
-                                "road_segment",
-                                "soc_pct",
-                                "speed_kmh",
-                            ]
-                        },
-                    },
                 },
                 "required": ["event_id"],
                 "additionalProperties": False,
@@ -162,11 +297,10 @@ def _branch_compare() -> dict[str, Any]:
                 "type": "object",
                 "properties": {
                     "metric": {"enum": _enum(Metric)},
-                    "range": _symbolic_time_range(),
                     "segment_a": {"enum": _enum(Segment)},
                     "segment_b": {"enum": _enum(Segment)},
                 },
-                "required": ["metric", "range"],
+                "required": ["metric"],
                 "additionalProperties": False,
             },
         },
@@ -184,10 +318,9 @@ def _branch_find_largest_change() -> dict[str, Any]:
                 "type": "object",
                 "properties": {
                     "metric": {"enum": _enum(Metric)},
-                    "range": _symbolic_time_range(),
                     "direction": {"enum": _enum(ChangeDirection)},
                 },
-                "required": ["metric", "range"],
+                "required": ["metric"],
                 "additionalProperties": False,
             },
         },
@@ -205,10 +338,9 @@ def _branch_trend() -> dict[str, Any]:
                 "type": "object",
                 "properties": {
                     "metric": {"enum": _enum(Metric)},
-                    "range": _symbolic_time_range(),
                     "bucket": {"enum": _enum(BucketSize)},
                 },
-                "required": ["metric", "range"],
+                "required": ["metric"],
                 "additionalProperties": False,
             },
         },
@@ -224,11 +356,8 @@ def _branch_explain_factors() -> dict[str, Any]:
             "tool": {"const": ToolName.explain_factors.value},
             "args": {
                 "type": "object",
-                "properties": {
-                    "metric": {"enum": _enum(Metric)},
-                    "range": _symbolic_time_range(),
-                },
-                "required": ["metric", "range"],
+                "properties": {"metric": {"enum": _enum(Metric)}},
+                "required": ["metric"],
                 "additionalProperties": False,
             },
         },
@@ -244,9 +373,7 @@ def _branch_out_of_scope() -> dict[str, Any]:
             "tool": {"const": ToolName.out_of_scope.value},
             "args": {
                 "type": "object",
-                "properties": {
-                    "reason": {"type": "string"},
-                },
+                "properties": {"reason": {"enum": OUT_OF_SCOPE_REASONS}},
                 "required": ["reason"],
                 "additionalProperties": False,
             },
@@ -256,17 +383,10 @@ def _branch_out_of_scope() -> dict[str, Any]:
     }
 
 
-# ---------------------------------------------------------------------------
-# Public API
-# ---------------------------------------------------------------------------
-
 def build_json_schema() -> dict[str, Any]:
     """
-    Build the complete JSON Schema for a VehicleGPT tool call.
-
-    The schema is an anyOf over all enabled tools. The grammar enforcer will
-    reject any output that does not match one of these branches at token level.
-    search_logs is omitted because the FTS5 table is not yet built.
+    Build the JSON Schema for a VehicleGPT tool call (test inspection only).
+    Note: range is absent from args — it is injected by the time parser.
     """
     return {
         "$schema": "http://json-schema.org/draft-07/schema#",
@@ -281,29 +401,6 @@ def build_json_schema() -> dict[str, Any]:
             _branch_out_of_scope(),
         ],
     }
-
-
-def build_gbnf() -> str:
-    """
-    Build a robust GBNF grammar string derived directly from schema.py ToolName enums.
-    Enforces that the model emits exactly one JSON object: {"tool": "<valid_tool>", "args": {...}}.
-    """
-    tools_list = [t.value for t in ToolName if t != ToolName.search_logs]
-    tool_rules = " | ".join(f'"\\"{t}\\""' for t in tools_list)
-
-    return (
-        'root ::= "{" ws "\\"tool\\": " tool "," ws "\\"args\\": " args ws "}"\n'
-        f"tool ::= {tool_rules}\n"
-        'args ::= "{" ws (member (ws "," ws member)*)? ws "}"\n'
-        'member ::= string ws ":" ws value\n'
-        'value ::= string | number | boolean | "null" | array | object\n'
-        'object ::= "{" ws (member (ws "," ws member)*)? ws "}"\n'
-        'array ::= "[" ws (value (ws "," ws value)*)? ws "]"\n'
-        'string ::= "\\"" [^"\\\\]* "\\""\n'
-        'number ::= "-"? [0-9]+ ("." [0-9]+)?\n'
-        'boolean ::= "true" | "false"\n'
-        'ws ::= [ \\t\\n\\r]*\n'
-    )
 
 
 def load_grammar():
