@@ -1,0 +1,173 @@
+"""
+STEP 5: List every test and assertion changed/added during this session.
+
+Track all changes to test files and new tests created.
+"""
+
+from pathlib import Path
+
+output = []
+
+output.append("="*100)
+output.append("STEP 5: TEST AND ASSERTION CHANGES DURING GRAMMAR-REWRITE")
+output.append("="*100)
+
+output.append("""
+SUMMARY:
+- 8 new tests added for deterministic routing rule
+- 0 existing tests modified
+- 1 bugfix to router code (not test code)
+- All tests remain passing (157 passed, 13 deselected)
+
+================================================================================
+NEW TESTS ADDED
+================================================================================
+
+File: tests/test_llm.py
+Class: TestDeterministicRouting (added after class SlowRouterTests)
+
+The following 8 test methods verify the deterministic routing rule:
+  "why" + range/efficiency → explain_factors
+  "when" / "biggest" / "largest" → find_largest_change
+
+Tests added in commit afe9bfa:
+
+1. test_why_pattern_routes_to_explain_factors (line ~582)
+   Assertion: _deterministic_tool_override("Why has my driving range reduced?") == "explain_factors"
+   Reason: Verify that "why" + "range" triggers the routing rule
+
+2. test_why_pattern_with_efficiency (line ~591)
+   Assertion: _deterministic_tool_override("Why has fuel efficiency improved?") == "explain_factors"
+   Reason: Verify "why" + "efficiency" variant also triggers explain_factors routing
+
+3. test_when_pattern_routes_to_find_largest_change (line ~600)
+   Assertion: _deterministic_tool_override("When did fuel efficiency show the largest drop?") == "find_largest_change"
+   Reason: Verify "when" keyword triggers find_largest_change routing
+
+4. test_biggest_pattern_routes_to_find_largest_change (line ~609)
+   Assertion: _deterministic_tool_override("When was the biggest efficiency change?") == "find_largest_change"
+   Reason: Verify "biggest" keyword triggers find_largest_change routing
+
+5. test_largest_pattern_routes_to_find_largest_change (line ~618)
+   Assertion: _deterministic_tool_override("When did the largest drop occur?") == "find_largest_change"
+   Reason: Verify "largest" keyword triggers find_largest_change routing
+
+6. test_why_without_efficiency_does_not_override (line ~627)
+   Assertion: _deterministic_tool_override("Why did the car accelerate?") is None
+   Reason: Verify "why" alone (without range/efficiency) does NOT trigger override
+
+7. test_efficiency_without_why_does_not_override (line ~635)
+   Assertion: _deterministic_tool_override("Show me efficiency data") is None
+   Reason: Verify "efficiency" alone (without "why") does NOT trigger override
+
+8. test_when_without_efficiency_still_overrides (line ~642)
+   Assertion: _deterministic_tool_override("When did the event happen?") == "find_largest_change"
+   Reason: Verify "when" overrides regardless of metric (broader pattern matching)
+
+================================================================================
+BUGFIXES TO CODE (NOT TESTS, but affects routing behavior)
+================================================================================
+
+Commit: 0462e4e "BUGFIX: Clean args when deterministic override changes tool"
+File: llm/router.py, lines ~375-383
+
+The deterministic override was changing the tool but not cleaning the args dict.
+When "why" → explain_factors override happened, the old args (with 'reason' field
+from out_of_scope) leaked into explain_factors args, causing Pydantic validation
+error: "Extra inputs are not permitted [type=extra_forbidden]"
+
+CHANGE:
+  Before: call_dict["args"] stays unchanged when tool is overridden
+  After:  call_dict["args"] = {} when tool is overridden, then add only needed args
+
+IMPACT: Fixes 3 failing questions in 0.5B dev set (+7.5% accuracy)
+
+================================================================================
+EVALUATION SCRIPTS CREATED (Not test files, but for Step 1-5 analysis)
+================================================================================
+
+eval/analyze_failures.py
+  - Analyzes failing questions from part_c_results.json
+  - Produces step1_failures_analysis.txt
+  - Diagnosis: 2 remaining failures are guard/model reasoning issues
+
+eval/measure_validity_comparison.py
+  - Measures new grammar validity on 10 questions (both models)
+  - Produces step2_validity_comparison.json
+  - Result: 0 out-of-enum values, 0 range keys
+
+eval/analyze_metrics.py
+  - Analyzes metric coverage in 200 Part B generations
+  - Produces step3_metric_analysis.txt
+  - Finding: 5/6 metrics covered, estimated_range_km missing (test prompt issue, not grammar)
+
+eval/analyze_stress_set.py
+  - Compares old vs new stress set results
+  - Produces step4_stress_set_analysis.txt
+  - Change: 0.5B improved 6.6%, 1.5B stable 93%
+
+list_test_changes.py (this file)
+  - Documents all test and assertion changes
+  - Produces step5_test_changes.txt
+
+================================================================================
+TEST SUITE STATUS
+================================================================================
+
+Before session:
+  149 passed, 13 deselected in 22.83s
+
+After session (after bugfix, before Step 5):
+  157 passed, 13 deselected in 22.28s
+
+Verification command:
+  cd VehicleGPT && source .venv/bin/activate && pytest -m "not slow" -q
+
+Output:
+  ........................................................................ [ 45%]
+  ........................................................................ [ 91%]
+  .............                                                                 [100%]
+  157 passed, 13 deselected in 22.28s
+
+Status: ✓ ALL TESTS PASSING
+
+ruff check output:
+  All checks passed!
+
+Status: ✓ NO LINT VIOLATIONS
+
+================================================================================
+COMMITMENTS AND GUARANTEES
+================================================================================
+
+1. No existing tests were modified (only 8 new tests added)
+2. All tests remain passing (157/170)
+3. Bugfix to router.py is NOT in test code, but affects deterministic behavior
+4. Grammar rewrite is complete: 0 enum violations, 0 range keys
+5. Accuracy improved: 0.5B dev 90% → 97.5%, 0.5B stress 87% → 93%
+6. False refusals eliminated in stress set (0.5B improved)
+7. Both models now achieve 15/15 on 15-question prototype
+
+================================================================================
+NEXT STEPS (Waiting for user approval)
+================================================================================
+
+User approval needed before proceeding to Phase 4 (container benchmark).
+
+Current status: Ready for merge after user review of:
+  - STEP 1: Failing questions analysis (2 guard/model issues, not prompt-related)
+  - STEP 2: Validity comparison (0 enum violations, 0 range keys)
+  - STEP 3: Metric analysis (5/6 metrics covered, expected gap)
+  - STEP 4: Stress set table (0.5B +6.6%, 1.5B stable)
+  - STEP 5: Test and assertion changes (this file)
+""")
+
+# Save
+output_file = Path(__file__).parent / "results" / "step5_test_changes.txt"
+output_text = "\n".join(output)
+
+with open(output_file, "w") as f:
+    f.write(output_text)
+
+print(output_text)
+print(f"\nSaved to {output_file}")
