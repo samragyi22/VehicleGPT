@@ -19,6 +19,10 @@ inference time.
 
 from __future__ import annotations
 
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+from pathlib import Path
 from typing import Any
 
 from schema import (
@@ -31,9 +35,8 @@ from schema import (
     ToolName,
 )
 
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
+_TMPL_PATH = Path(__file__).parent / "tool_grammar.gbnf.tmpl"
+
 
 def _enum(cls) -> list[str]:
     """Return sorted list of enum string values for JSON schema 'enum' keyword."""
@@ -43,38 +46,14 @@ def _enum(cls) -> list[str]:
 def _q(s: str) -> str:
     """
     Wrap a value string in GBNF-escaped double quotes.
-
-    In GBNF, a terminal that matches the JSON string "foo" is written:
-        "\"foo\""
-    which in a Python string literal is:
-        '"\\\"foo\\\""'
+    In GBNF, a terminal matching literal "foo" is written: "\"foo\""
     """
-    return '"\\\"' + s + '\\\""'
+    return "\"\\\"" + s + "\\\"\""
 
 
 def _alt(values: list[str]) -> str:
     """Build a GBNF alternation of quoted string literals."""
     return " | ".join(_q(v) for v in sorted(values))
-
-
-def _kv(key: str, val: str) -> str:
-    """
-    GBNF terminal matching a JSON key:value pair with trailing comma.
-    e.g. _kv("tool", "get_events") matches: "tool": "get_events",
-    In GBNF: "\"tool\": \"get_events\","
-    Python:  '"\\\"tool\\\": \\\"get_events\\\","'
-    """
-    return '"\\\"' + key + '\\\": \\\"' + val + '\\\","'
-
-
-def _key(k: str) -> str:
-    """
-    GBNF terminal matching a JSON key prefix (no value).
-    e.g. _key("type") matches: "type":
-    In GBNF: "\"type\": "
-    Python:  '"\\\"type\\\": "'
-    """
-    return '"\\\"' + k + '\\\": "'
 
 
 # ---------------------------------------------------------------------------
@@ -91,7 +70,8 @@ OUT_OF_SCOPE_REASONS = [
 
 def build_gbnf() -> str:
     """
-    Build a flat, non-recursive GBNF grammar for VehicleGPT tool calls.
+    Build a flat, non-recursive GBNF grammar for VehicleGPT tool calls by
+    substituting schema enums into llm/tool_grammar.gbnf.tmpl.
 
     The grammar enforces:
     - Exactly one of 7 tool branches (search_logs excluded).
@@ -101,112 +81,21 @@ def build_gbnf() -> str:
     - compare segments: only city->highway or highway->city.
     - event_id: EV-<digits> or latest_<EVENT_TYPE>.
     """
-    metrics  = _alt(_enum(Metric))
-    ev_types = _alt(_enum(EventType))
-    dirs     = _alt(_enum(ChangeDirection))
-    buckets  = _alt(_enum(BucketSize))
-    reasons  = _alt(OUT_OF_SCOPE_REASONS)
+    tmpl = _TMPL_PATH.read_text(encoding="utf-8")
 
-    # event_id: latest_<TYPE> literals or EV-DDDD
-    # latest_X matches the bare string latest_BATTERY_OVERHEAT_WARNING etc.
-    # (no surrounding quotes in the rule — the quotes come from _q)
-    ev_latest = " | ".join(_q("latest_" + t.value) for t in EventType)
-    # EV-DDDD: matches "EV-" followed by 4 digits, surrounded by JSON quotes
-    ev_id_digits = '"\\\"EV-" [0-9] [0-9] [0-9] [0-9] "\\\"" '
-    event_id_rule = "event-id ::= " + ev_latest + " | " + ev_id_digits
+    substitutions = {
+        "{{EVENT_TYPES}}": _alt([e.value for e in EventType]),
+        "{{EVENT_IDS}}": _alt(["latest_" + e.value for e in EventType]),
+        "{{METRICS}}": _alt([m.value for m in Metric]),
+        "{{DIRECTIONS}}": _alt([d.value for d in ChangeDirection]),
+        "{{BUCKETS}}": _alt([b.value for b in BucketSize]),
+        "{{REASONS}}": _alt(OUT_OF_SCOPE_REASONS),
+    }
 
-    lines = [
-        (
-            "root ::= get-events-call | context-before-call | compare-call"
-            " | find-largest-change-call | trend-call | explain-factors-call"
-            " | out-of-scope-call"
-        ),
-        "",
-        # ---- get_events ----
-        (
-            'get-events-call ::= "{" ws '
-            + _kv("tool", "get_events")
-            + ' ws "\"args\": {" ws '
-            + _key("type")
-            + " event-type ws \"}\" ws \"}\""
-        ),
-        "event-type ::= " + ev_types,
-        "",
-        # ---- context_before ----
-        (
-            'context-before-call ::= "{" ws '
-            + _kv("tool", "context_before")
-            + ' ws "\"args\": {" ws '
-            + _key("event_id")
-            + " event-id cb-opt ws \"}\" ws \"}\""
-        ),
-        event_id_rule,
-        'cb-opt ::= ("," ws ' + _key("seconds") + " cb-seconds)?",
-        'cb-seconds ::= "60" | "120" | "180" | "240" | "300"',
-        "",
-        # ---- compare (only city->highway or highway->city) ----
-        (
-            'compare-call ::= "{" ws '
-            + _kv("tool", "compare")
-            + ' ws "\"args\": {" ws '
-            + _key("metric")
-            + " metric ws \",\" ws"
-            + ' "\"segment_a\": \"city\"," ws "\"segment_b\": \"highway\"" ws "}" ws "}"'
-            + ' | "{" ws '
-            + _kv("tool", "compare")
-            + ' ws "\"args\": {" ws '
-            + _key("metric")
-            + " metric ws \",\" ws"
-            + ' "\"segment_a\": \"highway\"," ws "\"segment_b\": \"city\"" ws "}" ws "}"'
-        ),
-        "metric ::= " + metrics,
-        "",
-        # ---- find_largest_change ----
-        (
-            'find-largest-change-call ::= "{" ws '
-            + _kv("tool", "find_largest_change")
-            + ' ws "\"args\": {" ws '
-            + _key("metric")
-            + " metric ws \",\" ws "
-            + _key("direction")
-            + " direction ws \"}\" ws \"}\""
-        ),
-        "direction ::= " + dirs,
-        "",
-        # ---- trend ----
-        (
-            'trend-call ::= "{" ws '
-            + _kv("tool", "trend")
-            + ' ws "\"args\": {" ws '
-            + _key("metric")
-            + " metric ws \",\" ws "
-            + _key("bucket")
-            + " bucket ws \"}\" ws \"}\""
-        ),
-        "bucket ::= " + buckets,
-        "",
-        # ---- explain_factors ----
-        (
-            'explain-factors-call ::= "{" ws '
-            + _kv("tool", "explain_factors")
-            + ' ws "\"args\": {" ws '
-            + _key("metric")
-            + " metric ws \"}\" ws \"}\""
-        ),
-        "",
-        # ---- out_of_scope ----
-        (
-            'out-of-scope-call ::= "{" ws '
-            + _kv("tool", "out_of_scope")
-            + ' ws "\"args\": {" ws '
-            + _key("reason")
-            + " oos-reason ws \"}\" ws \"}\""
-        ),
-        "oos-reason ::= " + reasons,
-        "",
-        "ws ::= [ \\t\\n\\r]*",
-    ]
-    return "\n".join(lines)
+    for placeholder, val in substitutions.items():
+        tmpl = tmpl.replace(placeholder, val)
+
+    return tmpl
 
 
 # ---------------------------------------------------------------------------

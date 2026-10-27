@@ -1,0 +1,33 @@
+root ::= get-events-call | context-before-call | compare-call | find-largest-change-call | trend-call | explain-factors-call | out-of-scope-call
+
+# ---- get_events ----
+get-events-call ::= "{" ws "\"tool\": \"get_events\"," ws "\"args\": {" ws "\"type\": " ws event-type ws "}" ws "}"
+event-type ::= {{EVENT_TYPES}}
+
+# ---- context_before ----
+context-before-call ::= "{" ws "\"tool\": \"context_before\"," ws "\"args\": {" ws "\"event_id\": " ws event-id cb-opt ws "}" ws "}"
+event-id ::= {{EVENT_IDS}} | "\"EV-" [0-9] [0-9] [0-9] [0-9] "\""
+cb-opt ::= ("," ws "\"seconds\": " ws cb-seconds)?
+cb-seconds ::= "60" | "120" | "180" | "240" | "300"
+
+# ---- compare ----
+compare-call ::= "{" ws "\"tool\": \"compare\"," ws "\"args\": {" ws "\"metric\": " ws metric ws "," ws "\"segment_a\": \"city\"," ws "\"segment_b\": \"highway\"" ws "}" ws "}" | "{" ws "\"tool\": \"compare\"," ws "\"args\": {" ws "\"metric\": " ws metric ws "," ws "\"segment_a\": \"highway\"," ws "\"segment_b\": \"city\"" ws "}" ws "}"
+
+# ---- find_largest_change ----
+find-largest-change-call ::= "{" ws "\"tool\": \"find_largest_change\"," ws "\"args\": {" ws "\"metric\": " ws metric ws "," ws "\"direction\": " ws direction ws "}" ws "}"
+
+# ---- trend ----
+trend-call ::= "{" ws "\"tool\": \"trend\"," ws "\"args\": {" ws "\"metric\": " ws metric ws "," ws "\"bucket\": " ws bucket ws "}" ws "}"
+
+# ---- explain_factors ----
+explain-factors-call ::= "{" ws "\"tool\": \"explain_factors\"," ws "\"args\": {" ws "\"metric\": " ws metric ws "}" ws "}"
+
+# ---- out_of_scope ----
+out-of-scope-call ::= "{" ws "\"tool\": \"out_of_scope\"," ws "\"args\": {" ws "\"reason\": " ws oos-reason ws "}" ws "}"
+oos-reason ::= {{REASONS}}
+
+metric ::= {{METRICS}}
+direction ::= {{DIRECTIONS}}
+bucket ::= {{BUCKETS}}
+
+ws ::= [ \t\n\r]*
