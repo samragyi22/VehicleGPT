@@ -351,8 +351,8 @@ def route(
         return result
 
     # --- Step 1.6: Check control commands and vocabulary gates BEFORE model ---
-    from llm.guards import is_control_command, has_vehicle_terms, OFF_TOPIC_MESSAGE
-    is_ctrl, ctrl_reason = is_control_command(question)
+    from llm.guards import OFF_TOPIC_MESSAGE, has_vehicle_terms, is_control_command
+    is_ctrl, _ = is_control_command(question)
     if is_ctrl:
         result.tool_name = ToolName.out_of_scope
         result.answer = OFF_TOPIC_MESSAGE
