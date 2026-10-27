@@ -350,7 +350,26 @@ def route(
         result.error = "unsupported_time"
         return result
 
-    # --- Step 1.6: Deterministic tool override (why -> explain_factors, when -> find_largest_change) ---
+    # --- Step 1.6: Check control commands and vocabulary gates BEFORE model ---
+    from llm.guards import is_control_command, has_vehicle_terms, OFF_TOPIC_MESSAGE
+    is_ctrl, ctrl_reason = is_control_command(question)
+    if is_ctrl:
+        result.tool_name = ToolName.out_of_scope
+        result.answer = OFF_TOPIC_MESSAGE
+        result.error = "control_refused"
+        result.verified = True
+        return result
+    
+    has_terms = has_vehicle_terms(question)
+    if not has_terms:
+        result.tool_name = ToolName.out_of_scope
+        result.answer = OFF_TOPIC_MESSAGE
+        result.error = "off_topic"
+        result.verified = True
+        return result
+
+    # --- Step 1.7: Deterministic tool override (why -> explain_factors, when -> find_largest_change) ---
+    # --- Step 1.7: Deterministic tool override (why -> explain_factors, when -> find_largest_change) ---
     forced_tool = _deterministic_tool_override(question)
 
     # --- Step 2: Grammar-constrained tool call ---

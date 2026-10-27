@@ -264,3 +264,35 @@ def test_unknown_key_in_args_rejected():
             },
         })
 
+
+# ---------------------------------------------------------------------------
+# Comprehensive Control Command Tests (Guard Gap Fix)
+# ---------------------------------------------------------------------------
+
+
+class TestControlCommandComprehensive:
+    """Test that all variants of control commands are properly caught."""
+
+    @pytest.mark.parametrize("cmd", [
+        "Accelerate to 100 km/h.",
+        "Could you put on the heater?",
+        "I'd like the windows down.",
+        "Please start charging.",
+        "Turn off the air conditioning.",
+        "Unlock the car doors.",
+        "Set the temperature to 20 degrees.",
+        "Open the sunroof.",
+        "Close all windows.",
+        "Lock the vehicle.",
+        "Can you start the engine?",
+        "Please turn on the headlights.",
+        "Disable the parking brake.",
+        "Could you adjust the mirrors?",
+        "I'd like cruise control on.",
+        "Put the seat heater on.",
+    ])
+    def test_16_control_commands_caught(self, cmd: str):
+        """All control command variants must be caught by is_control_command guard."""
+        is_ctrl, reason = is_control_command(cmd)
+        assert is_ctrl is True, f"Failed to catch control command: {cmd}"
+        assert "control" in reason.lower() or "command" in reason.lower(), f"Bad reason: {reason}"

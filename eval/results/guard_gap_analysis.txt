@@ -1,0 +1,70 @@
+================================================================================
+GUARD GAP ANALYSIS: Control Command Detection
+================================================================================
+
+EXACT COMMAND THAT REACHED THE MODEL (1.5B, dev_34):
+  "Accelerate to 100 km/h."
+
+This command contains:
+  - Imperative verb: "Accelerate"
+  - Direct object: "to 100 km/h"
+  - Clear control intent
+
+The is_control_command guard DOES detect this, but it was only added to router.py
+during this session (Step 2 of pre-merge review). Before, there was no guard check
+in the main route() function - the model was called directly with only the prompt
+to guide it.
+
+FINDINGS FROM 16-COMMAND TEST:
+  ✓ Detected (9/16):
+    - Accelerate to 100 km/h.
+    - Turn off the air conditioning.
+    - Unlock the car doors.
+    - Set the temperature to 20 degrees.
+    - Open the sunroof.
+    - Close all windows.
+    - Lock the vehicle.
+    - Can you start the engine?
+    - Please turn on the headlights.
+
+  ✗ Not detected (7/16) - GAPS:
+    - Could you put on the heater?
+    - I'd like the windows down.
+    - Please start charging.
+    - Disable the parking brake.
+    - Could you adjust the mirrors?
+    - I'd like cruise control on.
+    - Put the seat heater on.
+
+DIAGNOSIS:
+The control command detection looks for imperative verbs (start, turn, unlock, etc.)
+but misses some subtler control requests like:
+  - Polite imperatives ("Could you...", "I'd like...")
+  - Unusual verbs ("disable", "adjust", "put")
+  - Noun-based controls ("seat heater", "parking brake", "cruise control")
+
+ROOT CAUSE:
+The is_control_command() guard in llm/guards.py uses regex patterns for common
+control verbs. It needs expansion to catch more variants.
+
+SOLUTION:
+Expand the control command regex patterns in llm/guards.py to include:
+  - Polite forms: "could you", "would you", "can you", "I'd like", "I would like"
+  - Additional verbs: "disable", "put", "adjust", "set", "enable"
+  - Noun patterns: vehicle components that should not be controlled
+
+TESTS ADDED:
+- 16 control command variants as pytest parametrized test
+- These tests currently fail on 7 variants (expose existing gaps)
+- After fixing is_control_command(), all 16 should pass
+
+ACTION TAKEN:
+- Early guard check added to route() function (before model call)
+- Guard check IMMEDIATELY returns with control_refused error
+- No model inference happens for detected control commands
+- This prevents the model from ever answering control requests
+
+COMMITMENT:
+With this fix, commands like "Accelerate to 100 km/h." are caught BEFORE
+the model is called, preventing any inference or tool routing.
+The guard check happens at Step 1.6, before deterministic routing (Step 1.7).
