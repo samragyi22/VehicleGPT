@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 eval/run_part_c.py - Part C: Measure validity with new grammar on dev and stress sets.
 
@@ -16,12 +15,11 @@ import json
 import logging
 import sys
 import time
-from collections import defaultdict
 from pathlib import Path
 
-import config
-
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
+import config
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
@@ -109,7 +107,7 @@ def run_eval_set(model_key: str, eval_set_name: str, questions: list[dict]) -> d
             
             logger.debug(f"  {q_id}: {classification} ({actual_tool})")
         
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             logger.error(f"Error processing {q_id}: {e}")
             results["errors"].append({"id": q_id, "error": str(e)})
             results["statistics"]["wrong"] += 1
@@ -180,4 +178,4 @@ def main():
 
 
 if __name__ == "__main__":
-    exit(main())
+    sys.exit(main())

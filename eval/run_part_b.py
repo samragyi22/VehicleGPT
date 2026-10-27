@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 eval/run_part_b.py - Part B: 200 Generations at Temperature 0.7
 
@@ -13,11 +12,10 @@ Saves results to eval/results/part_b_generations.jsonl (one JSON per line).
 
 import json
 import logging
+import sys
 import time
 from collections import defaultdict
 from pathlib import Path
-
-import config
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
@@ -40,7 +38,6 @@ from schema import (
     EventType,
     Metric,
     Segment,
-    ToolName,
 )
 
 # Collect all enum values
@@ -56,8 +53,8 @@ ENUM_SETS = {
 
 def get_llm():
     """Load the 0.5B model (default) with grammar."""
-    from llm.router import _get_llm
     from llm.grammar import load_grammar
+    from llm.router import _get_llm
     
     llm = _get_llm()
     grammar = load_grammar()
@@ -144,7 +141,7 @@ def generate_samples_for_tool(tool_name: str, count: int, llm, grammar) -> list[
                 "parsed": parsed,
                 "latency_ms": elapsed_ms,
             })
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             logger.error(f"Error generating sample for {tool_name}: {e}")
             samples.append({
                 "tool": tool_name,
@@ -204,7 +201,6 @@ def validate_samples(samples: list[dict]) -> dict:
             if "event_id" in args:
                 val = args["event_id"]
                 # Just check it's non-empty; pattern validation in grammar
-                pass
         
         elif tool == "compare":
             for field in ["metric", "segment_a", "segment_b"]:
@@ -288,19 +284,18 @@ def validate_samples(samples: list[dict]) -> dict:
                 else:
                     stats["enum_coverage"]["metric"].add(val)
         
-        elif tool == "out_of_scope":
-            if "reason" in args:
-                val = args["reason"]
-                if val not in ENUM_SETS["reason"]:
-                    stats["out_of_enum_values"] += 1
-                    stats["out_of_enum_details"].append({
-                        "tool": tool,
-                        "field": "reason",
-                        "value": val,
-                        "expected": list(ENUM_SETS["reason"]),
-                    })
-                else:
-                    stats["enum_coverage"]["reason"].add(val)
+        elif tool == "out_of_scope" and "reason" in args:
+            val = args["reason"]
+            if val not in ENUM_SETS["reason"]:
+                stats["out_of_enum_values"] += 1
+                stats["out_of_enum_details"].append({
+                    "tool": tool,
+                    "field": "reason",
+                    "value": val,
+                    "expected": list(ENUM_SETS["reason"]),
+                })
+            else:
+                stats["enum_coverage"]["reason"].add(val)
     
     return stats
 
@@ -327,8 +322,7 @@ def main():
     # Save to JSONL
     logger.info(f"Saving {len(all_samples)} samples to {OUTPUT_FILE}...")
     with open(OUTPUT_FILE, "w") as f:
-        for sample in all_samples:
-            f.write(json.dumps(sample) + "\n")
+        f.writelines(json.dumps(sample) + "\n" for sample in all_samples)
     
     # Validate
     logger.info("Validating samples...")
@@ -376,4 +370,4 @@ def main():
 
 
 if __name__ == "__main__":
-    exit(main())
+    sys.exit(main())

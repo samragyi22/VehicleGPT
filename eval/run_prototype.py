@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 eval/run_prototype.py - Run the 15-question prototype list on both models.
 
@@ -107,7 +106,7 @@ def run_prototype_on_model(model_key: str) -> dict:
             else:
                 logger.debug(f"  {q_id}: correct")
         
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             logger.error(f"Error processing {q_id}: {e}")
             results["statistics"]["wrong"] += 1
             results["questions"].append({
@@ -170,7 +169,7 @@ def main():
         # Show wrong/false refusals
         wrong_questions = [q for q in result["questions"] if q["classification"] != "correct"]
         if wrong_questions:
-            print(f"\n  Issues:")
+            print("\n  Issues:")
             for q in wrong_questions:
                 print(f"    {q['id']}: expected {q['expected_tool']}, got {q.get('actual_tool', 'ERROR')}")
     
@@ -178,4 +177,4 @@ def main():
 
 
 if __name__ == "__main__":
-    exit(main())
+    sys.exit(main())
