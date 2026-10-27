@@ -572,3 +572,72 @@ class TestRouterE2E:
         r = self._route("Show all ADAS disengagement events from yesterday.")
         total_ms = r.model_ms + r.query_ms + r.render_ms
         assert total_ms < 10_000, f"Total latency {total_ms:.0f} ms exceeds 10 s soft limit"
+
+
+# ===========================================================================
+# 6. Deterministic Routing Rule Tests
+# ===========================================================================
+
+
+class TestDeterministicRouting:
+    """
+    Test the deterministic routing rule (handoff §6 item 6):
+    - "why" + range/efficiency keyword -> explain_factors
+    - "when" / "biggest" / "largest" -> find_largest_change
+    """
+
+    def test_why_pattern_routes_to_explain_factors(self):
+        """'why' + 'range' should route to explain_factors."""
+        from llm.router import _deterministic_tool_override
+
+        result = _deterministic_tool_override("Why has my driving range reduced?")
+        assert result == "explain_factors", f"Expected explain_factors, got {result}"
+
+    def test_why_pattern_with_efficiency(self):
+        """'why' + 'efficiency' should route to explain_factors."""
+        from llm.router import _deterministic_tool_override
+
+        result = _deterministic_tool_override("Why has fuel efficiency improved?")
+        assert result == "explain_factors", f"Expected explain_factors, got {result}"
+
+    def test_when_pattern_routes_to_find_largest_change(self):
+        """'when' should route to find_largest_change."""
+        from llm.router import _deterministic_tool_override
+
+        result = _deterministic_tool_override("When did fuel efficiency show the largest drop?")
+        assert result == "find_largest_change", f"Expected find_largest_change, got {result}"
+
+    def test_biggest_pattern_routes_to_find_largest_change(self):
+        """'biggest' should route to find_largest_change."""
+        from llm.router import _deterministic_tool_override
+
+        result = _deterministic_tool_override("When was the biggest efficiency change?")
+        assert result == "find_largest_change", f"Expected find_largest_change, got {result}"
+
+    def test_largest_pattern_routes_to_find_largest_change(self):
+        """'largest' should route to find_largest_change."""
+        from llm.router import _deterministic_tool_override
+
+        result = _deterministic_tool_override("When did the largest drop occur?")
+        assert result == "find_largest_change", f"Expected find_largest_change, got {result}"
+
+    def test_why_without_efficiency_does_not_override(self):
+        """'why' without efficiency keyword should not override."""
+        from llm.router import _deterministic_tool_override
+
+        result = _deterministic_tool_override("Why did the car accelerate?")
+        assert result is None, f"Expected None (no override), got {result}"
+
+    def test_efficiency_without_why_does_not_override(self):
+        """'efficiency' without 'why' should not override."""
+        from llm.router import _deterministic_tool_override
+
+        result = _deterministic_tool_override("Show me efficiency data")
+        assert result is None, f"Expected None (no override), got {result}"
+
+    def test_when_without_efficiency_still_overrides(self):
+        """'when' should override regardless of metric (matches any question about timing)."""
+        from llm.router import _deterministic_tool_override
+
+        result = _deterministic_tool_override("When did the event happen?")
+        assert result == "find_largest_change", f"Expected find_largest_change, got {result}"
