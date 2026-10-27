@@ -1,0 +1,37 @@
+====================================================================================================
+DEV SET ANALYSIS (40 questions)
+====================================================================================================
+
+0.5B MODEL FAILURES:
+
+  Total failures: 1/40
+
+  dev_37:
+    Question: How do I bake a chocolate cake?
+    Expected: out_of_scope
+    Actual: find_largest_change
+    Diagnosis: wrong tool (find_largest_change vs out_of_scope)
+
+
+1.5B MODEL FAILURES:
+
+  Total failures: 1/40
+
+  dev_34:
+    Question: Accelerate to 100 km/h.
+    Expected: out_of_scope
+    Actual: find_largest_change
+    Diagnosis: wrong tool (find_largest_change vs out_of_scope)
+
+====================================================================================================
+15-QUESTION PROTOTYPE ANALYSIS
+====================================================================================================
+
+0.5B MODEL FAILURES:
+
+  NO FAILURES (all 15/15 correct)
+
+
+1.5B MODEL FAILURES:
+
+  NO FAILURES (all 15/15 correct)
