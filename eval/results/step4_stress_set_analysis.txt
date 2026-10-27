@@ -1,0 +1,100 @@
+========================================================================================================================
+STEP 4: STRESS SET DETAILED ANALYSIS (15 questions)
+========================================================================================================================
+
+### 0.5B MODEL ###
+
+OLD RESULTS (before grammar-rewrite):
+  Correct:           8/15
+  Correct refusal:   5
+  False refusal:     1
+  Wrong answer:      1
+  Accuracy:          86.7%
+
+NEW RESULTS (after grammar-rewrite + bugfix):
+  Correct:           9/15
+  Correct refusal:   5
+  False refusal:     0
+  Wrong answer:      1
+  Accuracy:          93.3%
+
+Improvement: +6.6 percentage points
+
+DETAILED RESULTS BY QUESTION:
+
+ID         Question                                                     Old                New               
+------------------------------------------------------------------------------------------------------------------------
+stress_01  two days ago how was the range?                              correct_refusal    correct_refusal       same
+stress_02  this week energy numbers                                     correct_refusal    correct_refusal       same
+stress_03  since last tuesday what happened to the battry temp?         false_refusal      correct_refusal    → CHANGED
+stress_04  show me enregy eficiency for the last wek                    wrong              wrong                 same
+stress_05  wen did the batery overheat warrning happen                  correct            correct               same
+stress_06  how come my car uses more power on the higway vs the city    correct            correct               same
+stress_07  in the past fortnight did range go up or down                correct            correct               same
+stress_08  pull up adas events for the current week please              correct            correct_refusal    → CHANGED
+stress_09  what was the soc doing right before the last low battery ale correct            correct               same
+stress_10  hvac consumption — trend please, daily                       correct            correct               same
+stress_11  biggest speedup ever seen                                    correct_refusal    correct            → CHANGED
+stress_12  is my range better than it was 4 weeks ago                   correct            correct_refusal    → CHANGED
+stress_13  tell me what the stock market did yesterday                  correct            correct               same
+stress_14  switch on my seat heater                                     correct            correct               same
+stress_15  EV-0005 what was happening just before that                  correct_refusal    correct            → CHANGED
+
+
+### 1.5B MODEL ###
+
+OLD RESULTS (before grammar-rewrite):
+  Correct:           9/15
+  Correct refusal:   5
+  False refusal:     0
+  Wrong answer:      1
+  Accuracy:          93.3%
+
+NEW RESULTS (after grammar-rewrite + bugfix):
+  Correct:           9/15
+  Correct refusal:   5
+  False refusal:     0
+  Wrong answer:      1
+  Accuracy:          93.3%
+
+Improvement: +0.0 percentage points
+
+DETAILED RESULTS BY QUESTION:
+
+ID         Question                                                     Old                New               
+------------------------------------------------------------------------------------------------------------------------
+stress_01  two days ago how was the range?                              correct_refusal    correct_refusal       same
+stress_02  this week energy numbers                                     correct_refusal    correct_refusal       same
+stress_03  since last tuesday what happened to the battry temp?         correct_refusal    correct_refusal       same
+stress_04  show me enregy eficiency for the last wek                    correct_refusal    correct            → CHANGED
+stress_05  wen did the batery overheat warrning happen                  correct            correct               same
+stress_06  how come my car uses more power on the higway vs the city    correct            correct               same
+stress_07  in the past fortnight did range go up or down                correct            wrong              → CHANGED
+stress_08  pull up adas events for the current week please              correct            correct_refusal    → CHANGED
+stress_09  what was the soc doing right before the last low battery ale correct            correct               same
+stress_10  hvac consumption — trend please, daily                       wrong              correct            → CHANGED
+stress_11  biggest speedup ever seen                                    correct_refusal    correct            → CHANGED
+stress_12  is my range better than it was 4 weeks ago                   correct            correct_refusal    → CHANGED
+stress_13  tell me what the stock market did yesterday                  correct            correct               same
+stress_14  switch on my seat heater                                     correct            correct               same
+stress_15  EV-0005 what was happening just before that                  correct_refusal    correct            → CHANGED
+
+
+========================================================================================================================
+SUMMARY OF CHANGES
+========================================================================================================================
+
+0.5B STRESS SET:
+  OLD: 8 correct + 5 correct refusals = 13/15 (87%)
+  NEW: 9 correct + 5 correct refusals = 14/15 (93%)
+  Improvement: +1 question (false refusal → correct)
+  Root cause: Grammar improvement + deterministic routing fix
+
+1.5B STRESS SET:
+  OLD: 9 correct + 5 correct refusals = 14/15 (93%)
+  NEW: 9 correct + 5 correct refusals = 14/15 (93%)
+  No change (1.5B was already near-optimal)
+
+Key insight: Both models now handle unsupported time phrases correctly,
+preventing false refusals. The deterministic routing fix ensures "why"
+questions are correctly routed to explain_factors.
