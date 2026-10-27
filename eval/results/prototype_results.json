@@ -7,10 +7,10 @@
         "id": "proto_01",
         "question": "Why has my driving range reduced over the last two weeks?",
         "expected_tool": "explain_factors",
-        "actual_tool": "",
-        "classification": "wrong",
-        "latency_ms": 1218.9,
-        "error": "Tool call validation failed: 1 validation error for ExplainFactorsArgs\nreason\n  Extra inputs are not permitted [type=extra_forbidden, input_value='ambiguous_query', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/extra_forbidden. Call: {'tool': 'explain_factors', 'args': {'reason': 'ambiguous_query', 'metric': 'estimated_range_km', 'range': {'kind': 'last_14_days'}}}"
+        "actual_tool": "explain_factors",
+        "classification": "correct",
+        "latency_ms": 1236.2,
+        "error": null
       },
       {
         "id": "proto_02",
@@ -18,7 +18,7 @@
         "expected_tool": "find_largest_change",
         "actual_tool": "find_largest_change",
         "classification": "correct",
-        "latency_ms": 475.8,
+        "latency_ms": 474.5,
         "error": null
       },
       {
@@ -27,7 +27,7 @@
         "expected_tool": "get_events",
         "actual_tool": "get_events",
         "classification": "correct",
-        "latency_ms": 384.4,
+        "latency_ms": 385.9,
         "error": null
       },
       {
@@ -36,7 +36,7 @@
         "expected_tool": "context_before",
         "actual_tool": "context_before",
         "classification": "correct",
-        "latency_ms": 516.4,
+        "latency_ms": 526.1,
         "error": null
       },
       {
@@ -45,7 +45,7 @@
         "expected_tool": "compare",
         "actual_tool": "compare",
         "classification": "correct",
-        "latency_ms": 568.5,
+        "latency_ms": 568.3,
         "error": null
       },
       {
@@ -54,7 +54,7 @@
         "expected_tool": "find_largest_change",
         "actual_tool": "find_largest_change",
         "classification": "correct",
-        "latency_ms": 487.7,
+        "latency_ms": 485.5,
         "error": null
       },
       {
@@ -72,7 +72,7 @@
         "expected_tool": "context_before",
         "actual_tool": "context_before",
         "classification": "correct",
-        "latency_ms": 529.2,
+        "latency_ms": 528.8,
         "error": null
       },
       {
@@ -81,17 +81,17 @@
         "expected_tool": "compare",
         "actual_tool": "compare",
         "classification": "correct",
-        "latency_ms": 578.2,
+        "latency_ms": 569.1,
         "error": null
       },
       {
         "id": "proto_10",
         "question": "Why has vehicle driving range decreased over the past 14 days?",
         "expected_tool": "explain_factors",
-        "actual_tool": "",
-        "classification": "wrong",
-        "latency_ms": 344.9,
-        "error": "Tool call validation failed: 1 validation error for ExplainFactorsArgs\nreason\n  Extra inputs are not permitted [type=extra_forbidden, input_value='not_vehicle_data', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/extra_forbidden. Call: {'tool': 'explain_factors', 'args': {'reason': 'not_vehicle_data', 'metric': 'estimated_range_km', 'range': {'kind': 'last_14_days'}}}"
+        "actual_tool": "explain_factors",
+        "classification": "correct",
+        "latency_ms": 382.9,
+        "error": null
       },
       {
         "id": "proto_11",
@@ -99,7 +99,7 @@
         "expected_tool": "trend",
         "actual_tool": "trend",
         "classification": "correct",
-        "latency_ms": 455.4,
+        "latency_ms": 449.6,
         "error": null
       },
       {
@@ -108,7 +108,7 @@
         "expected_tool": "get_events",
         "actual_tool": "get_events",
         "classification": "correct",
-        "latency_ms": 345.7,
+        "latency_ms": 346.6,
         "error": null
       },
       {
@@ -117,7 +117,7 @@
         "expected_tool": "context_before",
         "actual_tool": "context_before",
         "classification": "correct",
-        "latency_ms": 525.7,
+        "latency_ms": 523.9,
         "error": null
       },
       {
@@ -126,7 +126,7 @@
         "expected_tool": "compare",
         "actual_tool": "compare",
         "classification": "correct",
-        "latency_ms": 553.2,
+        "latency_ms": 560.0,
         "error": null
       },
       {
@@ -135,36 +135,36 @@
         "expected_tool": "find_largest_change",
         "actual_tool": "find_largest_change",
         "classification": "correct",
-        "latency_ms": 472.2,
+        "latency_ms": 477.3,
         "error": null
       }
     ],
     "statistics": {
-      "correct": 13,
-      "wrong": 2,
+      "correct": 15,
+      "wrong": 0,
       "correct_refusal": 0,
       "false_refusal": 0,
       "unsupported_time": 0,
-      "latency_median_ms": 487.7,
-      "latency_p95_ms": 1218.9,
-      "latency_mean_ms": 522.5
+      "latency_median_ms": 485.5,
+      "latency_p95_ms": 1236.2,
+      "latency_mean_ms": 526.4
     },
     "latencies_ms": [
-      1218.867333023809,
-      475.82745901308954,
-      384.38154198229313,
-      516.436584002804,
-      568.5497500235215,
-      487.6803340157494,
-      380.7648330111988,
-      529.2458329931833,
-      578.2141659874469,
-      344.8813749710098,
-      455.36612503929064,
-      345.6749170436524,
-      525.7354159839451,
-      553.1982089742087,
-      472.2357919672504
+      1236.1669160309248,
+      474.4562080013566,
+      385.92437497572973,
+      526.1355839902535,
+      568.273583019618,
+      485.52616697270423,
+      380.75062504503876,
+      528.7926250020973,
+      569.105957983993,
+      382.933208020404,
+      449.62008303264156,
+      346.6142080142163,
+      523.9253750187345,
+      559.9837089539506,
+      477.27241698885337
     ]
   },
   "1.5b": {
@@ -177,7 +177,7 @@
         "expected_tool": "explain_factors",
         "actual_tool": "explain_factors",
         "classification": "correct",
-        "latency_ms": 2312.4,
+        "latency_ms": 2295.0,
         "error": null
       },
       {
@@ -186,7 +186,7 @@
         "expected_tool": "find_largest_change",
         "actual_tool": "find_largest_change",
         "classification": "correct",
-        "latency_ms": 690.4,
+        "latency_ms": 694.5,
         "error": null
       },
       {
@@ -195,7 +195,7 @@
         "expected_tool": "get_events",
         "actual_tool": "get_events",
         "classification": "correct",
-        "latency_ms": 542.1,
+        "latency_ms": 535.4,
         "error": null
       },
       {
@@ -204,7 +204,7 @@
         "expected_tool": "context_before",
         "actual_tool": "context_before",
         "classification": "correct",
-        "latency_ms": 747.2,
+        "latency_ms": 747.7,
         "error": null
       },
       {
@@ -213,7 +213,7 @@
         "expected_tool": "compare",
         "actual_tool": "compare",
         "classification": "correct",
-        "latency_ms": 1047.8,
+        "latency_ms": 1055.1,
         "error": null
       },
       {
@@ -222,7 +222,7 @@
         "expected_tool": "find_largest_change",
         "actual_tool": "find_largest_change",
         "classification": "correct",
-        "latency_ms": 898.8,
+        "latency_ms": 907.2,
         "error": null
       },
       {
@@ -231,7 +231,7 @@
         "expected_tool": "get_events",
         "actual_tool": "get_events",
         "classification": "correct",
-        "latency_ms": 528.7,
+        "latency_ms": 538.0,
         "error": null
       },
       {
@@ -240,7 +240,7 @@
         "expected_tool": "context_before",
         "actual_tool": "context_before",
         "classification": "correct",
-        "latency_ms": 746.6,
+        "latency_ms": 747.6,
         "error": null
       },
       {
@@ -249,7 +249,7 @@
         "expected_tool": "compare",
         "actual_tool": "compare",
         "classification": "correct",
-        "latency_ms": 1059.0,
+        "latency_ms": 1063.2,
         "error": null
       },
       {
@@ -258,7 +258,7 @@
         "expected_tool": "explain_factors",
         "actual_tool": "explain_factors",
         "classification": "correct",
-        "latency_ms": 526.1,
+        "latency_ms": 528.6,
         "error": null
       },
       {
@@ -267,7 +267,7 @@
         "expected_tool": "trend",
         "actual_tool": "trend",
         "classification": "correct",
-        "latency_ms": 641.9,
+        "latency_ms": 644.8,
         "error": null
       },
       {
@@ -276,7 +276,7 @@
         "expected_tool": "get_events",
         "actual_tool": "get_events",
         "classification": "correct",
-        "latency_ms": 495.8,
+        "latency_ms": 480.5,
         "error": null
       },
       {
@@ -285,7 +285,7 @@
         "expected_tool": "context_before",
         "actual_tool": "context_before",
         "classification": "correct",
-        "latency_ms": 764.9,
+        "latency_ms": 752.4,
         "error": null
       },
       {
@@ -294,7 +294,7 @@
         "expected_tool": "compare",
         "actual_tool": "compare",
         "classification": "correct",
-        "latency_ms": 814.9,
+        "latency_ms": 806.5,
         "error": null
       },
       {
@@ -303,7 +303,7 @@
         "expected_tool": "find_largest_change",
         "actual_tool": "find_largest_change",
         "classification": "correct",
-        "latency_ms": 670.2,
+        "latency_ms": 679.0,
         "error": null
       }
     ],
@@ -313,26 +313,26 @@
       "correct_refusal": 0,
       "false_refusal": 0,
       "unsupported_time": 0,
-      "latency_median_ms": 746.6,
-      "latency_p95_ms": 2312.4,
-      "latency_mean_ms": 832.4
+      "latency_median_ms": 747.6,
+      "latency_p95_ms": 2295.0,
+      "latency_mean_ms": 831.7
     },
     "latencies_ms": [
-      2312.417250010185,
-      690.3647079598159,
-      542.0688330195844,
-      747.1631250227802,
-      1047.7863329579122,
-      898.7912089796737,
-      528.6525409901515,
-      746.6190839768387,
-      1058.990250050556,
-      526.0713329771534,
-      641.8534999829717,
-      495.7710420130752,
-      764.9162079906091,
-      814.9051659856923,
-      670.1847920194268
+      2294.952791999094,
+      694.5135410060175,
+      535.4421670199372,
+      747.6967499824241,
+      1055.1365830469877,
+      907.1683340007439,
+      537.9709590342827,
+      747.5515410187654,
+      1063.2341669988818,
+      528.6144170095213,
+      644.817249965854,
+      480.5377500015311,
+      752.3854169994593,
+      806.4632079913281,
+      678.9824169827625
     ]
   }
 }
