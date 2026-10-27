@@ -296,3 +296,54 @@ class TestControlCommandComprehensive:
         is_ctrl, reason = is_control_command(cmd)
         assert is_ctrl is True, f"Failed to catch control command: {cmd}"
         assert "control" in reason.lower() or "command" in reason.lower(), f"Bad reason: {reason}"
+
+
+# ---------------------------------------------------------------------------
+# Gate Tightening Tests: Off-Topic vs Vehicle Questions
+# ---------------------------------------------------------------------------
+
+
+class TestGateTightening:
+    """Test that off-topic questions fail the gate, vehicle questions pass."""
+
+    @pytest.mark.parametrize("off_topic_q", [
+        "How do I bake a chocolate cake?",
+        "What is the capital of France?",
+        "Tell me a joke.",
+        "How do I tie a necktie?",
+        "What is the weather today?",
+        "Who won the World Cup?",
+        "How do I solve a quadratic equation?",
+        "What is quantum physics?",
+        "How do I cook pasta?",
+        "Tell me about ancient Rome.",
+        "What is the best pizza recipe?",
+        "How do I play chess?",
+        "What are the rules of cricket?",
+        "Tell me about famous painters.",
+        "How do I knit a sweater?",
+        "What is the stock market?",
+        "How do I meditate?",
+        "What are the Olympics?",
+        "Tell me about astronomy.",
+        "How do I make sushi?",
+    ])
+    def test_20_off_topic_questions_fail_gate(self, off_topic_q: str):
+        """Off-topic questions must fail the has_vehicle_terms gate."""
+        assert has_vehicle_terms(off_topic_q) is False, f"Off-topic question passed gate: {off_topic_q}"
+
+    @pytest.mark.parametrize("typo_vehicle_q", [
+        "Why has my driving range redused?",  # typo: redused→reduced
+        "When did enregy eficiency change?",  # typos: enregy→energy, eficiency→efficiency
+        "Show all ADAS disenganement events.",  # typo: disenganement→disengagement
+        "What happend before the battry warning?",  # typos: happend→happened, battry→battery
+        "Compare energy consumtion between city and highway.",  # typo: consumtion→consumption
+        "Show the daily trnd in power.",  # typo: trnd→trend
+        "When did pack temp rise the most?",  # abbrev: temp, temp→temperature
+        "List all low SOC warrnings.",  # typo: warrnings→warnings
+        "Show hvac consuption trends.",  # typo: consuption→consumption
+        "What happend before the latest ADAS event?",  # typo: happend→happened
+    ])
+    def test_10_vehicle_questions_with_typos_pass_gate(self, typo_vehicle_q: str):
+        """Vehicle questions with typos must still pass the fuzzy matching gate."""
+        assert has_vehicle_terms(typo_vehicle_q) is True, f"Vehicle question with typos failed gate: {typo_vehicle_q}"
