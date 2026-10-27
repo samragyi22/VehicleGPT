@@ -1,0 +1,338 @@
+{
+  "0.5b": {
+    "model": "0.5b",
+    "total_questions": 15,
+    "questions": [
+      {
+        "id": "proto_01",
+        "question": "Why has my driving range reduced over the last two weeks?",
+        "expected_tool": "explain_factors",
+        "actual_tool": "",
+        "classification": "wrong",
+        "latency_ms": 1218.9,
+        "error": "Tool call validation failed: 1 validation error for ExplainFactorsArgs\nreason\n  Extra inputs are not permitted [type=extra_forbidden, input_value='ambiguous_query', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/extra_forbidden. Call: {'tool': 'explain_factors', 'args': {'reason': 'ambiguous_query', 'metric': 'estimated_range_km', 'range': {'kind': 'last_14_days'}}}"
+      },
+      {
+        "id": "proto_02",
+        "question": "When did fuel efficiency show the largest drop?",
+        "expected_tool": "find_largest_change",
+        "actual_tool": "find_largest_change",
+        "classification": "correct",
+        "latency_ms": 475.8,
+        "error": null
+      },
+      {
+        "id": "proto_03",
+        "question": "Show all ADAS disengagement events from yesterday.",
+        "expected_tool": "get_events",
+        "actual_tool": "get_events",
+        "classification": "correct",
+        "latency_ms": 384.4,
+        "error": null
+      },
+      {
+        "id": "proto_04",
+        "question": "What happened before the battery overheating warning?",
+        "expected_tool": "context_before",
+        "actual_tool": "context_before",
+        "classification": "correct",
+        "latency_ms": 516.4,
+        "error": null
+      },
+      {
+        "id": "proto_05",
+        "question": "Compare energy consumption between city and highway driving.",
+        "expected_tool": "compare",
+        "actual_tool": "compare",
+        "classification": "correct",
+        "latency_ms": 568.5,
+        "error": null
+      },
+      {
+        "id": "proto_06",
+        "question": "When did energy efficiency show the largest drop?",
+        "expected_tool": "find_largest_change",
+        "actual_tool": "find_largest_change",
+        "classification": "correct",
+        "latency_ms": 487.7,
+        "error": null
+      },
+      {
+        "id": "proto_07",
+        "question": "Show ADAS disengagements from yesterday.",
+        "expected_tool": "get_events",
+        "actual_tool": "get_events",
+        "classification": "correct",
+        "latency_ms": 380.8,
+        "error": null
+      },
+      {
+        "id": "proto_08",
+        "question": "What happened before EV-0002 battery overheating warning?",
+        "expected_tool": "context_before",
+        "actual_tool": "context_before",
+        "classification": "correct",
+        "latency_ms": 529.2,
+        "error": null
+      },
+      {
+        "id": "proto_09",
+        "question": "Compare energy consumption for city vs highway driving.",
+        "expected_tool": "compare",
+        "actual_tool": "compare",
+        "classification": "correct",
+        "latency_ms": 578.2,
+        "error": null
+      },
+      {
+        "id": "proto_10",
+        "question": "Why has vehicle driving range decreased over the past 14 days?",
+        "expected_tool": "explain_factors",
+        "actual_tool": "",
+        "classification": "wrong",
+        "latency_ms": 344.9,
+        "error": "Tool call validation failed: 1 validation error for ExplainFactorsArgs\nreason\n  Extra inputs are not permitted [type=extra_forbidden, input_value='not_vehicle_data', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/extra_forbidden. Call: {'tool': 'explain_factors', 'args': {'reason': 'not_vehicle_data', 'metric': 'estimated_range_km', 'range': {'kind': 'last_14_days'}}}"
+      },
+      {
+        "id": "proto_11",
+        "question": "Show the daily trend in energy consumption for the last 7 days.",
+        "expected_tool": "trend",
+        "actual_tool": "trend",
+        "classification": "correct",
+        "latency_ms": 455.4,
+        "error": null
+      },
+      {
+        "id": "proto_12",
+        "question": "List all low battery warnings in the last 14 days.",
+        "expected_tool": "get_events",
+        "actual_tool": "get_events",
+        "classification": "correct",
+        "latency_ms": 345.7,
+        "error": null
+      },
+      {
+        "id": "proto_13",
+        "question": "What happened before the latest ADAS disengagement?",
+        "expected_tool": "context_before",
+        "actual_tool": "context_before",
+        "classification": "correct",
+        "latency_ms": 525.7,
+        "error": null
+      },
+      {
+        "id": "proto_14",
+        "question": "Compare pack temperature between city and highway driving.",
+        "expected_tool": "compare",
+        "actual_tool": "compare",
+        "classification": "correct",
+        "latency_ms": 553.2,
+        "error": null
+      },
+      {
+        "id": "proto_15",
+        "question": "When did pack temperature show the largest rise?",
+        "expected_tool": "find_largest_change",
+        "actual_tool": "find_largest_change",
+        "classification": "correct",
+        "latency_ms": 472.2,
+        "error": null
+      }
+    ],
+    "statistics": {
+      "correct": 13,
+      "wrong": 2,
+      "correct_refusal": 0,
+      "false_refusal": 0,
+      "unsupported_time": 0,
+      "latency_median_ms": 487.7,
+      "latency_p95_ms": 1218.9,
+      "latency_mean_ms": 522.5
+    },
+    "latencies_ms": [
+      1218.867333023809,
+      475.82745901308954,
+      384.38154198229313,
+      516.436584002804,
+      568.5497500235215,
+      487.6803340157494,
+      380.7648330111988,
+      529.2458329931833,
+      578.2141659874469,
+      344.8813749710098,
+      455.36612503929064,
+      345.6749170436524,
+      525.7354159839451,
+      553.1982089742087,
+      472.2357919672504
+    ]
+  },
+  "1.5b": {
+    "model": "1.5b",
+    "total_questions": 15,
+    "questions": [
+      {
+        "id": "proto_01",
+        "question": "Why has my driving range reduced over the last two weeks?",
+        "expected_tool": "explain_factors",
+        "actual_tool": "explain_factors",
+        "classification": "correct",
+        "latency_ms": 2312.4,
+        "error": null
+      },
+      {
+        "id": "proto_02",
+        "question": "When did fuel efficiency show the largest drop?",
+        "expected_tool": "find_largest_change",
+        "actual_tool": "find_largest_change",
+        "classification": "correct",
+        "latency_ms": 690.4,
+        "error": null
+      },
+      {
+        "id": "proto_03",
+        "question": "Show all ADAS disengagement events from yesterday.",
+        "expected_tool": "get_events",
+        "actual_tool": "get_events",
+        "classification": "correct",
+        "latency_ms": 542.1,
+        "error": null
+      },
+      {
+        "id": "proto_04",
+        "question": "What happened before the battery overheating warning?",
+        "expected_tool": "context_before",
+        "actual_tool": "context_before",
+        "classification": "correct",
+        "latency_ms": 747.2,
+        "error": null
+      },
+      {
+        "id": "proto_05",
+        "question": "Compare energy consumption between city and highway driving.",
+        "expected_tool": "compare",
+        "actual_tool": "compare",
+        "classification": "correct",
+        "latency_ms": 1047.8,
+        "error": null
+      },
+      {
+        "id": "proto_06",
+        "question": "When did energy efficiency show the largest drop?",
+        "expected_tool": "find_largest_change",
+        "actual_tool": "find_largest_change",
+        "classification": "correct",
+        "latency_ms": 898.8,
+        "error": null
+      },
+      {
+        "id": "proto_07",
+        "question": "Show ADAS disengagements from yesterday.",
+        "expected_tool": "get_events",
+        "actual_tool": "get_events",
+        "classification": "correct",
+        "latency_ms": 528.7,
+        "error": null
+      },
+      {
+        "id": "proto_08",
+        "question": "What happened before EV-0002 battery overheating warning?",
+        "expected_tool": "context_before",
+        "actual_tool": "context_before",
+        "classification": "correct",
+        "latency_ms": 746.6,
+        "error": null
+      },
+      {
+        "id": "proto_09",
+        "question": "Compare energy consumption for city vs highway driving.",
+        "expected_tool": "compare",
+        "actual_tool": "compare",
+        "classification": "correct",
+        "latency_ms": 1059.0,
+        "error": null
+      },
+      {
+        "id": "proto_10",
+        "question": "Why has vehicle driving range decreased over the past 14 days?",
+        "expected_tool": "explain_factors",
+        "actual_tool": "explain_factors",
+        "classification": "correct",
+        "latency_ms": 526.1,
+        "error": null
+      },
+      {
+        "id": "proto_11",
+        "question": "Show the daily trend in energy consumption for the last 7 days.",
+        "expected_tool": "trend",
+        "actual_tool": "trend",
+        "classification": "correct",
+        "latency_ms": 641.9,
+        "error": null
+      },
+      {
+        "id": "proto_12",
+        "question": "List all low battery warnings in the last 14 days.",
+        "expected_tool": "get_events",
+        "actual_tool": "get_events",
+        "classification": "correct",
+        "latency_ms": 495.8,
+        "error": null
+      },
+      {
+        "id": "proto_13",
+        "question": "What happened before the latest ADAS disengagement?",
+        "expected_tool": "context_before",
+        "actual_tool": "context_before",
+        "classification": "correct",
+        "latency_ms": 764.9,
+        "error": null
+      },
+      {
+        "id": "proto_14",
+        "question": "Compare pack temperature between city and highway driving.",
+        "expected_tool": "compare",
+        "actual_tool": "compare",
+        "classification": "correct",
+        "latency_ms": 814.9,
+        "error": null
+      },
+      {
+        "id": "proto_15",
+        "question": "When did pack temperature show the largest rise?",
+        "expected_tool": "find_largest_change",
+        "actual_tool": "find_largest_change",
+        "classification": "correct",
+        "latency_ms": 670.2,
+        "error": null
+      }
+    ],
+    "statistics": {
+      "correct": 15,
+      "wrong": 0,
+      "correct_refusal": 0,
+      "false_refusal": 0,
+      "unsupported_time": 0,
+      "latency_median_ms": 746.6,
+      "latency_p95_ms": 2312.4,
+      "latency_mean_ms": 832.4
+    },
+    "latencies_ms": [
+      2312.417250010185,
+      690.3647079598159,
+      542.0688330195844,
+      747.1631250227802,
+      1047.7863329579122,
+      898.7912089796737,
+      528.6525409901515,
+      746.6190839768387,
+      1058.990250050556,
+      526.0713329771534,
+      641.8534999829717,
+      495.7710420130752,
+      764.9162079906091,
+      814.9051659856923,
+      670.1847920194268
+    ]
+  }
+}
