@@ -376,9 +376,10 @@ def route(
             call_dict.get("tool"), forced_tool, question,
         )
         call_dict["tool"] = forced_tool
+        # Replace args with clean args for the new tool (old args may not match)
+        call_dict["args"] = {}
         # Ensure metric is present for explain_factors / find_largest_change
-        if "metric" not in call_dict.get("args", {}):
-            call_dict.setdefault("args", {})["metric"] = "estimated_range_km"
+        call_dict.setdefault("args", {})["metric"] = "estimated_range_km"
 
     # Inject the authoritative time range (model never emits range)
     if call_dict.get("tool") not in ("context_before", "out_of_scope"):
