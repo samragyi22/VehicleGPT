@@ -25,11 +25,49 @@ The UI uses the default Qwen2.5-0.5B GGUF. The benchmark runs the 0.5B model fir
 
 ## Results
 
-| Measurement | Result | Source |
-|---|---|---|
-| Constrained container latency and memory | Not measured: Docker Desktop daemon was unavailable in this session. | [`container_benchmark_blocked.txt`](eval/results/container_benchmark_blocked.txt) |
+Environment: **emulated constrained environment on Apple Silicon (Docker, 2 GB, 2 CPUs); timings are optimistic compared with automotive cores**. Each model ran the 28 vehicle questions for three passes. Measurements below are from [`benchmark_summary.txt`](eval/results/benchmark_summary.txt) and the per-query records [`benchmark_0_5b.jsonl`](eval/results/benchmark_0_5b.jsonl) and [`benchmark_1_5b.jsonl`](eval/results/benchmark_1_5b.jsonl).
 
-Benchmark measurements, when available, are labeled **emulated constrained environment on Apple Silicon**. They are not vehicle-hardware timings. This README does not substitute native or prototype measurements for the requested container run.
+Peak RSS is the in-process peak; anon/file are the highest sampled cgroup `memory.stat` values. The warm per-tool statistics exclude the first record, which is reported separately as cold start. Median and p95 are in milliseconds.
+
+| Model | Peak RSS (MB) | cgroup anon (MB) | cgroup file (MB) |
+|---|---:|---:|---:|
+| 0.5B | 660.71 | 162.11 | 472.13 |
+| 1.5B | 1287.59 | 191.57 | 1065.90 |
+
+### First query (cold start)
+
+The first query in each run was `dev_01` (`explain_factors`). The table reports total / model / query time in milliseconds.
+
+| Model | Total time | Model time | Query time |
+|---|---:|---:|---:|
+| 0.5B | 12937.51 | 12471.60 | 44.07 |
+| 1.5B | 33410.73 | 32458.55 | 50.82 |
+
+### Warm query timings by tool
+
+The first record was omitted from these warm figures. Each timing column gives median / p95 in milliseconds.
+
+**0.5B**
+
+| Tool | Total median / p95 | Model median / p95 | Query median / p95 |
+|---|---:|---:|---:|
+| compare | 925.68 / 990.26 | 901.74 / 962.57 | 25.64 / 28.59 |
+| context_before | 879.64 / 917.06 | 877.72 / 914.97 | 1.67 / 5.72 |
+| explain_factors | 748.10 / 768.39 | 706.26 / 722.39 | 43.50 / 45.49 |
+| find_largest_change | 801.51 / 867.64 | 768.93 / 833.83 | 33.23 / 36.34 |
+| get_events | 697.68 / 731.04 | 697.17 / 730.50 | 0.22 / 0.25 |
+| trend | 798.71 / 899.24 | 778.16 / 865.68 | 20.80 / 33.43 |
+
+**1.5B**
+
+| Tool | Total median / p95 | Model median / p95 | Query median / p95 |
+|---|---:|---:|---:|
+| compare | 2060.24 / 2136.99 | 2032.46 / 2108.29 | 27.59 / 35.40 |
+| context_before | 2022.86 / 2144.95 | 2020.47 / 2142.85 | 1.66 / 9.51 |
+| explain_factors | 1771.70 / 1819.53 | 1732.67 / 1774.11 | 37.55 / 46.24 |
+| find_largest_change | 1817.95 / 1956.30 | 1783.01 / 1921.69 | 34.19 / 37.57 |
+| get_events | 1628.39 / 1763.64 | 1627.78 / 1763.01 | 0.23 / 0.30 |
+| trend | 1886.92 / 2038.27 | 1876.48 / 2005.74 | 20.30 / 35.48 |
 
 ## Held-out evaluation (first run, unbiased)
 
@@ -56,7 +94,9 @@ Failure causes, by type: two model errors (one wrong tool and one false `out_of_
 ## Known limitations
 
 - The data is simulated, not collected from a production vehicle.
-- Apple Silicon container timings are not vehicle timings.
+- Apple Silicon container timings are optimistic compared with automotive cores and are not vehicle timings.
+- Cold-start latency is much higher than warm-query latency.
+- The 1.5B model misses the 2 s target on some tools.
 - Dev and stress questions are builder-written; they are not held-out accuracy measurements.
 - The model selects tools. Deterministic code resolves dates and executes queries.
 - Real vehicle integration, target-board validation, encryption, and access controls remain future work.
