@@ -1,5 +1,5 @@
 {"id": "stress_01", "question": "two days ago how was the range?", "expected_tool": "explain_factors", "expected_args": {"metric": "estimated_range_km"}, "expected_status": "unsupported_time", "category": "unusual_time"}
-{"id": "stress_02", "question": "this week energy numbers", "expected_tool": "trend", "expected_args": {"metric": "energy_wh_per_km"}, "expected_status": "unsupported_time", "category": "unusual_time"}
+{"id": "stress_02", "question": "this week energy numbers", "expected_tool": "trend", "expected_args": {"metric": "energy_wh_per_km"}, "expected_status": "ok", "category": "unusual_time"}
 {"id": "stress_03", "question": "since last tuesday what happened to the battry temp?", "expected_tool": "trend", "expected_args": {"metric": "pack_temp_c"}, "expected_status": "unsupported_time", "category": "typo_unusual_time"}
 {"id": "stress_04", "question": "show me enregy eficiency for the last wek", "expected_tool": "trend", "expected_args": {"metric": "energy_wh_per_km"}, "expected_status": "ok", "category": "typo"}
 {"id": "stress_05", "question": "wen did the batery overheat warrning happen", "expected_tool": "get_events", "expected_args": {"type": "BATTERY_OVERHEAT_WARNING"}, "expected_status": "ok", "category": "typo"}

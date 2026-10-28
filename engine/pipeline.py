@@ -51,7 +51,7 @@ from llm.guards import (
     is_grounded,
     normalize_tool_args,
 )
-from llm.timeparse import UNSUPPORTED_TIME_MESSAGE, parse_time_range
+from llm.timeparse import UNSUPPORTED_TIME_MESSAGE, interpretation_text, parse_time_range
 from schema import (
     CompareArgs,
     ContextBeforeArgs,
@@ -172,6 +172,7 @@ def run_pipeline(
     # =========================================================================
     t0 = time.perf_counter()
     authoritative_range, _ = parse_time_range(question, model_range=None)
+    interp_text = interpretation_text(question, authoritative_range)
     timings["timeparse_ms"] = round((time.perf_counter() - t0) * 1000, 2)
     if authoritative_range is None:
         timings["total_ms"] = round((time.perf_counter() - t_start) * 1000, 2)
@@ -387,8 +388,12 @@ def run_pipeline(
 
     timings["total_ms"] = round((time.perf_counter() - t_start) * 1000, 2)
 
+    final_answer = verified_answer
+    if interp_text:
+        final_answer = f"{interp_text}\n{verified_answer}"
+
     return PipelineResult(
-        answer=verified_answer,
+        answer=final_answer,
         tool_call=call_dict,
         evidence=tool_output.evidence,
         timings=timings,

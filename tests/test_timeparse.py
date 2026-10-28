@@ -2,7 +2,7 @@
 tests/test_timeparse.py - Tests for Deterministic Natural-Language Time Parser.
 """
 
-from llm.timeparse import parse_time_range
+from llm.timeparse import interpretation_text, parse_time_range
 
 
 def test_yesterday_parsed():
@@ -78,8 +78,25 @@ def test_two_days_ago_returns_none():
     assert r is None
 
 
-def test_this_week_returns_none():
+def test_this_week_maps_to_7_days():
+    """'this week' is now deterministic: the last 7 days (updated from clarification)."""
     r, _ = parse_time_range("this week energy numbers")
+    assert r == {"kind": "last_7_days"}
+
+
+def test_past_week_maps_to_7_days():
+    r, _ = parse_time_range("show energy numbers for the past week")
+    assert r == {"kind": "last_7_days"}
+
+
+def test_last_month_maps_to_28_days():
+    r, _ = parse_time_range("how was consumption over the last month?")
+    assert r == {"kind": "last_28_days"}
+
+
+def test_n_weeks_ago_returns_none():
+    """'N weeks ago' stays a clarification request."""
+    r, _ = parse_time_range("how was range 2 weeks ago?")
     assert r is None
 
 
@@ -97,4 +114,15 @@ def test_no_time_phrase_still_defaults_all_history():
     """When no temporal phrase is present at all, all_history is used."""
     r, _ = parse_time_range("biggest speedup ever seen")
     assert r == {"kind": "all_history"}
+
+
+def test_interpretation_text_states_phrase_and_dates():
+    text = interpretation_text("this week energy numbers", {"kind": "last_7_days"})
+    assert text == "Interpreted 'this week' as the last 7 days (21 Oct to 28 Oct)."
+
+
+def test_interpretation_text_no_phrase():
+    text = interpretation_text("Compare energy consumption between city and highway.", {"kind": "all_history"})
+    assert text.startswith("No time phrase found; interpreting as all history")
+    assert "30 Sep" in text and "28 Oct" in text
 
