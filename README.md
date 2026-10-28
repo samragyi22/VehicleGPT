@@ -31,6 +31,20 @@ The UI uses the default Qwen2.5-0.5B GGUF. The benchmark runs the 0.5B model fir
 
 Benchmark measurements, when available, are labeled **emulated constrained environment on Apple Silicon**. They are not vehicle-hardware timings. This README does not substitute native or prototype measurements for the requested container run.
 
+## Held-out evaluation (first run, unbiased)
+
+The team lead ran the frozen pipeline once, without tuning before or after, against a question file written by the team and kept outside the repository. The run used the pipeline frozen at tag `freeze-v1` (commit `506d995`) and repository commit `f39f634`. The question file SHA-256 is `e4fe4284f519794a71d11cceda73f8f3dce03a7c3aaec3d540ecfe38627d0b34`. Per-question results, without question text, are in [`heldout_first_run.json`](eval/results/heldout_first_run.json); the recorded report is [`heldout_first_run.md`](eval/results/heldout_first_run.md).
+
+| Question category | Count | Result |
+|---|---:|---|
+| Vehicle questions | 19 | Exact match: 14/19 (73.7%) |
+| Vehicle failures | — | Wrong tool: 1; false refusal: 2 (one clarification request and one `out_of_scope`); refused as ungrounded: 2 |
+| Non-vehicle questions | 11 | All refused or clarified (5 off-topic, 3 control commands, 1 time clarification, 2 ambiguous); 3 had a different refusal label than expected |
+
+Failure causes, by type: two model errors (one wrong tool and one false `out_of_scope` on an explanatory question); three rule gaps (grounding does not recognize “led up to,” grounding misses “by day,” and a synonym gap for “efficient” with informal road-type words); and one control-command guard vocabulary gap (“cabin”). Two ambiguous questions were refused rather than clarified; this is acceptable behavior but differs from the expected label.
+
+**small sample (19 vehicle questions); dev and stress sets are builder-written and score higher**
+
 ## Demonstrated / Target to validate / Planned
 
 | Status | Capability |
@@ -46,6 +60,11 @@ Benchmark measurements, when available, are labeled **emulated constrained envir
 - Dev and stress questions are builder-written; they are not held-out accuracy measurements.
 - The model selects tools. Deterministic code resolves dates and executes queries.
 - Real vehicle integration, target-board validation, encryption, and access controls remain future work.
+- The first held-out run exposed two model errors (one wrong tool and one false `out_of_scope` on an explanatory question); grounding gaps for “led up to” and “by day”; a synonym gap for “efficient” with informal road-type words; and a control-command guard vocabulary gap for “cabin.” Two ambiguous questions were refused rather than clarified.
+
+## Future work
+
+Fix the rule gaps and re-measure on new questions, never on this set.
 
 ## Models and licenses
 

@@ -1,0 +1,325 @@
+{
+  "vehicle": {
+    "exact": 14,
+    "tool_only": 0,
+    "wrong": 1,
+    "false_refusal": 2,
+    "other": 2
+  },
+  "refusals": {
+    "pass": 8,
+    "fail": 3
+  },
+  "rows": [
+    {
+      "i": 1,
+      "cls": "EXACT",
+      "tool": "get_events",
+      "args": {
+        "type": "ADAS_DISENGAGEMENT",
+        "range": {
+          "kind": "yesterday"
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "i": 2,
+      "cls": "EXACT",
+      "tool": "get_events",
+      "args": {
+        "type": "BATTERY_OVERHEAT_WARNING",
+        "range": {
+          "kind": "last_14_days"
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "i": 3,
+      "cls": "EXACT",
+      "tool": "get_events",
+      "args": {
+        "type": "LOW_SOC_WARNING",
+        "range": {
+          "kind": "last_14_days"
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "i": 4,
+      "cls": "EXACT",
+      "tool": "get_events",
+      "args": {
+        "type": "ADAS_DISENGAGEMENT",
+        "range": {
+          "kind": "last_7_days"
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "i": 5,
+      "cls": "OTHER",
+      "tool": "context_before",
+      "args": {
+        "event_id": "EV-0005",
+        "seconds": 300
+      },
+      "status": "ungrounded"
+    },
+    {
+      "i": 6,
+      "cls": "EXACT",
+      "tool": "context_before",
+      "args": {
+        "event_id": "latest_ADAS_DISENGAGEMENT",
+        "seconds": 300
+      },
+      "status": "ok"
+    },
+    {
+      "i": 7,
+      "cls": "WRONG",
+      "tool": "find_largest_change",
+      "args": {
+        "range": {
+          "kind": "all_history"
+        },
+        "metric": "hvac_power_kw"
+      },
+      "status": "ok"
+    },
+    {
+      "i": 8,
+      "cls": "FALSE_REFUSAL",
+      "tool": "find_largest_change",
+      "args": {
+        "metric": "energy_wh_per_km",
+        "direction": "drop",
+        "range": {
+          "kind": "all_history"
+        }
+      },
+      "status": "ambiguous_metric"
+    },
+    {
+      "i": 9,
+      "cls": "EXACT",
+      "tool": "compare",
+      "args": {
+        "metric": "hvac_power_kw",
+        "segment_a": "city",
+        "segment_b": "highway",
+        "range": {
+          "kind": "all_history"
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "i": 10,
+      "cls": "EXACT",
+      "tool": "compare",
+      "args": {
+        "metric": "pack_temp_c",
+        "segment_a": "city",
+        "segment_b": "highway",
+        "range": {
+          "kind": "last_7_days"
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "i": 11,
+      "cls": "EXACT",
+      "tool": "find_largest_change",
+      "args": {
+        "range": {
+          "kind": "all_history"
+        },
+        "direction": "rise",
+        "metric": "energy_wh_per_km"
+      },
+      "status": "ok"
+    },
+    {
+      "i": 12,
+      "cls": "EXACT",
+      "tool": "find_largest_change",
+      "args": {
+        "metric": "soc_pct",
+        "direction": "drop",
+        "range": {
+          "kind": "all_history"
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "i": 13,
+      "cls": "EXACT",
+      "tool": "find_largest_change",
+      "args": {
+        "metric": "hvac_power_kw",
+        "direction": "rise",
+        "range": {
+          "kind": "all_history"
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "i": 14,
+      "cls": "EXACT",
+      "tool": "trend",
+      "args": {
+        "metric": "pack_temp_c",
+        "bucket": "day",
+        "range": {
+          "kind": "last_14_days"
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "i": 15,
+      "cls": "EXACT",
+      "tool": "trend",
+      "args": {
+        "metric": "estimated_range_km",
+        "bucket": "week",
+        "range": {
+          "kind": "all_history"
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "i": 16,
+      "cls": "EXACT",
+      "tool": "trend",
+      "args": {
+        "metric": "speed_kmh",
+        "bucket": "hour",
+        "range": {
+          "kind": "yesterday"
+        }
+      },
+      "status": "ok"
+    },
+    {
+      "i": 17,
+      "cls": "OTHER",
+      "tool": "find_largest_change",
+      "args": {
+        "metric": "soc_pct",
+        "direction": "drop",
+        "range": {
+          "kind": "last_28_days"
+        }
+      },
+      "status": "ungrounded"
+    },
+    {
+      "i": 18,
+      "cls": "FALSE_REFUSAL",
+      "tool": "out_of_scope",
+      "args": {
+        "reason": "not_vehicle_data"
+      },
+      "status": "out_of_scope"
+    },
+    {
+      "i": 19,
+      "cls": "EXACT",
+      "tool": "explain_factors",
+      "args": {
+        "range": {
+          "kind": "last_7_days"
+        },
+        "metric": "energy_wh_per_km"
+      },
+      "status": "ok"
+    },
+    {
+      "i": 20,
+      "cls": "refusal",
+      "tool": null,
+      "args": null,
+      "status": "unsupported_time"
+    },
+    {
+      "i": 21,
+      "cls": "refusal",
+      "tool": null,
+      "args": null,
+      "status": "off_topic"
+    },
+    {
+      "i": 22,
+      "cls": "refusal",
+      "tool": null,
+      "args": null,
+      "status": "off_topic"
+    },
+    {
+      "i": 23,
+      "cls": "refusal",
+      "tool": null,
+      "args": null,
+      "status": "off_topic"
+    },
+    {
+      "i": 24,
+      "cls": "refusal",
+      "tool": null,
+      "args": null,
+      "status": "off_topic"
+    },
+    {
+      "i": 25,
+      "cls": "refusal",
+      "tool": null,
+      "args": null,
+      "status": "off_topic"
+    },
+    {
+      "i": 26,
+      "cls": "refusal",
+      "tool": null,
+      "args": null,
+      "status": "control_refused"
+    },
+    {
+      "i": 27,
+      "cls": "refusal",
+      "tool": null,
+      "args": null,
+      "status": "off_topic"
+    },
+    {
+      "i": 28,
+      "cls": "refusal",
+      "tool": null,
+      "args": null,
+      "status": "control_refused"
+    },
+    {
+      "i": 29,
+      "cls": "refusal",
+      "tool": null,
+      "args": null,
+      "status": "out_of_scope"
+    },
+    {
+      "i": 30,
+      "cls": "refusal",
+      "tool": null,
+      "args": null,
+      "status": "off_topic"
+    }
+  ]
+}

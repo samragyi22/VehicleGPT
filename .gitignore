@@ -64,3 +64,6 @@ HANDOFF_SUMMARY.md
 *.local.md
 *_local_notes.*
 NOTES.local.*
+heldout*.jsonl
+heldout*.json
+!eval/results/heldout_first_run.json
