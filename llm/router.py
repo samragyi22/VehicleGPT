@@ -82,25 +82,25 @@ Rules:
 4. out_of_scope reason must be exactly one of: not_vehicle_data, vehicle_control_prohibited, ambiguous_query.
 
 Examples:
-Q: Show all ADAS disengagement events.
+Q: List events where the driver assistance system disengaged.
 A: {"tool": "get_events", "args": {"type": "ADAS_DISENGAGEMENT"}}
 
 Q: Why has my driving range reduced?
 A: {"tool": "explain_factors", "args": {"metric": "estimated_range_km"}}
 
-Q: When did energy efficiency show the largest drop?
+Q: Which point in time had the biggest efficiency decrease?
 A: {"tool": "find_largest_change", "args": {"metric": "energy_wh_per_km", "direction": "drop"}}
 
-Q: What happened before the battery overheating warning?
+Q: Show signal values leading up to the last overheat warning.
 A: {"tool": "context_before", "args": {"event_id": "latest_BATTERY_OVERHEAT_WARNING", "seconds": 300}}
 
-Q: Compare energy consumption between city and highway driving.
+Q: Compute the energy usage difference on city roads versus motorway.
 A: {"tool": "compare", "args": {"metric": "energy_wh_per_km", "segment_a": "city", "segment_b": "highway"}}
 
-Q: What is the capital of France?
+Q: Tell me the population of France.
 A: {"tool": "out_of_scope", "args": {"reason": "not_vehicle_data"}}
 
-Q: Turn off the air conditioning.
+Q: Lower the driver side glass.
 A: {"tool": "out_of_scope", "args": {"reason": "vehicle_control_prohibited"}}
 """
 

@@ -1,0 +1,12 @@
+{"q": "How has my driving range changed this week?", "expect_status": "ok", "tool": "trend", "args": {"metric": "estimated_range_km"}}
+{"q": "When did the battery range have its biggest drop?", "expect_status": "ok", "tool": "find_largest_change", "args": {"metric": "estimated_range_km", "direction": "drop"}}
+{"q": "How much air conditioning power did the cabin use daily over the last week?", "expect_status": "ok", "tool": "trend", "args": {"metric": "hvac_power_kw"}}
+{"q": "Was heating power higher on the highway than in the city?", "expect_status": "ok", "tool": "compare", "args": {"metric": "hvac_power_kw"}}
+{"q": "Show the battery temperature trend by day.", "expect_status": "ok", "tool": "trend", "args": {"metric": "pack_temp_c"}}
+{"q": "When did the pack temperature increase the most?", "expect_status": "ok", "tool": "find_largest_change", "args": {"metric": "pack_temp_c", "direction": "rise"}}
+{"q": "What did the charge level look like yesterday?", "expect_status": "ok", "tool": "trend", "args": {"metric": "soc_pct"}}
+{"q": "When did the state of charge drop the most?", "expect_status": "ok", "tool": "find_largest_change", "args": {"metric": "soc_pct", "direction": "drop"}}
+{"q": "Compare speed on the highway versus city.", "expect_status": "ok", "tool": "compare", "args": {"metric": "speed_kmh"}}
+{"q": "Show my speed trend for the last 7 days.", "expect_status": "ok", "tool": "trend", "args": {"metric": "speed_kmh"}}
+{"q": "Show the daily energy consumption trend for the last week.", "expect_status": "ok", "tool": "trend", "args": {"metric": "energy_wh_per_km"}}
+{"q": "Compare energy consumption in the city versus the highway.", "expect_status": "ok", "tool": "compare", "args": {"metric": "energy_wh_per_km"}}

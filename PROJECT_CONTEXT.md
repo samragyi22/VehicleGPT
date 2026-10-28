@@ -245,3 +245,27 @@ These were resolved during Phase 1a and must not be changed silently.
 - Lead users: service engineers and validation teams; also drivers and fleet operators (one compact line).
 - Scalability story: same tool interface from a laptop container, to a Raspberry Pi/ARM board, to a vehicle HPC with an NPU and a larger model (planned).
 - Privacy: local-only processing, encrypted storage (planned), role-based access (planned), camera data kept as extracted events rather than stored frames (planned).
+
+---
+
+## 13. Updates from the grammar-rewrite handoff (2026-10-28)
+
+Where CODING_AGENT_HANDOFF.md and this file differ, the handoff's newer decisions win:
+
+- **Control-command guard vocabulary** now also catches polite/imperative forms
+  ("could you put on the heater", "I'd like the windows down", "please start
+  charging", "turn up the volume", "switch to sport mode") in `llm/guards.py`.
+- **Honest accuracy runs** (dev + stress on 0.5B and 1.5B) are saved under
+  `eval/results/`; refusal questions are scored as pass/fail of the guard/gate/
+  time-parser layers and are not counted as model accuracy.
+- New eval runners: `eval/report_accuracy.py` (dev/stress honesty report),
+  `eval/run_heldout.py PATH` (user's held-out set, full pipeline, run once, no
+  tuning), `eval/prompt_overlap.py` (few-shot vs question word overlap).
+- Known discrepancy (not yet resolved): the handoff plans support for
+  "this week"/"last month"/"past fortnight"/"two days ago", but the stress set
+  expects those to return `unsupported_time`. Do not change the time parser
+  without deciding which expectation is authoritative.
+- The earlier claim that main's code "is completely broken on stress" was an
+  artifact of a worktree missing the git-ignored `data/vehicle.db` and
+  `models/`; with symlinks restored, main runs on the dev set (results in
+  `eval/results/old_main_results.txt`).

@@ -1,0 +1,130 @@
+
+=== Model 0.5b ===
+  [OK] dev_01: tool_correct   | explain_factors    | 
+  [X] dev_02: args_wrong     | find_largest_change | args={'metric': 'estimated_range_km', 'direction': 'drop', 'range': {'kind': 'all_history'}}
+  [OK] dev_03: tool_correct   | get_events         | 
+  [OK] dev_04: tool_correct   | context_before     | 
+  [OK] dev_05: tool_correct   | compare            | 
+  [OK] dev_06: tool_correct   | explain_factors    | 
+  [OK] dev_07: tool_correct   | explain_factors    | 
+  [OK] dev_08: tool_correct   | find_largest_change | 
+  [X] dev_09: args_wrong     | find_largest_change | args={'metric': 'estimated_range_km', 'direction': 'drop', 'range': {'kind': 'all_history'}}
+  [OK] dev_10: tool_correct   | get_events         | 
+  [OK] dev_11: tool_correct   | get_events         | 
+  [OK] dev_12: tool_correct   | context_before     | 
+  [OK] dev_13: tool_correct   | context_before     | 
+  [OK] dev_14: tool_correct   | compare            | 
+  [OK] dev_15: tool_correct   | compare            | 
+  [OK] dev_16: tool_correct   | trend              | 
+  [OK] dev_17: tool_correct   | trend              | 
+  [OK] dev_18: tool_correct   | trend              | 
+  [OK] dev_19: tool_correct   | get_events         | 
+  [OK] dev_20: tool_correct   | get_events         | 
+  [OK] dev_21: tool_correct   | context_before     | 
+  [OK] dev_22: tool_correct   | compare            | 
+  [OK] dev_23: tool_correct   | find_largest_change | 
+  [OK] dev_24: tool_correct   | trend              | 
+  [OK] dev_25: tool_correct   | get_events         | 
+  [OK] dev_26: tool_correct   | compare            | 
+  [OK] dev_27: tool_correct   | find_largest_change | 
+  [OK] dev_28: tool_correct   | context_before     | 
+  [X] stress_04: false_refusal  | out_of_scope       | model returned out_of_scope
+  [OK] stress_05: tool_correct   | get_events         | 
+  [X] stress_06: args_wrong     | compare            | args={'metric': 'pack_temp_c', 'segment_a': 'highway', 'segment_b': 'city', 'range': {'kind': 'all_history'}}
+  [OK] stress_07: tool_correct   | find_largest_change | 
+  [X] stress_09: partial        | context_before     | two_part_answered_part_1
+  [OK] stress_10: tool_correct   | trend              | 
+  [X] stress_11: args_wrong     | find_largest_change | args={'metric': 'estimated_range_km', 'range': {'kind': 'all_history'}}
+  [OK] stress_15: tool_correct   | context_before     | 
+
+  Vehicle questions (36): tool_correct=30, args_wrong=4, wrong=0, false_refusal=1, partial=1, pipeline_error=0
+  Vehicle latency: median=498ms, max=1420ms
+  Refusal questions: pass=19, fail=0 (deterministic layers, not model)
+
+=== Model 1.5b ===
+  [OK] dev_01: tool_correct   | explain_factors    | 
+  [OK] dev_02: tool_correct   | find_largest_change | 
+  [OK] dev_03: tool_correct   | get_events         | 
+  [OK] dev_04: tool_correct   | context_before     | 
+  [OK] dev_05: tool_correct   | compare            | 
+  [OK] dev_06: tool_correct   | explain_factors    | 
+  [OK] dev_07: tool_correct   | explain_factors    | 
+  [OK] dev_08: tool_correct   | find_largest_change | 
+  [OK] dev_09: tool_correct   | find_largest_change | 
+  [OK] dev_10: tool_correct   | get_events         | 
+  [OK] dev_11: tool_correct   | get_events         | 
+  [OK] dev_12: tool_correct   | context_before     | 
+  [OK] dev_13: tool_correct   | context_before     | 
+  [OK] dev_14: tool_correct   | compare            | 
+  [OK] dev_15: tool_correct   | compare            | 
+  [OK] dev_16: tool_correct   | trend              | 
+  [OK] dev_17: tool_correct   | trend              | 
+  [OK] dev_18: tool_correct   | trend              | 
+  [OK] dev_19: tool_correct   | get_events         | 
+  [OK] dev_20: tool_correct   | get_events         | 
+  [OK] dev_21: tool_correct   | context_before     | 
+  [OK] dev_22: tool_correct   | compare            | 
+  [OK] dev_23: tool_correct   | find_largest_change | 
+  [OK] dev_24: tool_correct   | trend              | 
+  [OK] dev_25: tool_correct   | get_events         | 
+  [OK] dev_26: tool_correct   | compare            | 
+  [OK] dev_27: tool_correct   | find_largest_change | 
+  [OK] dev_28: tool_correct   | context_before     | 
+  [OK] stress_04: tool_correct   | trend              | 
+  [OK] stress_05: tool_correct   | get_events         | 
+  [OK] stress_06: tool_correct   | compare            | 
+  [X] stress_07: wrong          | trend              | tool=trend args={'metric': 'estimated_range_km', 'bucket': 'week', 'range': {'kind': 'last_14_days'}}
+  [X] stress_09: partial        | context_before     | two_part_answered_part_1
+  [OK] stress_10: tool_correct   | trend              | 
+  [OK] stress_11: tool_correct   | find_largest_change | 
+  [OK] stress_15: tool_correct   | context_before     | 
+
+  Vehicle questions (36): tool_correct=34, args_wrong=0, wrong=1, false_refusal=0, partial=1, pipeline_error=0
+  Vehicle latency: median=705ms, max=2874ms
+  Refusal questions: pass=19, fail=0 (deterministic layers, not model)
+=================== METRIC PROBE 0.5B ===================
+
+Held-out set: eval/results/metric_probe.jsonl (12 questions)
+Model pipeline: guard -> gate -> time parser -> grammar-constrained model -> validation -> tools -> render -> verify
+
+[FALSE_REFUSAL] #1 expected=trend              status=unsupported_time      | How has my driving range changed this week?
+[EXACT] #2 expected=find_largest_change                              | When did the battery range have its biggest drop?
+[FALSE_REFUSAL] #3 expected=trend              status=out_of_scope          | How much air conditioning power did the cabin use da
+[EXACT] #4 expected=compare                                         | Was heating power higher on the highway than in the 
+[EXACT] #5 expected=trend                                           | Show the battery temperature trend by day.
+[EXACT] #6 expected=find_largest_change                              | When did the pack temperature increase the most?
+[OTHER] #7 expected=trend              status=ungrounded            | What did the charge level look like yesterday?
+[TOOL_ONLY] #8 expected=find_largest_change args={'metric': 'pack_temp_c', 'direction': 'drop', 'range': {'kind': 'all_history'}} | When did the state of charge drop the most?
+[EXACT] #9 expected=compare                                         | Compare speed on the highway versus city.
+[EXACT] #10 expected=trend                                           | Show my speed trend for the last 7 days.
+[EXACT] #11 expected=trend                                           | Show the daily energy consumption trend for the last
+[EXACT] #12 expected=compare                                         | Compare energy consumption in the city versus the hi
+
+================================================================
+Vehicle questions (12): exact=8, tool_only=1, wrong=0, false_refusal=2, other=1
+Vehicle exact-match accuracy: 8/12 (66.7%)
+Refusal questions (0): pass=0, fail=0 (guard/gate/time parser; not model accuracy)
+Raw results saved to eval/results/metric_probe.results.json
+=================== METRIC PROBE 1.5B ===================
+
+Held-out set: eval/results/metric_probe.jsonl (12 questions)
+Model pipeline: guard -> gate -> time parser -> grammar-constrained model -> validation -> tools -> render -> verify
+
+[FALSE_REFUSAL] #1 expected=trend              status=unsupported_time      | How has my driving range changed this week?
+[EXACT] #2 expected=find_largest_change                              | When did the battery range have its biggest drop?
+[OTHER] #3 expected=trend              status=ungrounded            | How much air conditioning power did the cabin use da
+[EXACT] #4 expected=compare                                         | Was heating power higher on the highway than in the 
+[EXACT] #5 expected=trend                                           | Show the battery temperature trend by day.
+[EXACT] #6 expected=find_largest_change                              | When did the pack temperature increase the most?
+[EXACT] #7 expected=trend                                           | What did the charge level look like yesterday?
+[EXACT] #8 expected=find_largest_change                              | When did the state of charge drop the most?
+[EXACT] #9 expected=compare                                         | Compare speed on the highway versus city.
+[EXACT] #10 expected=trend                                           | Show my speed trend for the last 7 days.
+[EXACT] #11 expected=trend                                           | Show the daily energy consumption trend for the last
+[EXACT] #12 expected=compare                                         | Compare energy consumption in the city versus the hi
+
+================================================================
+Vehicle questions (12): exact=10, tool_only=0, wrong=0, false_refusal=1, other=1
+Vehicle exact-match accuracy: 10/12 (83.3%)
+Refusal questions (0): pass=0, fail=0 (guard/gate/time parser; not model accuracy)
+Raw results saved to eval/results/metric_probe.results.json

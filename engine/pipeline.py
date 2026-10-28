@@ -52,7 +52,17 @@ from llm.guards import (
     normalize_tool_args,
 )
 from llm.timeparse import UNSUPPORTED_TIME_MESSAGE, parse_time_range
-from schema import ToolName, ToolOutput
+from schema import (
+    CompareArgs,
+    ContextBeforeArgs,
+    ExplainFactorsArgs,
+    FindLargestChangeArgs,
+    GetEventsArgs,
+    OutOfScopeArgs,
+    ToolName,
+    ToolOutput,
+    TrendArgs,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -83,6 +93,19 @@ _TOOL_MAP = {
     ToolName.trend: trend,
     ToolName.explain_factors: explain_factors,
     ToolName.out_of_scope: out_of_scope,
+}
+
+# Allowed arg keys per tool, derived from schema.py Pydantic models. Models
+# sometimes copy keys across tools (e.g. event_id into a trend call); such
+# keys are dropped here instead of letting the whole call fail validation.
+_TOOL_ARG_KEYS: dict[str, set[str]] = {
+    ToolName.get_events: set(GetEventsArgs.model_fields),
+    ToolName.context_before: set(ContextBeforeArgs.model_fields),
+    ToolName.compare: set(CompareArgs.model_fields),
+    ToolName.find_largest_change: set(FindLargestChangeArgs.model_fields),
+    ToolName.trend: set(TrendArgs.model_fields),
+    ToolName.explain_factors: set(ExplainFactorsArgs.model_fields),
+    ToolName.out_of_scope: set(OutOfScopeArgs.model_fields),
 }
 
 
@@ -245,6 +268,12 @@ def run_pipeline(
     # Stage 6: Normalize args then Schema Validation
     # =========================================================================
     args = call_dict.get("args", {})
+    allowed_keys = _TOOL_ARG_KEYS.get(call_dict.get("tool", ""))
+    if allowed_keys is not None:
+        for key in list(args):
+            if key not in allowed_keys and key != "range":
+                logger.info("Dropping arg %r not in %s schema", key, call_dict["tool"])
+                args.pop(key)
     args = normalize_tool_args(args, question=question, tool_name=call_dict.get("tool", ""))
     call_dict["args"] = args
     t0 = time.perf_counter()

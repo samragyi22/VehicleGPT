@@ -24,24 +24,32 @@ _STOPWORDS = {
     "can", "all", "between", "from", "have", "has", "had", "be", "been",
 }
 
+def _load_examples() -> list[tuple[str, str]]:
+    """Extract the few-shot Q lines from the live system prompt (single source)."""
+    from llm.router import _SYSTEM_PROMPT
+    lines = _SYSTEM_PROMPT.splitlines()
+    start = next(i for i, l in enumerate(lines) if l.strip() == "Examples:")
+    out = []
+    for i in range(start + 1, len(lines)):
+        l = lines[i].strip()
+        if l.startswith("Q: "):
+            out.append((f"shot_{len(out) + 1}", l[3:]))
+    return out
+
+
 _FEWSHOT_EXAMPLES = [
-    ("shots/tool_list/get_events", "get_events: list battery overheating warnings, "
-     "ads disengagements, or low-charge warnings."),
-    ("shots/example_1", "Show all ADAS disengagement events."),
-    ("shots/example_2", "Why has my driving range reduced?"),
-    ("shots/example_3", "When did energy efficiency show the largest drop?"),
-    ("shots/example_4", "What happened before the battery overheating warning?"),
-    ("shots/example_5", "Compare energy consumption between city and highway driving."),
-    ("shots/example_6", "What is the capital of France?"),
-    ("shots/example_7", "Turn off the air conditioning."),
-]
-_TOOL_TITLES = [
-    ("tools_line_get_events", "get_events"),
-    ("tools_line_context_before", "context_before"),
-    ("tools_line_compare", "compare"),
-    ("tools_line_find_largest_change", "find_largest_change"),
-    ("tools_line_trend", "trend"),
-    ("tools_line_explain_factors", "explain_factors"),
+    ("shots/tool_list_get_events",
+     "get_events: list battery overheating warnings, ADAS disengagements, or low-charge warnings."),
+    ("shots/tool_list_context_before",
+     "context_before: show signals in the seconds before a specific event."),
+    ("shots/tool_list_compare",
+     "compare: compare a metric between city and highway driving."),
+    ("shots/tool_list_find_largest_change",
+     "find_largest_change: find when a metric dropped or rose the most."),
+    ("shots/tool_list_trend",
+     "trend: show how a metric changed over time (hourly / daily / weekly)."),
+    ("shots/tool_list_explain_factors",
+     "explain_factors: explain why a metric changed, ranking possible contributing factors."),
 ]
 
 
@@ -77,16 +85,6 @@ def main() -> None:
                 print(f"{q_id:12} vs {ex_key:44} {ov:7.3f}{flag}")
             if ov > THRESHOLD:
                 contaminated.append((q_id, ex_key, round(ov, 3)))
-
-    print("\n" + "=" * 68)
-    print("tool/tool-list lines (informational, they are vocab not examples):")
-    for t_key, t_text in _TOOL_TITLES:
-        max_ov, max_q = 0.0, ""
-        for q_id, q_text in questions:
-            ov = jaccard(content_words(t_text), content_words(q_text))
-            if ov > max_ov:
-                max_ov, max_q = ov, q_id
-        print(f"{t_key:52} max={max_ov:.3f} vs {max_q}")
 
     print("\n" + "=" * 68)
     if contaminated:

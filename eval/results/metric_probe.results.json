@@ -1,0 +1,181 @@
+{
+  "file": "eval/results/metric_probe.jsonl",
+  "vehicle": {
+    "exact": 10,
+    "tool_only": 0,
+    "wrong": 0,
+    "false_refusal": 1,
+    "other": 1
+  },
+  "refusals": {
+    "pass": 0,
+    "fail": 0
+  },
+  "rows": [
+    {
+      "i": 1,
+      "cls": "FALSE_REFUSAL",
+      "tool": null,
+      "args": {},
+      "status": "unsupported_time",
+      "answer": "I recognised a time reference in your question but could not map it to a supported window (yesterday, last N days/hours, last 7/14/28 days, or all history). Please rephrase using one of those, e.g. 'last 7 days' or 'yesterday'."
+    },
+    {
+      "i": 2,
+      "cls": "EXACT",
+      "tool": "find_largest_change",
+      "args": {
+        "metric": "estimated_range_km",
+        "direction": "drop",
+        "range": {
+          "kind": "all_history"
+        }
+      },
+      "status": "ok",
+      "answer": "The largest change in estimated_range_km occurred on 2026-10-06:\n- Previous value (2026-10-05): 170.9 Wh/km\n- New value (2026-10-06): 141.1 Wh/km\n- Shift: -29.8 Wh/km (-17.4%)"
+    },
+    {
+      "i": 3,
+      "cls": "OTHER",
+      "tool": "find_largest_change",
+      "args": {
+        "metric": "hvac_power_kw",
+        "direction": "rise",
+        "range": {
+          "kind": "last_7_days"
+        }
+      },
+      "status": "ungrounded",
+      "answer": "Telemetry grounding failure: find_largest_change selected without change/extremum context."
+    },
+    {
+      "i": 4,
+      "cls": "EXACT",
+      "tool": "compare",
+      "args": {
+        "metric": "hvac_power_kw",
+        "segment_a": "highway",
+        "segment_b": "city",
+        "range": {
+          "kind": "all_history"
+        }
+      },
+      "status": "ok",
+      "answer": "Comparison of hvac_power_kw between highway and city driving:\n- Highway: 1.27 Wh/km\n- City: 0.99 Wh/km\nCity driving used 0.3 Wh/km (-22.0%) less energy than highway driving."
+    },
+    {
+      "i": 5,
+      "cls": "EXACT",
+      "tool": "trend",
+      "args": {
+        "metric": "pack_temp_c",
+        "bucket": "day",
+        "range": {
+          "kind": "all_history"
+        }
+      },
+      "status": "ok",
+      "answer": "Trend for pack_temp_c across 28 day bucket(s) is rising with a slope of +2.161 per day. Latest value: 193.9 Wh/km."
+    },
+    {
+      "i": 6,
+      "cls": "EXACT",
+      "tool": "find_largest_change",
+      "args": {
+        "metric": "pack_temp_c",
+        "direction": "rise",
+        "range": {
+          "kind": "all_history"
+        }
+      },
+      "status": "ok",
+      "answer": "Need at least 2 distinct days."
+    },
+    {
+      "i": 7,
+      "cls": "EXACT",
+      "tool": "trend",
+      "args": {
+        "metric": "soc_pct",
+        "bucket": "day",
+        "range": {
+          "kind": "yesterday"
+        }
+      },
+      "status": "ok",
+      "answer": "Trend for soc_pct across 1 day bucket(s) is stable with a slope of +0.000 per day. Latest value: 193.9 Wh/km."
+    },
+    {
+      "i": 8,
+      "cls": "EXACT",
+      "tool": "find_largest_change",
+      "args": {
+        "metric": "soc_pct",
+        "direction": "drop",
+        "range": {
+          "kind": "all_history"
+        }
+      },
+      "status": "ok",
+      "answer": "Need at least 2 distinct days."
+    },
+    {
+      "i": 9,
+      "cls": "EXACT",
+      "tool": "compare",
+      "args": {
+        "metric": "speed_kmh",
+        "segment_a": "highway",
+        "segment_b": "city",
+        "range": {
+          "kind": "all_history"
+        }
+      },
+      "status": "ok",
+      "answer": "Comparison of speed_kmh between highway and city driving:\n- Highway: 98.07 Wh/km\n- City: 28.82 Wh/km\nCity driving used 69.2 Wh/km (-70.6%) less energy than highway driving."
+    },
+    {
+      "i": 10,
+      "cls": "EXACT",
+      "tool": "trend",
+      "args": {
+        "metric": "speed_kmh",
+        "bucket": "week",
+        "range": {
+          "kind": "last_7_days"
+        }
+      },
+      "status": "ok",
+      "answer": "Trend for speed_kmh across 7 week bucket(s) is rising with a slope of +0.361 per week. Latest value: 193.9 Wh/km."
+    },
+    {
+      "i": 11,
+      "cls": "EXACT",
+      "tool": "trend",
+      "args": {
+        "metric": "energy_wh_per_km",
+        "bucket": "day",
+        "range": {
+          "kind": "last_7_days"
+        }
+      },
+      "status": "ok",
+      "answer": "Trend for energy_wh_per_km across 7 day bucket(s) is rising with a slope of +0.361 per day. Latest value: 193.9 Wh/km."
+    },
+    {
+      "i": 12,
+      "cls": "EXACT",
+      "tool": "compare",
+      "args": {
+        "metric": "energy_wh_per_km",
+        "segment_a": "city",
+        "segment_b": "highway",
+        "range": {
+          "kind": "all_history"
+        }
+      },
+      "status": "ok",
+      "answer": "Comparison of energy_wh_per_km between city and highway driving:\n- City: 133.4 Wh/km\n- Highway: 188.6 Wh/km\nHighway driving used 55.2 Wh/km (+41.4%) more energy than city driving."
+    }
+  ]
+}

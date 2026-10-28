@@ -1,0 +1,68 @@
+
+=== Model 0.5b ===
+  [OK] dev_01: tool_correct   | explain_factors    | 
+  [OK] dev_02: tool_correct   | find_largest_change | 
+  [OK] dev_03: tool_correct   | get_events         | 
+  [OK] dev_04: tool_correct   | context_before     | 
+  [OK] dev_05: tool_correct   | compare            | 
+  [OK] dev_06: tool_correct   | explain_factors    | 
+  [OK] dev_07: tool_correct   | explain_factors    | 
+  [OK] dev_08: tool_correct   | find_largest_change | 
+  [OK] dev_09: tool_correct   | find_largest_change | 
+  [OK] dev_10: tool_correct   | get_events         | 
+  [OK] dev_11: tool_correct   | get_events         | 
+  [OK] dev_12: tool_correct   | context_before     | 
+  [OK] dev_13: tool_correct   | context_before     | 
+  [OK] dev_14: tool_correct   | compare            | 
+  [OK] dev_15: tool_correct   | compare            | 
+  [OK] dev_16: tool_correct   | trend              | 
+  [OK] dev_17: tool_correct   | trend              | 
+  [OK] dev_18: tool_correct   | trend              | 
+  [OK] dev_19: tool_correct   | get_events         | 
+  [OK] dev_20: tool_correct   | get_events         | 
+  [OK] dev_21: tool_correct   | context_before     | 
+  [OK] dev_22: tool_correct   | compare            | 
+  [X] dev_23: args_wrong     | find_largest_change | args={'metric': 'estimated_range_km', 'range': {'kind': 'all_history'}, 'direction': 'rise'}
+  [OK] dev_24: tool_correct   | trend              | 
+  [OK] dev_25: tool_correct   | get_events         | 
+  [OK] dev_26: tool_correct   | compare            | 
+  [OK] dev_27: tool_correct   | find_largest_change | 
+  [OK] dev_28: tool_correct   | context_before     | 
+
+  Vehicle questions (28): tool_correct=27, args_wrong=1, wrong=0, false_refusal=0, partial=0, pipeline_error=0
+  Vehicle latency: median=519ms, max=5270ms
+  Refusal questions: pass=12, fail=0 (deterministic layers, not model)
+
+=== Model 1.5b ===
+  [OK] dev_01: tool_correct   | explain_factors    | 
+  [OK] dev_02: tool_correct   | find_largest_change | 
+  [OK] dev_03: tool_correct   | get_events         | 
+  [OK] dev_04: tool_correct   | context_before     | 
+  [OK] dev_05: tool_correct   | compare            | 
+  [OK] dev_06: tool_correct   | explain_factors    | 
+  [OK] dev_07: tool_correct   | explain_factors    | 
+  [OK] dev_08: tool_correct   | find_largest_change | 
+  [OK] dev_09: tool_correct   | find_largest_change | 
+  [OK] dev_10: tool_correct   | get_events         | 
+  [OK] dev_11: tool_correct   | get_events         | 
+  [OK] dev_12: tool_correct   | context_before     | 
+  [OK] dev_13: tool_correct   | context_before     | 
+  [OK] dev_14: tool_correct   | compare            | 
+  [OK] dev_15: tool_correct   | compare            | 
+  [OK] dev_16: tool_correct   | trend              | 
+  [OK] dev_17: tool_correct   | trend              | 
+  [OK] dev_18: tool_correct   | trend              | 
+  [OK] dev_19: tool_correct   | get_events         | 
+  [OK] dev_20: tool_correct   | get_events         | 
+  [OK] dev_21: tool_correct   | context_before     | 
+  [OK] dev_22: tool_correct   | compare            | 
+  [OK] dev_23: tool_correct   | find_largest_change | 
+  [OK] dev_24: tool_correct   | trend              | 
+  [OK] dev_25: tool_correct   | get_events         | 
+  [OK] dev_26: tool_correct   | compare            | 
+  [OK] dev_27: tool_correct   | find_largest_change | 
+  [OK] dev_28: tool_correct   | context_before     | 
+
+  Vehicle questions (28): tool_correct=28, args_wrong=0, wrong=0, false_refusal=0, partial=0, pipeline_error=0
+  Vehicle latency: median=681ms, max=2356ms
+  Refusal questions: pass=12, fail=0 (deterministic layers, not model)

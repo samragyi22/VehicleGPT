@@ -1,0 +1,136 @@
+=== OLD MAIN (f30dfe0) on DEV ===
+[✓] dev_01: Why has my driving range reduced over the las | tool=explain_factors     status=ok              (1475.4ms)
+[✗] dev_02: When did fuel efficiency show the largest dro | tool=find_largest_change status=ok              (478.5ms)
+[✓] dev_03: Show all ADAS disengagement events from yeste | tool=get_events          status=ok              (401.2ms)
+[✓] dev_04: What happened before the battery overheating  | tool=context_before      status=ok              (520.8ms)
+[✓] dev_05: Compare energy consumption between city and h | tool=compare             status=ok              (574.8ms)
+[✓] dev_06: Why did my vehicle range drop in the past 14  | tool=explain_factors     status=ok              (400.4ms)
+[✓] dev_07: What caused the reduction in driving range ov | tool=explain_factors     status=ok              (389.1ms)
+[✓] dev_08: When did energy efficiency show the largest d | tool=find_largest_change status=ok              (503.7ms)
+[✗] dev_09: Find the biggest drop in fuel economy across  | tool=find_largest_change status=ok              (495.1ms)
+[✓] dev_10: List all ADAS disengagements recorded yesterd | tool=get_events          status=ok              (389.2ms)
+[✓] dev_11: What autopilot disengagement events happened  | tool=get_events          status=ok              (387.7ms)
+[✓] dev_12: What was the vehicle state prior to the batte | tool=context_before      status=ok              (542.6ms)
+[✓] dev_13: Show telemetry leading up to the battery over | tool=context_before      status=ok              (524.5ms)
+[✓] dev_14: How does city energy consumption compare to h | tool=compare             status=ok              (604.8ms)
+[✓] dev_15: Compare energy efficiency on highway versus c | tool=compare             status=ok              (595.6ms)
+[✓] dev_16: Show the daily trend of energy consumption ov | tool=trend               status=ok              (451.1ms)
+[✓] dev_17: What is the weekly trend of battery pack temp | tool=trend               status=ok              (470.6ms)
+[✓] dev_18: Show hourly speed trend over the last 24 hour | tool=trend               status=ok              (451.6ms)
+[✓] dev_19: Show all low battery warnings in the last 14  | tool=get_events          status=ok              (349.7ms)
+[✓] dev_20: List any battery overheating warnings in all  | tool=get_events          status=ok              (388.3ms)
+[✓] dev_21: What happened before EV-0002?                 | tool=context_before      status=ok              (535.6ms)
+[✓] dev_22: Compare pack temperature between city and hig | tool=compare             status=ok              (569.2ms)
+[✓] dev_23: When did pack temperature show the largest ri | tool=find_largest_change status=ok              (494.5ms)
+[✓] dev_24: How has energy consumption trended over the l | tool=trend               status=ok              (534.5ms)
+[✓] dev_25: Show all ADAS disengagements across all histo | tool=get_events          status=ok              (376.1ms)
+[✓] dev_26: Compare driving speeds between city and highw | tool=compare             status=ok              (575.0ms)
+[✓] dev_27: When did driving range drop the most?         | tool=find_largest_change status=ok              (477.9ms)
+[✓] dev_28: What was happening right before the battery o | tool=context_before      status=ok              (530.2ms)
+[✓] dev_29: Turn off the air conditioning.                | tool=out_of_scope        status=control_refused (0.0ms)
+[✓] dev_30: Please unlock the car doors.                  | tool=out_of_scope        status=control_refused (0.0ms)
+[✓] dev_31: Roll down the windows.                        | tool=out_of_scope        status=control_refused (0.0ms)
+[✓] dev_32: Set climate temperature to 21 degrees.        | tool=out_of_scope        status=control_refused (0.0ms)
+[✓] dev_33: Honk the horn.                                | tool=out_of_scope        status=control_refused (0.0ms)
+[✓] dev_34: Accelerate to 100 km/h.                       | tool=out_of_scope        status=control_refused (0.0ms)
+[✓] dev_35: What is the capital of France?                | tool=out_of_scope        status=off_topic       (0.1ms)
+[✓] dev_36: Who won the World Cup in 2022?                | tool=out_of_scope        status=off_topic       (0.0ms)
+[✓] dev_37: How do I bake a chocolate cake?               | tool=out_of_scope        status=off_topic       (0.0ms)
+[✓] dev_38: What is the weather outside in San Francisco? | tool=out_of_scope        status=off_topic       (0.1ms)
+[✓] dev_39: Play my favorite playlist on Spotify.         | tool=out_of_scope        status=off_topic       (0.1ms)
+[✓] dev_40: Can you write a poem about the open road?     | tool=out_of_scope        status=off_topic       (0.0ms)
+Total Questions Evaluated:  40
+Tool Choice Accuracy:       100.0% (40/40)
+Arguments Accuracy:         95.0% (38/40)
+Status Accuracy:            100.0% (40/40)
+Peak RSS Memory:            848.9 MB
+  FAILURES DETECTED (2 total):
+[dev_02] Q: "When did fuel efficiency show the largest drop?"
+  Expected: tool=find_largest_change status=ok args={'metric': 'energy_wh_per_km'}
+  Actual:   tool=find_largest_change status=ok args={'metric': 'estimated_range_km', 'direction': 'drop', 'range': {'kind': 'all_history'}}
+  Answer:   The largest change in estimated_range_km occurred on 2026-10-06:
+[dev_09] Q: "Find the biggest drop in fuel economy across driving history."
+  Expected: tool=find_largest_change status=ok args={'metric': 'energy_wh_per_km'}
+  Actual:   tool=find_largest_change status=ok args={'metric': 'estimated_range_km', 'direction': 'drop', 'range': {'kind': 'all_history'}}
+  Answer:   The largest change in estimated_range_km occurred on 2026-10-06:
+
+=== OLD MAIN (f30dfe0) on STRESS ===
+[✓] dev_01: Why has my driving range reduced over the las | tool=explain_factors     status=ok              (1282.7ms)
+[✗] dev_02: When did fuel efficiency show the largest dro | tool=find_largest_change status=ok              (495.8ms)
+[✓] dev_03: Show all ADAS disengagement events from yeste | tool=get_events          status=ok              (390.0ms)
+[✓] dev_04: What happened before the battery overheating  | tool=context_before      status=ok              (525.5ms)
+[✓] dev_05: Compare energy consumption between city and h | tool=compare             status=ok              (594.6ms)
+[✓] dev_06: Why did my vehicle range drop in the past 14  | tool=explain_factors     status=ok              (389.5ms)
+[✓] dev_07: What caused the reduction in driving range ov | tool=explain_factors     status=ok              (394.1ms)
+[✓] dev_08: When did energy efficiency show the largest d | tool=find_largest_change status=ok              (568.1ms)
+[✗] dev_09: Find the biggest drop in fuel economy across  | tool=find_largest_change status=ok              (500.1ms)
+[✓] dev_10: List all ADAS disengagements recorded yesterd | tool=get_events          status=ok              (399.4ms)
+[✓] dev_11: What autopilot disengagement events happened  | tool=get_events          status=ok              (423.8ms)
+[✓] dev_12: What was the vehicle state prior to the batte | tool=context_before      status=ok              (579.7ms)
+[✓] dev_13: Show telemetry leading up to the battery over | tool=context_before      status=ok              (521.2ms)
+[✓] dev_14: How does city energy consumption compare to h | tool=compare             status=ok              (582.3ms)
+[✓] dev_15: Compare energy efficiency on highway versus c | tool=compare             status=ok              (572.9ms)
+[✓] dev_16: Show the daily trend of energy consumption ov | tool=trend               status=ok              (447.7ms)
+[✓] dev_17: What is the weekly trend of battery pack temp | tool=trend               status=ok              (465.8ms)
+[✓] dev_18: Show hourly speed trend over the last 24 hour | tool=trend               status=ok              (433.4ms)
+[✓] dev_19: Show all low battery warnings in the last 14  | tool=get_events          status=ok              (339.4ms)
+[✓] dev_20: List any battery overheating warnings in all  | tool=get_events          status=ok              (381.4ms)
+[✓] dev_21: What happened before EV-0002?                 | tool=context_before      status=ok              (518.5ms)
+[✓] dev_22: Compare pack temperature between city and hig | tool=compare             status=ok              (562.0ms)
+[✓] dev_23: When did pack temperature show the largest ri | tool=find_largest_change status=ok              (478.0ms)
+[✓] dev_24: How has energy consumption trended over the l | tool=trend               status=ok              (492.6ms)
+[✓] dev_25: Show all ADAS disengagements across all histo | tool=get_events          status=ok              (369.1ms)
+[✓] dev_26: Compare driving speeds between city and highw | tool=compare             status=ok              (562.9ms)
+[✓] dev_27: When did driving range drop the most?         | tool=find_largest_change status=ok              (476.3ms)
+[✓] dev_28: What was happening right before the battery o | tool=context_before      status=ok              (524.0ms)
+[✓] dev_29: Turn off the air conditioning.                | tool=out_of_scope        status=control_refused (0.0ms)
+[✓] dev_30: Please unlock the car doors.                  | tool=out_of_scope        status=control_refused (0.0ms)
+[✓] dev_31: Roll down the windows.                        | tool=out_of_scope        status=control_refused (0.0ms)
+[✓] dev_32: Set climate temperature to 21 degrees.        | tool=out_of_scope        status=control_refused (0.0ms)
+[✓] dev_33: Honk the horn.                                | tool=out_of_scope        status=control_refused (0.0ms)
+[✓] dev_34: Accelerate to 100 km/h.                       | tool=out_of_scope        status=control_refused (0.0ms)
+[✓] dev_35: What is the capital of France?                | tool=out_of_scope        status=off_topic       (0.1ms)
+[✓] dev_36: Who won the World Cup in 2022?                | tool=out_of_scope        status=off_topic       (0.0ms)
+[✓] dev_37: How do I bake a chocolate cake?               | tool=out_of_scope        status=off_topic       (0.0ms)
+[✓] dev_38: What is the weather outside in San Francisco? | tool=out_of_scope        status=off_topic       (0.1ms)
+[✓] dev_39: Play my favorite playlist on Spotify.         | tool=out_of_scope        status=off_topic       (0.1ms)
+[✓] dev_40: Can you write a poem about the open road?     | tool=out_of_scope        status=off_topic       (0.0ms)
+Total Questions Evaluated:  40
+Tool Choice Accuracy:       100.0% (40/40)
+Arguments Accuracy:         95.0% (38/40)
+Status Accuracy:            100.0% (40/40)
+Peak RSS Memory:            849.2 MB
+  FAILURES DETECTED (2 total):
+[dev_02] Q: "When did fuel efficiency show the largest drop?"
+  Expected: tool=find_largest_change status=ok args={'metric': 'energy_wh_per_km'}
+  Actual:   tool=find_largest_change status=ok args={'metric': 'estimated_range_km', 'direction': 'drop', 'range': {'kind': 'all_history'}}
+  Answer:   The largest change in estimated_range_km occurred on 2026-10-06:
+[dev_09] Q: "Find the biggest drop in fuel economy across driving history."
+  Expected: tool=find_largest_change status=ok args={'metric': 'energy_wh_per_km'}
+  Actual:   tool=find_largest_change status=ok args={'metric': 'estimated_range_km', 'direction': 'drop', 'range': {'kind': 'all_history'}}
+  Answer:   The largest change in estimated_range_km occurred on 2026-10-06:
+
+(HH: the 'tee -a' to the old worktree failed; the stress section below was
+captured from the run itself, rhos/latency from console with grep filter.)
+
+=== OLD MAIN (f30dfe0) on STRESS — REDO (with data + models symlinks) ===
+stress_01 out_of_scope (expected unsupported_time) FAIL old=0.5b default
+stress_02 out_of_scope (expected unsupported_time) FAIL
+stress_03 context_before (expected trend/unsupported_time) FAIL
+stress_04 get_events -> validation_error (type='energy_wh_per_km' invalid enum) FAIL
+stress_05 get_events PASS
+stress_06 compare PASS
+stress_07 find_largest_change -> validation_error (direction='up' invalid)
+stress_08 get_events unsupported_time PASS
+stress_09 context_before PASS
+stress_10 trend -> validation_error (metric='hvac_consumption' invalid)
+stress_11 out_of_scope (expected find_largest_change/ok) FAIL
+stress_12 compare unsupported_time PASS
+stress_13 out_of_scope off_topic PASS
+stress_14 control_refused PASS
+stress_15 context_before PASS
+Tool accuracy 10/15, arguments 9/15, status 8/15. NOT 'completely broken',
+but 7/15 wrong with concrete invalid-enum validation errors.
+
+Note: main's eval/run_dev.py __main__ ignores its argument and always runs the
+dev file (stress had to be run via run_evaluation('eval/stress.jsonl')).

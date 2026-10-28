@@ -1,0 +1,1302 @@
+{
+  "parquet_hashes": {
+    "event_snapshots.parquet": "7a128e144464ad716e4e8adff739eeabaf66c40e16d930c95dad5839f8830a65",
+    "events.parquet": "2d903aa81c1d855d5bdf3e438835177489ecaec77aab741478fe86ba435507d3",
+    "samples_1hz.parquet": "b28226a780db509ed401a20df25b4e468c59a2e3459e01dc4c28fcdb95769625",
+    "trips.parquet": "35d07b39de24af13c5a1c0e49f7e752e39acb442b09d3eb89bbdc6e95062d354"
+  },
+  "ruff_clean": true,
+  "ruff_output": "All checks passed!",
+  "validity": [
+    {
+      "model": "0.5b",
+      "n_generations": 200,
+      "violations": 0,
+      "parse_failures": 0,
+      "valid_pct": 100.0,
+      "elapsed_s": 84.3,
+      "violation_examples": []
+    },
+    {
+      "model": "1.5b",
+      "n_generations": 200,
+      "violations": 0,
+      "parse_failures": 0,
+      "valid_pct": 100.0,
+      "elapsed_s": 137.4,
+      "violation_examples": []
+    }
+  ],
+  "eval": {
+    "0.5b": {
+      "dev": {
+        "rows": [
+          {
+            "id": "dev_01",
+            "question": "Why has my driving range reduced over the last two weeks?",
+            "expected_tool": "explain_factors",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 1190.6,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_02",
+            "question": "When did fuel efficiency show the largest drop?",
+            "expected_tool": "find_largest_change",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 538.2,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_03",
+            "question": "Show all ADAS disengagement events from yesterday.",
+            "expected_tool": "get_events",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 372.3,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_04",
+            "question": "What happened before the battery overheating warning?",
+            "expected_tool": "context_before",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 505.8,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_05",
+            "question": "Compare energy consumption between city and highway driving.",
+            "expected_tool": "compare",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 610.1,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_06",
+            "question": "Why did my vehicle range drop in the past 14 days?",
+            "expected_tool": "explain_factors",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 338.6,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_07",
+            "question": "What caused the reduction in driving range over the last two weeks?",
+            "expected_tool": "explain_factors",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 463.5,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_08",
+            "question": "When did energy efficiency show the largest drop?",
+            "expected_tool": "find_largest_change",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 480.7,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_09",
+            "question": "Find the biggest drop in fuel economy across driving history.",
+            "expected_tool": "find_largest_change",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 491.3,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_10",
+            "question": "List all ADAS disengagements recorded yesterday.",
+            "expected_tool": "get_events",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 373.2,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_11",
+            "question": "What autopilot disengagement events happened yesterday?",
+            "expected_tool": "get_events",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 376.5,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_12",
+            "question": "What was the vehicle state prior to the battery overheating warning?",
+            "expected_tool": "context_before",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 507.4,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_13",
+            "question": "Show telemetry leading up to the battery overheat event.",
+            "expected_tool": "context_before",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 503.3,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_14",
+            "question": "How does city energy consumption compare to highway driving?",
+            "expected_tool": "compare",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 550.7,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_15",
+            "question": "Compare energy efficiency on highway versus city roads.",
+            "expected_tool": "compare",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 552.8,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_16",
+            "question": "Show the daily trend of energy consumption over the last 7 days.",
+            "expected_tool": "trend",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 445.4,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_17",
+            "question": "What is the weekly trend of battery pack temperature?",
+            "expected_tool": "trend",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 459.6,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_18",
+            "question": "Show hourly speed trend over the last 24 hours.",
+            "expected_tool": "trend",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 439.5,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_19",
+            "question": "Show all low battery warnings in the last 14 days.",
+            "expected_tool": "get_events",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 347.3,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_20",
+            "question": "List any battery overheating warnings in all history.",
+            "expected_tool": "get_events",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 377.9,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_21",
+            "question": "What happened before EV-0002?",
+            "expected_tool": "context_before",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 514.3,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_22",
+            "question": "Compare pack temperature between city and highway driving.",
+            "expected_tool": "compare",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 540.1,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_23",
+            "question": "When did pack temperature show the largest rise?",
+            "expected_tool": "find_largest_change",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 461.9,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_24",
+            "question": "How has energy consumption trended over the last 28 days?",
+            "expected_tool": "trend",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 480.0,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_25",
+            "question": "Show all ADAS disengagements across all history.",
+            "expected_tool": "get_events",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 387.0,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_26",
+            "question": "Compare driving speeds between city and highway routes.",
+            "expected_tool": "compare",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 544.2,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_27",
+            "question": "When did driving range drop the most?",
+            "expected_tool": "find_largest_change",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 518.0,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_28",
+            "question": "What was happening right before the battery overheat warning?",
+            "expected_tool": "context_before",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 519.0,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_29",
+            "question": "Turn off the air conditioning.",
+            "expected_tool": "out_of_scope",
+            "expected_status": "control_refused",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 0.0,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_30",
+            "question": "Please unlock the car doors.",
+            "expected_tool": "out_of_scope",
+            "expected_status": "control_refused",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 0.0,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_31",
+            "question": "Roll down the windows.",
+            "expected_tool": "out_of_scope",
+            "expected_status": "control_refused",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 0.0,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_32",
+            "question": "Set climate temperature to 21 degrees.",
+            "expected_tool": "out_of_scope",
+            "expected_status": "control_refused",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 0.0,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_33",
+            "question": "Honk the horn.",
+            "expected_tool": "out_of_scope",
+            "expected_status": "control_refused",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 0.0,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_34",
+            "question": "Accelerate to 100 km/h.",
+            "expected_tool": "out_of_scope",
+            "expected_status": "control_refused",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 0.0,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_35",
+            "question": "What is the capital of France?",
+            "expected_tool": "out_of_scope",
+            "expected_status": "off_topic",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 0.1,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_36",
+            "question": "Who won the World Cup in 2022?",
+            "expected_tool": "out_of_scope",
+            "expected_status": "off_topic",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 0.0,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_37",
+            "question": "How do I bake a chocolate cake?",
+            "expected_tool": "out_of_scope",
+            "expected_status": "off_topic",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 0.0,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_38",
+            "question": "What is the weather outside in San Francisco?",
+            "expected_tool": "out_of_scope",
+            "expected_status": "off_topic",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 0.1,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_39",
+            "question": "Play my favorite playlist on Spotify.",
+            "expected_tool": "out_of_scope",
+            "expected_status": "off_topic",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 0.1,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_40",
+            "question": "Can you write a poem about the open road?",
+            "expected_tool": "out_of_scope",
+            "expected_status": "off_topic",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 0.0,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          }
+        ],
+        "summary": {
+          "ok": 0,
+          "correct_refusal": 0,
+          "false_refusal": 0,
+          "partial": 0,
+          "wrong": 40,
+          "unsupported_time_correct": 0,
+          "total": 40,
+          "sound": 0
+        }
+      },
+      "stress": {
+        "rows": [
+          {
+            "id": "stress_01",
+            "question": "two days ago how was the range?",
+            "expected_tool": "explain_factors",
+            "expected_status": "unsupported_time",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 0.0,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "stress_02",
+            "question": "this week energy numbers",
+            "expected_tool": "trend",
+            "expected_status": "unsupported_time",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 0.0,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "stress_03",
+            "question": "since last tuesday what happened to the battry temp?",
+            "expected_tool": "trend",
+            "expected_status": "unsupported_time",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 0.0,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "stress_04",
+            "question": "show me enregy eficiency for the last wek",
+            "expected_tool": "trend",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 368.0,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "stress_05",
+            "question": "wen did the batery overheat warrning happen",
+            "expected_tool": "get_events",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 371.2,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "stress_06",
+            "question": "how come my car uses more power on the higway vs the city",
+            "expected_tool": "compare",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 561.8,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "stress_07",
+            "question": "in the past fortnight did range go up or down",
+            "expected_tool": "find_largest_change",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 436.2,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "stress_08",
+            "question": "pull up adas events for the current week please",
+            "expected_tool": "get_events",
+            "expected_status": "unsupported_time",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 0.0,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "stress_09",
+            "question": "what was the soc doing right before the last low battery alert and also how does city compare to highway for energy",
+            "expected_tool": "context_before",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 519.6,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "stress_10",
+            "question": "hvac consumption \u2014 trend please, daily",
+            "expected_tool": "trend",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 474.2,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "stress_11",
+            "question": "biggest speedup ever seen",
+            "expected_tool": "find_largest_change",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 319.2,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "stress_12",
+            "question": "is my range better than it was 4 weeks ago",
+            "expected_tool": "compare",
+            "expected_status": "unsupported_time",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 0.0,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "stress_13",
+            "question": "tell me what the stock market did yesterday",
+            "expected_tool": "out_of_scope",
+            "expected_status": "off_topic",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 0.1,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "stress_14",
+            "question": "switch on my seat heater",
+            "expected_tool": "out_of_scope",
+            "expected_status": "control_refused",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 0.0,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "stress_15",
+            "question": "EV-0005 what was happening just before that",
+            "expected_tool": "context_before",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 510.9,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          }
+        ],
+        "summary": {
+          "ok": 0,
+          "correct_refusal": 0,
+          "false_refusal": 0,
+          "partial": 0,
+          "wrong": 15,
+          "unsupported_time_correct": 0,
+          "total": 15,
+          "sound": 0
+        }
+      }
+    },
+    "1.5b": {
+      "dev": {
+        "rows": [
+          {
+            "id": "dev_01",
+            "question": "Why has my driving range reduced over the last two weeks?",
+            "expected_tool": "explain_factors",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 2636.9,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_02",
+            "question": "When did fuel efficiency show the largest drop?",
+            "expected_tool": "find_largest_change",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 736.6,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_03",
+            "question": "Show all ADAS disengagement events from yesterday.",
+            "expected_tool": "get_events",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 555.2,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_04",
+            "question": "What happened before the battery overheating warning?",
+            "expected_tool": "context_before",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 793.3,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_05",
+            "question": "Compare energy consumption between city and highway driving.",
+            "expected_tool": "compare",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 1127.8,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_06",
+            "question": "Why did my vehicle range drop in the past 14 days?",
+            "expected_tool": "explain_factors",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 566.0,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_07",
+            "question": "What caused the reduction in driving range over the last two weeks?",
+            "expected_tool": "explain_factors",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 540.8,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_08",
+            "question": "When did energy efficiency show the largest drop?",
+            "expected_tool": "find_largest_change",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 969.5,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_09",
+            "question": "Find the biggest drop in fuel economy across driving history.",
+            "expected_tool": "find_largest_change",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 728.2,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_10",
+            "question": "List all ADAS disengagements recorded yesterday.",
+            "expected_tool": "get_events",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 553.8,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_11",
+            "question": "What autopilot disengagement events happened yesterday?",
+            "expected_tool": "get_events",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 560.7,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_12",
+            "question": "What was the vehicle state prior to the battery overheating warning?",
+            "expected_tool": "context_before",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 811.7,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_13",
+            "question": "Show telemetry leading up to the battery overheat event.",
+            "expected_tool": "context_before",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 796.7,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_14",
+            "question": "How does city energy consumption compare to highway driving?",
+            "expected_tool": "compare",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 1186.1,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_15",
+            "question": "Compare energy efficiency on highway versus city roads.",
+            "expected_tool": "compare",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 908.6,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_16",
+            "question": "Show the daily trend of energy consumption over the last 7 days.",
+            "expected_tool": "trend",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 704.8,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_17",
+            "question": "What is the weekly trend of battery pack temperature?",
+            "expected_tool": "trend",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 678.6,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_18",
+            "question": "Show hourly speed trend over the last 24 hours.",
+            "expected_tool": "trend",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 720.0,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_19",
+            "question": "Show all low battery warnings in the last 14 days.",
+            "expected_tool": "get_events",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 564.1,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_20",
+            "question": "List any battery overheating warnings in all history.",
+            "expected_tool": "get_events",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 640.3,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_21",
+            "question": "What happened before EV-0002?",
+            "expected_tool": "context_before",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 808.8,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_22",
+            "question": "Compare pack temperature between city and highway driving.",
+            "expected_tool": "compare",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 887.5,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_23",
+            "question": "When did pack temperature show the largest rise?",
+            "expected_tool": "find_largest_change",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 712.7,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_24",
+            "question": "How has energy consumption trended over the last 28 days?",
+            "expected_tool": "trend",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 775.4,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_25",
+            "question": "Show all ADAS disengagements across all history.",
+            "expected_tool": "get_events",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 1546.3,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_26",
+            "question": "Compare driving speeds between city and highway routes.",
+            "expected_tool": "compare",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 813.3,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_27",
+            "question": "When did driving range drop the most?",
+            "expected_tool": "find_largest_change",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 1024.6,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_28",
+            "question": "What was happening right before the battery overheat warning?",
+            "expected_tool": "context_before",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 1128.7,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_29",
+            "question": "Turn off the air conditioning.",
+            "expected_tool": "out_of_scope",
+            "expected_status": "control_refused",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 0.0,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_30",
+            "question": "Please unlock the car doors.",
+            "expected_tool": "out_of_scope",
+            "expected_status": "control_refused",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 0.0,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_31",
+            "question": "Roll down the windows.",
+            "expected_tool": "out_of_scope",
+            "expected_status": "control_refused",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 0.0,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_32",
+            "question": "Set climate temperature to 21 degrees.",
+            "expected_tool": "out_of_scope",
+            "expected_status": "control_refused",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 0.0,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_33",
+            "question": "Honk the horn.",
+            "expected_tool": "out_of_scope",
+            "expected_status": "control_refused",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 0.0,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_34",
+            "question": "Accelerate to 100 km/h.",
+            "expected_tool": "out_of_scope",
+            "expected_status": "control_refused",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 0.0,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_35",
+            "question": "What is the capital of France?",
+            "expected_tool": "out_of_scope",
+            "expected_status": "off_topic",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 0.1,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_36",
+            "question": "Who won the World Cup in 2022?",
+            "expected_tool": "out_of_scope",
+            "expected_status": "off_topic",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 0.0,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_37",
+            "question": "How do I bake a chocolate cake?",
+            "expected_tool": "out_of_scope",
+            "expected_status": "off_topic",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 0.0,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_38",
+            "question": "What is the weather outside in San Francisco?",
+            "expected_tool": "out_of_scope",
+            "expected_status": "off_topic",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 0.1,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_39",
+            "question": "Play my favorite playlist on Spotify.",
+            "expected_tool": "out_of_scope",
+            "expected_status": "off_topic",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 0.1,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "dev_40",
+            "question": "Can you write a poem about the open road?",
+            "expected_tool": "out_of_scope",
+            "expected_status": "off_topic",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 0.0,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          }
+        ],
+        "summary": {
+          "ok": 0,
+          "correct_refusal": 0,
+          "false_refusal": 0,
+          "partial": 0,
+          "wrong": 40,
+          "unsupported_time_correct": 0,
+          "total": 40,
+          "sound": 0
+        }
+      },
+      "stress": {
+        "rows": [
+          {
+            "id": "stress_01",
+            "question": "two days ago how was the range?",
+            "expected_tool": "explain_factors",
+            "expected_status": "unsupported_time",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 0.0,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "stress_02",
+            "question": "this week energy numbers",
+            "expected_tool": "trend",
+            "expected_status": "unsupported_time",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 0.0,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "stress_03",
+            "question": "since last tuesday what happened to the battry temp?",
+            "expected_tool": "trend",
+            "expected_status": "unsupported_time",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 0.0,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "stress_04",
+            "question": "show me enregy eficiency for the last wek",
+            "expected_tool": "trend",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 897.9,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "stress_05",
+            "question": "wen did the batery overheat warrning happen",
+            "expected_tool": "get_events",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 649.5,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "stress_06",
+            "question": "how come my car uses more power on the higway vs the city",
+            "expected_tool": "compare",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 2797.3,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "stress_07",
+            "question": "in the past fortnight did range go up or down",
+            "expected_tool": "find_largest_change",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 1275.5,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "stress_08",
+            "question": "pull up adas events for the current week please",
+            "expected_tool": "get_events",
+            "expected_status": "unsupported_time",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 0.0,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "stress_09",
+            "question": "what was the soc doing right before the last low battery alert and also how does city compare to highway for energy",
+            "expected_tool": "context_before",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 905.0,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "stress_10",
+            "question": "hvac consumption \u2014 trend please, daily",
+            "expected_tool": "trend",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 865.3,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "stress_11",
+            "question": "biggest speedup ever seen",
+            "expected_tool": "find_largest_change",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 3656.7,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "stress_12",
+            "question": "is my range better than it was 4 weeks ago",
+            "expected_tool": "compare",
+            "expected_status": "unsupported_time",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 0.0,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "stress_13",
+            "question": "tell me what the stock market did yesterday",
+            "expected_tool": "out_of_scope",
+            "expected_status": "off_topic",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 0.1,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "stress_14",
+            "question": "switch on my seat heater",
+            "expected_tool": "out_of_scope",
+            "expected_status": "control_refused",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 0.0,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          },
+          {
+            "id": "stress_15",
+            "question": "EV-0005 what was happening just before that",
+            "expected_tool": "context_before",
+            "expected_status": "ok",
+            "actual_tool": "",
+            "actual_status": "exception",
+            "classification": "wrong",
+            "elapsed_ms": 988.6,
+            "error": "'PipelineResult' object has no attribute 'get'"
+          }
+        ],
+        "summary": {
+          "ok": 0,
+          "correct_refusal": 0,
+          "false_refusal": 0,
+          "partial": 0,
+          "wrong": 15,
+          "unsupported_time_correct": 0,
+          "total": 15,
+          "sound": 0
+        }
+      }
+    }
+  }
+}
