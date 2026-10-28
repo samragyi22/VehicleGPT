@@ -261,11 +261,29 @@ Where CODING_AGENT_HANDOFF.md and this file differ, the handoff's newer decision
 - New eval runners: `eval/report_accuracy.py` (dev/stress honesty report),
   `eval/run_heldout.py PATH` (user's held-out set, full pipeline, run once, no
   tuning), `eval/prompt_overlap.py` (few-shot vs question word overlap).
-- Known discrepancy (not yet resolved): the handoff plans support for
-  "this week"/"last month"/"past fortnight"/"two days ago", but the stress set
-  expects those to return `unsupported_time`. Do not change the time parser
-  without deciding which expectation is authoritative.
 - The earlier claim that main's code "is completely broken on stress" was an
   artifact of a worktree missing the git-ignored `data/vehicle.db` and
   `models/`; with symlinks restored, main runs on the dev set (results in
   `eval/results/old_main_results.txt`).
+
+### Freeze-prep (2026-10-28, branch freeze-prep, tag freeze-v1)
+
+- Time phrases: "this week" and "past week" -> last 7 days; "last month" ->
+  last 28 days; "past fortnight"/"fortnight" -> last 14 days. "two days ago",
+  "N weeks ago" and "since <weekday>" remain clarification requests
+  (`unsupported_time`). Every tool answer is prefixed with an interpretation
+  statement, e.g. "Interpreted 'this week' as the last 7 days (21 Oct to 28 Oct)."
+  (built by `llm/timeparse.py:interpretation_text`).
+- Metric grounding: the model's `metric` must be grounded in the question
+  (value or synonyms). If not grounded, it is derived from the question via
+  the synonym tables; ambiguous (several metrics) or empty -> fixed
+  clarification with status `ambiguous_metric`. The silent
+  `estimated_range_km` default was removed.
+- `llm.router.route()`/`route_batch`/`RouterResult` deleted;
+  `engine.pipeline.run_pipeline` is the single entry point, enforced by
+  `tests/test_entry_point.py`. Legacy scripts `run_part_c.py`,
+  `measure_validity_comparison.py`, `debug_failures.py` deleted;
+  `run_prototype.py` migrated.
+- `data/quality_report.json` no longer contains the wall-clock
+  `elapsed_seconds` field; two consecutive ingest runs produce a
+  byte-identical report.
