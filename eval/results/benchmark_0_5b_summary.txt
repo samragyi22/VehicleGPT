@@ -1,0 +1,8 @@
+0.5B — emulated constrained environment on Apple Silicon; 28 vehicle questions × 3 passes
+tool | total median/p95 ms | model median/p95 ms | query median/p95 ms | peak RSS MB | cgroup anon/file MB
+compare | 925.68/990.26 | 901.74/962.57 | 25.64/28.59 | 660.71 | 162.11/472.13
+context_before | 879.64/917.06 | 877.72/914.97 | 1.67/5.72 | 660.71 | 162.11/472.13
+explain_factors | 751.65/12937.51 | 710.15/12471.6 | 44.07/45.49 | 656.81 | 162.1/472.12
+find_largest_change | 801.51/867.64 | 768.93/833.83 | 33.23/36.34 | 660.71 | 162.11/472.13
+get_events | 697.68/731.04 | 697.17/730.5 | 0.22/0.25 | 660.71 | 162.11/472.13
+trend | 798.71/899.24 | 778.16/865.68 | 20.8/33.43 | 660.71 | 162.11/472.13

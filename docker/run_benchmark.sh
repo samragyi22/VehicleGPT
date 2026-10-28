@@ -8,7 +8,7 @@ run_one() {
   docker run --rm --memory=2g --cpus=2 \
     -e VEHICLEGPT_MODEL="/models/$model" -e VEHICLEGPT_LABEL="$label" \
     -v "$PWD/models:/models:ro" -v "$PWD/eval/results:/results" \
-    vehiclegpt-benchmark --output "/results/$output"
+    vehiclegpt-benchmark python -m eval.benchmark --output "/results/$output"
 }
 started=$SECONDS
 run_one qwen2.5-0.5b-instruct-q4_k_m.gguf 0.5B benchmark_0_5b.jsonl

@@ -1,0 +1,20 @@
+
+0.5B — emulated constrained environment on Apple Silicon; 28 vehicle questions × 3 passes
+tool | total median/p95 ms | model median/p95 ms | query median/p95 ms | peak RSS MB | cgroup anon/file MB
+compare | 925.68/990.26 | 901.74/962.57 | 25.64/28.59 | 660.71 | 162.11/472.13
+context_before | 879.64/917.06 | 877.72/914.97 | 1.67/5.72 | 660.71 | 162.11/472.13
+explain_factors | 751.65/12937.51 | 710.15/12471.6 | 44.07/45.49 | 656.81 | 162.1/472.12
+find_largest_change | 801.51/867.64 | 768.93/833.83 | 33.23/36.34 | 660.71 | 162.11/472.13
+get_events | 697.68/731.04 | 697.17/730.5 | 0.22/0.25 | 660.71 | 162.11/472.13
+trend | 798.71/899.24 | 778.16/865.68 | 20.8/33.43 | 660.71 | 162.11/472.13
+
+
+1.5B — emulated constrained environment on Apple Silicon; 28 vehicle questions × 3 passes
+tool | total median/p95 ms | model median/p95 ms | query median/p95 ms | peak RSS MB | cgroup anon/file MB
+compare | 2060.24/2136.99 | 2032.46/2108.29 | 27.59/35.4 | 1287.59 | 191.57/1065.9
+context_before | 2022.86/2144.95 | 2020.47/2142.85 | 1.66/9.51 | 1287.59 | 191.57/1065.9
+explain_factors | 1798.45/33410.73 | 1758.6/32458.55 | 37.61/50.82 | 1279.48 | 187.04/1065.89
+find_largest_change | 1817.95/1956.3 | 1783.01/1921.69 | 34.19/37.57 | 1287.59 | 191.57/1065.9
+get_events | 1628.39/1763.64 | 1627.78/1763.01 | 0.23/0.3 | 1287.59 | 191.57/1065.9
+trend | 1886.92/2038.27 | 1876.48/2005.74 | 20.3/35.48 | 1287.59 | 191.57/1065.9
+
