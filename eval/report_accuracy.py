@@ -25,7 +25,7 @@ MODELS = {
     "0.5b": "models/qwen2.5-0.5b-instruct-q4_k_m.gguf",
     "1.5b": "models/qwen2.5-1.5b-instruct-q4_k_m.gguf",
 }
-TIME_REFUSAL_STATUSES = {"unsupported_time"}
+TIME_REFUSAL_STATUSES = {"unsupported_time", "ambiguous_metric"}
 DETERMINISTIC_REFUSALS = {"control_refused", "off_topic"}
 
 

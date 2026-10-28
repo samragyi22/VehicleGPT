@@ -91,7 +91,7 @@ def run_heldout(path: Path, model_path: Path | None = None) -> None:
         # Vehicle question: full classification.
         if res.status != "ok":
             # Guard/gate/time-parser refused a question the user expected to be answered.
-            if res.status in ("control_refused", "off_topic", "unsupported_time", "out_of_scope"):
+            if res.status in ("control_refused", "off_topic", "unsupported_time", "ambiguous_metric", "out_of_scope"):
                 vehicle["false_refusal"] += 1
                 cls = "FALSE_REFUSAL"
             else:
