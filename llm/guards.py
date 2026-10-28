@@ -467,6 +467,12 @@ def normalize_tool_args(args: dict[str, Any], question: str = "", tool_name: str
     normalized = dict(args)
     q_lower = question.lower()
 
+    # A `reason` key is only valid for out_of_scope; models sometimes copy it
+    # into other tools (prompt-example leakage) and strict schema validation
+    # would reject the whole call, so drop it for every other tool.
+    if tool_name and tool_name != "out_of_scope" and "reason" in normalized:
+        normalized.pop("reason")
+
     # Normalize metric
     if "metric" in normalized and isinstance(normalized["metric"], str):
         raw_m = normalized["metric"].lower().replace("-", "_").strip()
@@ -587,7 +593,8 @@ def is_grounded(question: str, tool_name: str, args: dict[str, Any]) -> tuple[bo
             return False, "context_before selected without pre-event temporal context."
 
     elif tool_name == "find_largest_change":
-        change_terms = {"largest", "biggest", "drop", "rise", "increase", "decrease", "when did", "most"}
+        change_terms = {"largest", "biggest", "drop", "rise", "increase", "decrease",
+                        "when did", "most", "went up", "went down", "up or down"}
         if not any(t in q_lower for t in change_terms):
             return False, "find_largest_change selected without change/extremum context."
 
