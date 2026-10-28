@@ -1,4 +1,5 @@
 .venv
 models
-data
+data/*
+!data/vehicle.db
 .git
