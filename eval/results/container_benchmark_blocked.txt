@@ -1,0 +1,9 @@
+Benchmark attempt status
+
+Requested benchmark: Docker CPU container with --memory=2g and --cpus=2; model weights mounted read-only.
+0.5B: not run. 1.5B: not run.
+
+Command output:
+ERROR: failed to connect to the docker API at unix:///Users/samragyisharma/.docker/run/docker.sock; check if the path is correct and if the daemon is running: dial unix /Users/samragyisharma/.docker/run/docker.sock: connect: no such file or directory
+
+The Docker Desktop application was opened, but the daemon socket remained unavailable. No latency or memory measurements were produced. Do not interpret prior prototype measurements as this benchmark.

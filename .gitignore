@@ -61,3 +61,6 @@ models/*.gguf
 .vscode/
 .idea/
 HANDOFF_SUMMARY.md
+*.local.md
+*_local_notes.*
+NOTES.local.*
