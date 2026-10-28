@@ -55,7 +55,6 @@ The normaliser NEVER reads ground_truth.json.  That file is the test oracle only
 
 import json
 import sqlite3
-import time
 from pathlib import Path
 from typing import Any
 
@@ -344,7 +343,6 @@ def normalise(
     Uses journal_mode=DELETE; no -wal or -shm files are created.
     Returns the quality report dict.
     """
-    t0 = time.perf_counter()
 
     # -----------------------------------------------------------------------
     # 0. Delete and recreate DB (and any stale WAL/SHM from previous runs)
@@ -430,14 +428,13 @@ def normalise(
 
     con.close()
 
-    elapsed = time.perf_counter() - t0
-
     # -----------------------------------------------------------------------
     # 6. Quality Report
     # -----------------------------------------------------------------------
     report: dict[str, Any] = {
         "generated_at": config.SIMULATED_NOW_ISO,
-        "elapsed_seconds": round(elapsed, 2),
+        # elapsed intentionally omitted: wall-clock timing made the committed
+        # report drift on every run; the report must be byte-stable.
         "db_path": str(db_path),
         "db_size_bytes": db_path.stat().st_size,
         "rows_read": rows_read,
@@ -478,7 +475,6 @@ def run() -> None:
     report = normalise()
 
     print(f"\n[Quality Report written to {QUALITY_REPORT_PATH}]")
-    print(f"  Elapsed      : {report['elapsed_seconds']:.2f} s")
     print(f"  DB size      : {report['db_size_bytes'] / 1_048_576:.2f} MB")
 
     print("\n[Rows Read from Parquet]")
