@@ -299,12 +299,13 @@ def _fuzzy_match_vehicle_term(token: str) -> bool:
 
 _CONTROL_ACTION_PATTERN = re.compile(
     r"\b("
-    r"turn\s+(on|off)|switch\s+(on|off)|shut\s+off|"
+    r"turn\s+(on|off|up|down)|switch\s+(on|off|to)|shut\s+off|"
     r"open|close|unlock|lock|"
     r"start|stop|"
     r"set|adjust|change|"
     r"increase|decrease|raise|lower|"
     r"enable|disable|activate|deactivate|"
+    r"put(\s+(on|up|down))?|"
     r"roll\s+(up|down)|"
     r"brake|accelerate|speed\s+up|slow\s+down|"
     r"honk|flash|steer|drive\s+to"
@@ -321,8 +322,28 @@ _CONTROL_TARGET_PATTERN = re.compile(
     r"horn|"
     r"seat|seats|radio|music|volume|"
     r"speed|cruise\s+control|autopilot|adas|"
+    r"charging|charger|charge\s+port|"
+    r"brake|parking\s+brake|mirror|mirrors|"
+    r"sport\s+mode|eco\s+mode|comfort\s+mode|drive\s+mode|"
     r"motor|engine|car"
     r")\b",
+    re.IGNORECASE,
+)
+
+# Polite request openers: "could you ...", "I'd like the ...", "please ...".
+# These are requests to actuate, not questions, so when such an opener is
+# followed by a control target (and no question intent anywhere), the guard
+# must refuse instead of letting a disguised command reach the tools.
+_REQUEST_OPENER_PATTERN = re.compile(
+    r"^(could\s+you|would\s+you|can\s+you|will\s+you|i'd\s+like|i\s+would\s+like|please)\b",
+    re.IGNORECASE,
+)
+
+# Query-intent markers anywhere in the question mean the user is asking about
+# data, not commanding the vehicle; those must NOT be refused by the guard.
+_QUERY_INTENT_PATTERN = re.compile(
+    r"\b(why|when|what|how|show|list|compare|tell|explain|did|does|"
+    r"is|are|was|were|which|where)\b",
     re.IGNORECASE,
 )
 
@@ -369,15 +390,18 @@ def is_control_command(question: str) -> tuple[bool, str | None]:
     if any(lower_q.startswith(act) for act in standalone_actions):
         return True, CONTROL_REFUSAL_MESSAGE
 
+    # Polite request opener + control target and no question intent anywhere:
+    # a disguised command ("I'd like the windows down."), not a data question.
+    if (
+        _REQUEST_OPENER_PATTERN.search(q)
+        and has_target
+        and not _QUERY_INTENT_PATTERN.search(q)
+    ):
+        return True, CONTROL_REFUSAL_MESSAGE
+
     if has_action and has_target:
         # Exceptions: questions asking about data or events, e.g., "when did it start?"
-        query_words = {"why", "when", "what", "show", "list", "compare", "how much", "how did"}
-        first_word = lower_q.split()[0] if lower_q.split() else ""
-        if (
-            first_word in query_words
-            and not lower_q.startswith("what is the best way to open")
-            and any(w in lower_q for w in ("show", "when", "why", "what happened", "compare"))
-        ):
+        if _QUERY_INTENT_PATTERN.search(q):
             return False, None
         return True, CONTROL_REFUSAL_MESSAGE
 
