@@ -50,11 +50,11 @@ MODEL_PATHS = {
 
 def run_prototype_on_model(model_key: str) -> dict:
     """Run the 15 prototype questions on the specified model."""
-    from llm.router import route
-    
+    from engine.pipeline import run_pipeline
+
     logger.info(f"Running 15-question prototype on {model_key} model...")
     model_path = MODEL_PATHS[model_key]
-    
+
     results = {
         "model": model_key,
         "total_questions": len(FIFTEEN_PROTOTYPE_QUESTIONS),
@@ -68,17 +68,19 @@ def run_prototype_on_model(model_key: str) -> dict:
         },
         "latencies_ms": [],
     }
-    
+
     for q_id, question, expected_tool in FIFTEEN_PROTOTYPE_QUESTIONS:
         try:
             t0 = time.perf_counter()
-            result = route(question, model_path=model_path, with_explanation=False)
+            result = run_pipeline(question, model_path=model_path, with_explanation=False)
             elapsed_ms = (time.perf_counter() - t0) * 1000
             results["latencies_ms"].append(elapsed_ms)
-            
+
             # Classify result
-            actual_tool = result.tool_name.value if result.tool_name else ""
-            error_status = result.error
+            actual_tool = (
+                result.tool_call.get("tool", "") if result.tool_call else ""
+            )
+            error_status = result.status if result.status != "ok" else ""
             
             classification = "correct"
             

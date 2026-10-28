@@ -41,6 +41,7 @@ METRIC_SYNONYMS: dict[Metric, list[str]] = {
         "economy",
         "fuel economy",
         "fuel_consumption_litre_per_100km",
+        "power",
     ],
     Metric.estimated_range_km: [
         "range",
@@ -90,6 +91,9 @@ METRIC_SYNONYMS: dict[Metric, list[str]] = {
         "cooling",
         "cabin cooling",
         "aircon",
+        "hvac consumption",
+        "hvac use",
+        "hvac power",
     ],
 }
 
@@ -543,7 +547,7 @@ def normalize_tool_args(args: dict[str, Any], question: str = "", tool_name: str
                     normalized["direction"] = d_enum.value
                     break
         elif question:
-            if any(w in q_lower for w in ("rise", "increase", "jump", "higher", "spike")):
+            if any(w in q_lower for w in ("rise", "increase", "jump", "higher", "spike", "speedup", "went up", "sped up", "up")):
                 normalized["direction"] = ChangeDirection.rise.value
             elif any(w in q_lower for w in ("drop", "decrease", "reduction", "fell", "loss", "lower")):
                 normalized["direction"] = ChangeDirection.drop.value
@@ -551,6 +555,42 @@ def normalize_tool_args(args: dict[str, Any], question: str = "", tool_name: str
         normalized.pop("direction", None)
 
     return normalized
+
+
+AMBIGUOUS_METRIC_MESSAGE = (
+    "I couldn't match your question to exactly one vehicle measurement. "
+    "Please ask about one metric, e.g. energy consumption, range, battery "
+    "temperature, charge level, speed or HVAC power."
+)
+
+
+def metric_grounded_in_question(metric_value: str, question: str) -> bool:
+    """
+    True if the canonical metric (its value or any synonym) appears in the
+    question. Used to require that the model's metric choice is not invented.
+    """
+    try:
+        metric = Metric(metric_value)
+    except ValueError:
+        return False
+    q_lower = question.lower()
+    if metric.value.lower() in q_lower:
+        return True
+    return any(s.lower() in q_lower for s in METRIC_SYNONYMS.get(metric, []))
+
+
+def metrics_in_question(question: str) -> list[Metric]:
+    """
+    All metrics whose canonical value or synonyms appear in the question.
+    Zero -> cannot derive; more than one -> ambiguous ("hvac" in an HVAC and
+    range question, etc.).
+    """
+    q_lower = question.lower()
+    found: list[Metric] = []
+    for metric, syns in METRIC_SYNONYMS.items():
+        if metric.value.lower() in q_lower or any(s.lower() in q_lower for s in syns):
+            found.append(metric)
+    return found
 
 
 # ---------------------------------------------------------------------------

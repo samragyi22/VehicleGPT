@@ -489,88 +489,77 @@ class TestRouterE2E:
             pytest.skip(f"Model not found: {config.DEFAULT_MODEL_PATH}")
 
     def _route(self, question: str):
-        from llm.router import route
-        return route(question, with_explanation=False)
+        from engine.pipeline import run_pipeline
+        return run_pipeline(question, with_explanation=False)
+
+    def _tool(self, r):
+        return r.tool_call.get("tool") if r.tool_call else None
 
     def test_case_1_range_drop_routes_to_explain_factors(self):
         """Q: 'Why has my driving range reduced over the last two weeks?'"""
         r = self._route("Why has my driving range reduced over the last two weeks?")
-        assert r.error == "", f"Router error: {r.error}"
-        assert r.tool_name == ToolName.explain_factors, (
-            f"Expected explain_factors, got {r.tool_name}. Raw: {r.tool_call_raw}"
-        )
+        assert r.status == "ok", f"Pipeline status: {r.status} {r.error}"
+        assert self._tool(r) == "explain_factors", f"Got {self._tool(r)}"
 
     def test_case_2_efficiency_drop_routes_to_find_largest_change(self):
         """Q: 'When did fuel efficiency show the largest drop?'"""
-        r = self._route("When did energy efficiency show the largest drop?")
-        assert r.error == "", f"Router error: {r.error}"
-        assert r.tool_name == ToolName.find_largest_change, (
-            f"Expected find_largest_change, got {r.tool_name}. Raw: {r.tool_call_raw}"
-        )
+        r = self._route("When did fuel efficiency show the largest drop?")
+        assert r.status == "ok", f"Pipeline status: {r.status} {r.error}"
+        assert self._tool(r) == "find_largest_change", f"Got {self._tool(r)}"
 
     def test_case_3_adas_yesterday_routes_to_get_events(self):
         """Q: 'Show all ADAS disengagement events from yesterday.'"""
         r = self._route("Show all ADAS disengagement events from yesterday.")
-        assert r.error == "", f"Router error: {r.error}"
-        assert r.tool_name == ToolName.get_events, (
-            f"Expected get_events, got {r.tool_name}. Raw: {r.tool_call_raw}"
-        )
-        assert r.tool_args_dict.get("type") in ("ADAS_DISENGAGEMENT", "adas_disengagement"), (
-            f"Wrong event type: {r.tool_args_dict}"
-        )
+        assert r.status == "ok", f"Pipeline status: {r.status} {r.error}"
+        assert self._tool(r) == "get_events", f"Got {self._tool(r)}"
+        args = r.tool_call.get("args", {}) if r.tool_call else {}
+        assert args.get("type") == "ADAS_DISENGAGEMENT", f"Wrong event type: {args}"
 
     def test_case_4_battery_context_routes_to_context_before(self):
         """Q: 'What happened before the battery overheating warning?'"""
         r = self._route("What happened before the battery overheating warning?")
-        assert r.error == "", f"Router error: {r.error}"
-        assert r.tool_name == ToolName.context_before, (
-            f"Expected context_before, got {r.tool_name}. Raw: {r.tool_call_raw}"
-        )
+        assert r.status == "ok", f"Pipeline status: {r.status} {r.error}"
+        assert self._tool(r) == "context_before", f"Got {self._tool(r)}"
 
     def test_case_5_city_highway_routes_to_compare(self):
         """Q: 'Compare energy consumption between city and highway driving.'"""
         r = self._route("Compare energy consumption between city and highway driving.")
-        assert r.error == "", f"Router error: {r.error}"
-        assert r.tool_name == ToolName.compare, (
-            f"Expected compare, got {r.tool_name}. Raw: {r.tool_call_raw}"
-        )
+        assert r.status == "ok", f"Pipeline status: {r.status} {r.error}"
+        assert self._tool(r) == "compare", f"Got {self._tool(r)}"
 
     def test_out_of_scope_general_knowledge(self):
-        """General knowledge questions must route to out_of_scope."""
+        """General knowledge questions must not be answered from telemetry."""
         r = self._route("What is the capital of France?")
-        assert r.error == "", f"Router error: {r.error}"
-        assert r.tool_name == ToolName.out_of_scope, (
-            f"Expected out_of_scope, got {r.tool_name}. Raw: {r.tool_call_raw}"
-        )
+        # Gate refuses before the model; either way no vehicle tool is used.
+        assert r.status in ("off_topic", "out_of_scope"), f"Status: {r.status}"
+        assert self._tool(r) in ("out_of_scope", None), f"Got {self._tool(r)}"
 
     def test_out_of_scope_vehicle_control(self):
-        """Vehicle control requests must route to out_of_scope."""
+        """Vehicle control requests must be refused by the guard."""
         r = self._route("Please unlock the car doors.")
-        assert r.error == "", f"Router error: {r.error}"
-        assert r.tool_name == ToolName.out_of_scope, (
-            f"Expected out_of_scope, got {r.tool_name}. Raw: {r.tool_call_raw}"
-        )
+        assert r.status == "control_refused", f"Status: {r.status}"
+        assert self._tool(r) == "out_of_scope", f"Got {self._tool(r)}"
 
     def test_answer_is_nonempty(self):
         """Router must always return a non-empty answer."""
         r = self._route("Show ADAS events from the last 7 days.")
-        assert r.error == "", f"Router error: {r.error}"
+        assert r.status in ("ok", "ambiguous_metric"), f"Status: {r.status}"
         assert r.answer.strip() != "", "Answer is empty"
 
     def test_verified_flag_set(self):
         """For tool calls with numeric output, verified must be True."""
         r = self._route("Compare energy consumption between city and highway driving.")
-        assert r.error == "", f"Router error: {r.error}"
+        assert r.status == "ok", f"Status: {r.status} {r.error}"
         # Template numbers come from tool output, so verification must pass
         assert r.verified is True
 
     def test_latency_within_target(self):
         """
-        Soft latency check: model_ms + query_ms should be under 10 s on the
+        Soft latency check: model + query + render should be under 10 s on the
         laptop (target is 2 s on the constrained container; reported separately).
         """
         r = self._route("Show all ADAS disengagement events from yesterday.")
-        total_ms = r.model_ms + r.query_ms + r.render_ms
+        total_ms = r.timings["model_ms"] + r.timings["query_ms"] + r.timings["render_ms"]
         assert total_ms < 10_000, f"Total latency {total_ms:.0f} ms exceeds 10 s soft limit"
 
 

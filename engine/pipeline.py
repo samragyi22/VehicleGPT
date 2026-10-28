@@ -18,7 +18,7 @@ Returns:
 - tool_call: Validated tool call dict
 - evidence: Evidence rows/identifiers
 - timings: Per-stage timings (ms)
-- status: Status code ("ok", "control_refused", "off_topic", "out_of_scope", "validation_error", "ungrounded", "query_error")
+- status: Status code ("ok", "control_refused", "off_topic", "out_of_scope", "validation_error", "ungrounded", "query_error", "unsupported_time", "ambiguous_metric")
 - verified: True if all numbers in the answer are strictly backed by tool output.
 """
 
@@ -44,11 +44,14 @@ from engine.tools import (
 from engine.validate import prepare_executable_args, validate_tool_call
 from engine.verify import verify_or_fallback
 from llm.guards import (
+    AMBIGUOUS_METRIC_MESSAGE,
     CONTROL_REFUSAL_MESSAGE,
     OFF_TOPIC_MESSAGE,
     has_vehicle_terms,
     is_control_command,
     is_grounded,
+    metric_grounded_in_question,
+    metrics_in_question,
     normalize_tool_args,
 )
 from llm.timeparse import UNSUPPORTED_TIME_MESSAGE, interpretation_text, parse_time_range
@@ -106,6 +109,15 @@ _TOOL_ARG_KEYS: dict[str, set[str]] = {
     ToolName.trend: set(TrendArgs.model_fields),
     ToolName.explain_factors: set(ExplainFactorsArgs.model_fields),
     ToolName.out_of_scope: set(OutOfScopeArgs.model_fields),
+}
+
+# Tools whose args include a `metric` field; their metric must be grounded in
+# the question or derived from it — never silently defaulted.
+_METRIC_TOOL_NAMES: set[str] = {
+    "compare",
+    "find_largest_change",
+    "trend",
+    "explain_factors",
 }
 
 
@@ -245,8 +257,8 @@ def run_pipeline(
             call_dict.get("tool"), forced_tool, question,
         )
         call_dict["tool"] = forced_tool
-        if "metric" not in call_dict.get("args", {}):
-            call_dict.setdefault("args", {})["metric"] = "estimated_range_km"
+        # NOTE: no metric is injected here. The chosen metric must be grounded
+        # in the question (Stage 6) or derived from it, never silently defaulted.
 
     # Inject authoritative time range (model never emits range)
     if call_dict.get("tool") not in ("context_before", "out_of_scope"):
@@ -277,6 +289,41 @@ def run_pipeline(
                 args.pop(key)
     args = normalize_tool_args(args, question=question, tool_name=call_dict.get("tool", ""))
     call_dict["args"] = args
+
+    # Stage 6b: metric grounding — no silent metric defaults.
+    if call_dict.get("tool") in _METRIC_TOOL_NAMES:
+        metric_val = args.get("metric")
+        grounded = (
+            metric_val is not None
+            and metric_grounded_in_question(str(metric_val), question)
+        )
+        if not grounded:
+            candidates = metrics_in_question(question)
+            if len(candidates) == 1:
+                logger.info(
+                    "Metric not grounded in model output; derived %s from question.",
+                    candidates[0].value,
+                )
+                args["metric"] = candidates[0].value
+            else:
+                detail = (
+                    f"{len(candidates)} metrics match the question"
+                    if candidates
+                    else "no metric appears in the question"
+                )
+                logger.info(
+                    "Metric clarification (%s) for: %s", detail, question,
+                )
+                timings["total_ms"] = round((time.perf_counter() - t_start) * 1000, 2)
+                return PipelineResult(
+                    answer=AMBIGUOUS_METRIC_MESSAGE,
+                    tool_call=call_dict,
+                    status="ambiguous_metric",
+                    verified=True,
+                    timings=timings,
+                    tokens=tokens,
+                )
+
     t0 = time.perf_counter()
     try:
         tool_name, validated_sym_args = validate_tool_call(call_dict)
